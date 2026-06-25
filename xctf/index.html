@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>XCTF 竞赛复盘 | CX-5W 的个人网站</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="XCTF 网络安全攻防竞赛 · 第一名 赛事：XCTF 网络安全攻防竞赛（攻防世界 AD World 平台 · 个人赛）成绩：第一名时间：2026 年方向：Web 安全 · 密码学   比赛简介XCTF 网络安全竞赛是国内知名的 CTF 赛事之一，由**攻防世界（AD World）**平台主办，涵盖 Web 渗透、密码学、逆向分析、Pwn 二进制利用等多个方向。本次比赛以个人赛形式进行，考验选手的">
+<meta property="og:type" content="website">
+<meta property="og:title" content="XCTF 竞赛复盘">
+<meta property="og:url" content="https://cx-5w.github.io/xctf/index.html">
+<meta property="og:site_name" content="CX-5W 的个人网站">
+<meta property="og:description" content="XCTF 网络安全攻防竞赛 · 第一名 赛事：XCTF 网络安全攻防竞赛（攻防世界 AD World 平台 · 个人赛）成绩：第一名时间：2026 年方向：Web 安全 · 密码学   比赛简介XCTF 网络安全竞赛是国内知名的 CTF 赛事之一，由**攻防世界（AD World）**平台主办，涵盖 Web 渗透、密码学、逆向分析、Pwn 二进制利用等多个方向。本次比赛以个人赛形式进行，考验选手的">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-06-25T04:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-25T03:41:05.815Z">
+<meta property="article:author" content="CX-5W">
+<meta property="article:tag" content="CTF, Web安全, 渗透测试, 密码学, 网络安全, XCTF">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="CX-5W 的个人网站" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CX-5W 的个人网站</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/resume">简历</a>
+        
+          <a class="main-nav-link" href="/tools">工具</a>
+        
+          <a class="main-nav-link" href="/projects">项目</a>
+        
+          <a class="main-nav-link" href="/xctf">XCTF</a>
+        
+          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
+        
+          <a class="main-nav-link" href="/about">关于我</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/CX-5W"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://cx-5w.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/xctf/index.html" class="article-date">
+  <time class="dt-published" datetime="2026-06-25T04:00:00.000Z" itemprop="datePublished">2026-06-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      XCTF 竞赛复盘
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="XCTF-网络安全攻防竞赛-·-第一名"><a href="#XCTF-网络安全攻防竞赛-·-第一名" class="headerlink" title="XCTF 网络安全攻防竞赛 · 第一名"></a>XCTF 网络安全攻防竞赛 · 第一名</h1><blockquote>
+<p><strong>赛事</strong>：XCTF 网络安全攻防竞赛（攻防世界 AD World 平台 · 个人赛）<br><strong>成绩</strong>：第一名<br><strong>时间</strong>：2026 年<br><strong>方向</strong>：Web 安全 · 密码学</p>
+</blockquote>
+<hr>
+<h2 id="比赛简介"><a href="#比赛简介" class="headerlink" title="比赛简介"></a>比赛简介</h2><p>XCTF 网络安全竞赛是国内知名的 CTF 赛事之一，由**攻防世界（AD World）**平台主办，涵盖 Web 渗透、密码学、逆向分析、Pwn 二进制利用等多个方向。本次比赛以个人赛形式进行，考验选手的综合解题能力和临场应变能力。</p>
+<hr>
+<h2 id="解题复盘"><a href="#解题复盘" class="headerlink" title="解题复盘"></a>解题复盘</h2><h3 id="Web-方向"><a href="#Web-方向" class="headerlink" title="Web 方向"></a>Web 方向</h3><h4 id="1-前端登录绕过"><a href="#1-前端登录绕过" class="headerlink" title="1. 前端登录绕过"></a>1. 前端登录绕过</h4><p><strong>考点</strong>：Base64 编码、前端 JavaScript 分析</p>
+<p>题目为一个登录页面，用户名固定为 admin，密码在前端通过 JavaScript 进行 Base64 比对验证。</p>
+<p><strong>解题思路</strong>：</p>
+<ol>
+<li>F12 查看页面源码，找到 JS 中的硬编码密码 <code>Q1RGe2Vhc3lfYmFzZTY0fQ==</code></li>
+<li>识别为 Base64 编码（以 <code>==</code> 结尾，仅含 A-Za-z0-9+&#x2F;）</li>
+<li>使用 <code>atob()</code> 解码得到明文密码</li>
+<li>输入密码获取 flag</li>
+</ol>
+<p><strong>关键代码</strong>：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> correctPassword = <span class="string">&quot;Q1RGe2Vhc3lfYmFzZTY0fQ==&quot;</span>;</span><br><span class="line"><span class="comment">// btoa(enteredPassword) === correctPassword → 登录成功</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>完整题解见 <a target="_blank" rel="noopener" href="https://github.com/CX-5W/CTF-Writeups">CTF-Writeups&#x2F;web</a></p>
+</blockquote>
+<hr>
+<h4 id="2-User-Agent-绕过"><a href="#2-User-Agent-绕过" class="headerlink" title="2. User-Agent 绕过"></a>2. User-Agent 绕过</h4><p><strong>考点</strong>：HTTP 请求头修改、Burp Suite 抓包改包</p>
+<p>在前端校验的基础上，后端增加了一层 User-Agent 校验，需要将请求头中的 User-Agent 修改为指定值才能通过。</p>
+<p><strong>解题思路</strong>：</p>
+<ol>
+<li>先用正确的密码通过前端校验</li>
+<li>使用 Burp Suite 拦截提交的 POST 请求</li>
+<li>修改 <code>User-Agent: ctf-show-brower</code></li>
+<li>Forward 放行，获取 flag</li>
+</ol>
+<p><strong>Burp 操作流程</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Proxy → Intercept is on → 浏览器提交表单 →</span><br><span class="line">Burp 拦截到请求 → 修改 User-Agent → Forward</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h4 id="3-多层编码逆向"><a href="#3-多层编码逆向" class="headerlink" title="3. 多层编码逆向"></a>3. 多层编码逆向</h4><p><strong>考点</strong>：Base64 多层嵌套、字符串变换逆向</p>
+<p>前端 JS 对密码做了 5 层 Base64 编码变换，需要从最外层逐层逆向推导出原始密码。</p>
+<p><strong>解题思路</strong>：</p>
+<ol>
+<li>从外往内逐层逆向，每层逆向一次 Base64 编码</li>
+<li>处理裁剪操作（<code>.slice(3)</code>、<code>.substr(2)</code>），暴力补全被删除的字符</li>
+<li>使用合法 Base64 字符集作为约束条件缩小搜索范围</li>
+<li>最终还原出原始密码，改包提交获取 flag</li>
+</ol>
+<blockquote>
+<p>详细逆向过程见 <a href="/ctf-web/">ctf-web 题解</a></p>
+</blockquote>
+<hr>
+<h3 id="密码学方向"><a href="#密码学方向" class="headerlink" title="密码学方向"></a>密码学方向</h3><h4 id="编码识别与解码"><a href="#编码识别与解码" class="headerlink" title="编码识别与解码"></a>编码识别与解码</h4><p>在密码学题目中，遇到多种编码方式的组合，需要快速识别并解码。</p>
+<p><strong>识别流程</strong>：</p>
+<ol>
+<li>观察字符集特征（大写字母、数字、特殊符号）</li>
+<li>判断编码类型（Base64 &#x2F; Base32 &#x2F; Base58 &#x2F; Hex 等）</li>
+<li>使用 Python 脚本或 CyberChef 解码</li>
+</ol>
+<p><strong>涉及的知识点</strong>：</p>
+<ul>
+<li>Base 家族编码（Base64、Base32、Base58）</li>
+<li>古典密码（凯撒、维吉尼亚、栅栏密码）</li>
+<li>XOR 加解密</li>
+<li>ASCII &#x2F; Hex &#x2F; URL 编码转换</li>
+</ul>
+<blockquote>
+<p>编码速查手册 <a href="/%E7%BC%96%E7%A0%81%E8%A7%A3%E7%A0%81%E5%AD%A6%E4%B9%A0/">编码解码学习</a></p>
+</blockquote>
+<hr>
+<h2 id="赛后总结"><a href="#赛后总结" class="headerlink" title="赛后总结"></a>赛后总结</h2><p>这次比赛让我在以下几个方面有所提升：</p>
+<ol>
+<li><strong>Web 渗透实战能力</strong>：从面对登录页面时知道从哪下手，到能系统性地分析前端逻辑和后端校验</li>
+<li><strong>编码分析能力</strong>：建立了一套编码识别方法论，不再靠瞎猜</li>
+<li><strong>工具熟练度</strong>：Burp Suite 的抓包改包操作达到肌肉记忆水平</li>
+<li><strong>Python 脚本能力</strong>：赛后编写了自动化解题脚本，沉淀为可复用的工具</li>
+</ol>
+<hr>
+<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/CX-5W/CTF-Writeups">CTF 题解归档</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CX-5W/Security-Scripts">安全脚本工具</a></li>
+<li><a href="/ctf-web/">Web 安全题解</a></li>
+<li><a href="/%E7%BC%96%E7%A0%81%E8%A7%A3%E7%A0%81%E5%AD%A6%E4%B9%A0/">编码解码学习</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://cx-5w.github.io/xctf/index.html" data-id="cuidifwJpEKoSCvn-pgXDTBFA" data-title="XCTF 竞赛复盘" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/06/25/welcome/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 CX-5W<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/resume" class="mobile-nav-link">简历</a>
+  
+    <a href="/tools" class="mobile-nav-link">工具</a>
+  
+    <a href="/projects" class="mobile-nav-link">项目</a>
+  
+    <a href="/xctf" class="mobile-nav-link">XCTF</a>
+  
+    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
+  
+    <a href="/about" class="mobile-nav-link">关于我</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
