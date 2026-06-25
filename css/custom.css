@@ -556,3 +556,58 @@ a:hover {
 ::-webkit-scrollbar-thumb:hover {
     background: #9ca3af;
 }
+
+/* ===== 11. 打印样式 — 简历打印优化 ===== */
+@media print {
+    #header, #nav-bar, #sidebar, #footer,
+    .home-welcome, .quick-links, .banner-gradient,
+    #banner, #header-outer::before, #header-outer::after {
+        display: none !important;
+    }
+    body {
+        background: #fff;
+        color: #000;
+        font-size: 12pt;
+        line-height: 1.5;
+    }
+    .article, .article-inner {
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+        border: none;
+        background: #fff;
+    }
+    .article-entry {
+        padding: 0 !important;
+        color: #000;
+    }
+    .article-entry h1, .article-entry h2,
+    .article-entry h3, .article-entry h4 {
+        color: #000;
+    }
+    .article-entry a {
+        color: #000;
+        text-decoration: underline;
+    }
+    .article-entry table {
+        border-collapse: collapse;
+    }
+    .article-entry th {
+        background: #f3f4f6;
+        color: #000;
+        border-bottom: 2px solid #000;
+    }
+    .article-entry td {
+        border-bottom: 1px solid #ccc;
+    }
+    .article-entry code {
+        background: #f5f5f5;
+        color: #000;
+    }
+    .article-entry pre {
+        background: #f5f5f5 !important;
+        border: 1px solid #ddd;
+        color: #000;
+    }
+}
