@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>面试高频问答 100 题 | CX-5W 的安全笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="从 45 篇笔记的「面试问答」汇总的高频题库，覆盖协议 &#x2F; 信息收集 &#x2F; Web 漏洞 &#x2F; 工具 &#x2F; 内网域 &#x2F; 应急 &#x2F; 开发。面试前过一遍，心里有底。  ★重点 答案均为要点版，答题时记得”先结论、再展开、带例子”。  一、基础与网络协议（12） HTTP 请求包格式？ A：请求行、请求头、空行、请求体；GET 无体、POST 有体">
+<meta property="og:type" content="article">
+<meta property="og:title" content="面试高频问答 100 题">
+<meta property="og:url" content="https://cx-5w.github.io/security-notes/interview-100/index.html">
+<meta property="og:site_name" content="CX-5W 的安全笔记">
+<meta property="og:description" content="从 45 篇笔记的「面试问答」汇总的高频题库，覆盖协议 &#x2F; 信息收集 &#x2F; Web 漏洞 &#x2F; 工具 &#x2F; 内网域 &#x2F; 应急 &#x2F; 开发。面试前过一遍，心里有底。  ★重点 答案均为要点版，答题时记得”先结论、再展开、带例子”。  一、基础与网络协议（12） HTTP 请求包格式？ A：请求行、请求头、空行、请求体；GET 无体、POST 有体">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-07T01:40:00.000Z">
+<meta property="article:modified_time" content="2026-08-06T16:40:46.314Z">
+<meta property="article:author" content="CX-5W">
+<meta property="article:tag" content="面试">
+<meta property="article:tag" content="题库">
+<meta property="article:tag" content="高频">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="CX-5W 的安全笔记" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CX-5W 的安全笔记</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Web 安全 · CTF · 渗透测试</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/security-notes/">安全笔记</a>
+        
+          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
+        
+          <a class="main-nav-link" href="/tools">工具</a>
+        
+          <a class="main-nav-link" href="/projects">项目</a>
+        
+          <a class="main-nav-link" href="/resume">简历</a>
+        
+          <a class="main-nav-link" href="/about">关于我</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/CX-5W"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://cx-5w.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-security-notes-interview-100" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/security-notes/interview-100/" class="article-date">
+  <time class="dt-published" datetime="2026-08-07T01:40:00.000Z" itemprop="datePublished">2026-08-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a>►<a class="article-category-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      面试高频问答 100 题
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>从 45 篇笔记的「面试问答」汇总的高频题库，覆盖协议 &#x2F; 信息收集 &#x2F; Web 漏洞 &#x2F; 工具 &#x2F; 内网域 &#x2F; 应急 &#x2F; 开发。面试前过一遍，心里有底。</p>
+</blockquote>
+<p><span class="badge-key">★重点</span> 答案均为要点版，答题时记得”先结论、再展开、带例子”。</p>
+<hr>
+<h2 id="一、基础与网络协议（12）"><a href="#一、基础与网络协议（12）" class="headerlink" title="一、基础与网络协议（12）"></a>一、基础与网络协议（12）</h2><ol>
+<li><strong>HTTP 请求包格式？</strong> A：请求行、请求头、空行、请求体；GET 无体、POST 有体。</li>
+<li><strong>GET 和 POST 区别？</strong> A：数据位置（URL vs 请求体）、长度、类型、幂等性、场景（查 vs 增改）。</li>
+<li><strong>HTTP 状态码常考？</strong> A：200 成功、301&#x2F;302 重定向、304 缓存、403 禁止、404 不存在、500&#x2F;502&#x2F;504 服务端问题。</li>
+<li><strong>304 原理？</strong> A：带缓存修改时间给服务端对比，无变化返回 304 用本地缓存。</li>
+<li><strong>HTTPS 握手流程？</strong> A：客户端发握手 → 服务端回证书 → 客户端验签+摘要比对 → 公钥传预密钥 → 双方合成对称密钥 → 加密通信。</li>
+<li><strong>为什么 HTTPS 用三种算法？</strong> A：哈希验完整性、非对称做认证和密钥协商、对称加密传数据。</li>
+<li><strong>什么是同源？</strong> A：协议+域名+端口全同；同源策略拦”读取”不拦”发送”。</li>
+<li><strong>跨域方式？</strong> A：CORS 响应头、五大跨域标签、JSONP 回调。</li>
+<li><strong>Cookie 和 Session？</strong> A：HTTP 无状态，服务端 Session 存状态，Set-Cookie 下发会话 ID，请求自动携带。</li>
+<li><strong>TCP 三次握手&#x2F;四次挥手？</strong> A：SYN→SYN+ACK→ACK；FIN→ACK→FIN→ACK。</li>
+<li><strong>SYN 洪水原理？</strong> A：伪造海量 SYN 占满半连接队列，正常用户无法建连。</li>
+<li><strong>MD5 密码怎么破解？</strong> A：不可逆但可撞库&#x2F;彩虹表；防御用加盐+慢哈希（bcrypt&#x2F;argon2）。</li>
+</ol>
+<h2 id="二、信息收集与扫描（12）"><a href="#二、信息收集与扫描（12）" class="headerlink" title="二、信息收集与扫描（12）"></a>二、信息收集与扫描（12）</h2><ol start="13">
+<li><strong>为什么信息收集是核心？</strong> A：成败约 80% 取决于它；版本匹配漏洞、子域找薄弱点、CDN 绕过找源站。</li>
+<li><strong>信息收集收集什么？</strong> A：域名&#x2F;子域、真实 IP、端口服务、指纹版本、目录文件、旁站 C 段、测绘。</li>
+<li><strong>怎么判断有 CDN？</strong> A：多地 Ping，多地区多 IP&#x3D;CDN；单 IP&#x3D;真实源站。</li>
+<li><strong>CDN 绕过方法？</strong> A：子域名排查（最稳）、历史 DNS、邮件头、国外服务器 Ping。</li>
+<li><strong>Nmap 常用参数？</strong> A：<code>-sn</code> 主机发现、<code>-sS</code> SYN、<code>-sT</code> 全连接、<code>-sV</code> 版本、<code>-O</code> 系统、<code>-A</code> 综合。</li>
+<li><strong>-sS 和 -sT 区别？</strong> A：SYN 半连接隐蔽快需 root；全连接完整握手无权限但易被记录。</li>
+<li><strong>ping 不通说明主机不在？</strong> A：不一定，Windows 防火墙默认拦 ICMP，用 <code>-sn</code> 多协议探测。</li>
+<li><strong>指纹识别怎么手工判断？</strong> A：响应头 Server&#x2F;X-Powered-By + 源码关键词（wp-content、thinkphp 等）。</li>
+<li><strong>Git 泄露怎么检测利用？</strong> A：访问 <code>/.git/HEAD</code> 确认，GitHack 还原源码，git log 挖历史敏感信息。</li>
+<li><strong>目录扫描原理？</strong> A：路径字典批量拼接发包，按状态码判断（200&#x2F;301&#x2F;403&#x3D;存在）。</li>
+<li><strong>Google Hack 常用语法？</strong> A：site&#x2F;inurl&#x2F;intitle&#x2F;intext&#x2F;filetype&#x2F;- 组合。</li>
+<li><strong>旁站和 C 段？</strong> A：旁站&#x3D;同 IP 多站点；C 段&#x3D;同网段主机；主站打不动打旁站。</li>
+</ol>
+<h2 id="三、Web-漏洞（30）"><a href="#三、Web-漏洞（30）" class="headerlink" title="三、Web 漏洞（30）"></a>三、Web 漏洞（30）</h2><ol start="25">
+<li><strong>SQL 注入原理？</strong> A：用户输入未过滤直接拼接 SQL 执行，本质是信任失控。</li>
+<li><strong>怎么判断数字型&#x2F;字符型？</strong> A：数字型直接拼 <code>and 1=1</code>；字符型加引号报错、需闭合。</li>
+<li><strong>注入分类？</strong> A：按类型（数字&#x2F;字符&#x2F;搜索&#x2F;堆叠）、按位置（GET&#x2F;POST&#x2F;Cookie）、按回显（联合&#x2F;报错&#x2F;布尔&#x2F;时间）。</li>
+<li><strong>联合查询注意？</strong> A：order by 测列数、列数一致、回显位替换、Access 末尾需真实表名。</li>
+<li><strong>报错注入原理？</strong> A：updatexml&#x2F;extractvalue 非法 XPath 报错带出数据，单次 32 字符。</li>
+<li><strong>写 Shell 条件？</strong> A：secure_file_priv 开放 + 绝对路径 + 写权限，最好 root。</li>
+<li><strong>SQLMap 常用？</strong> A：<code>--dbs --tables --columns --dump</code>；登录态 <code>-r</code>；WAF <code>--tamper</code>。</li>
+<li><strong>预编译为什么能防注入？</strong> A：SQL 结构固定，输入只当值绑定；局限是动态表名&#x2F;排序等。</li>
+<li><strong>XSS 三类区别？</strong> A：存储型入库持久高危；反射型 URL 一次性；DOM 型前端动态渲染。</li>
+<li><strong>XSS 怎么验证？</strong> A：<code>&lt;script&gt;alert(1)&lt;/script&gt;</code> 或 <code>&lt;img src=x onerror=alert(1)&gt;</code> 弹窗。</li>
+<li><strong>属性内输出怎么打 XSS？</strong> A：引号闭合+事件注入：<code>&#39; onclick=alert(1) &gt;</code>。</li>
+<li><strong>XSS 危害？</strong> A：窃取 Cookie 冒充登录、键盘记录、钓鱼；管理员中招&#x3D;后台沦陷。</li>
+<li><strong>XSS 防御？</strong> A：输入过滤+输出转义双端，CSP 兜底。</li>
+<li><strong>文件上传怎么绕过？</strong> A：前端删 JS&#x2F;改包；MIME 改 Content-Type；文件头做图片马；后缀大小写双写截断。</li>
+<li><strong>图片马能直接用吗？</strong> A：不能，需解析漏洞&#x2F;文件包含配合执行。</li>
+<li><strong>解析漏洞有哪些？</strong> A：IIS6 分号截断&#x2F;目录解析；Apache 多后缀回溯；Nginx fix_pathinfo。</li>
+<li><strong>文件包含怎么产生？</strong> A：include 路径用户可控无白名单；包含函数不校验后缀只解析内容。</li>
+<li><strong>LFI 和 RFI？</strong> A：LFI 本地文件无配置要求；RFI 远程 URL 需 allow_url_include 开启。</li>
+<li><strong>命令执行危险函数？</strong> A：PHP system&#x2F;exec&#x2F;shell_exec&#x2F;反引号；eval&#x2F;assert。</li>
+<li><strong>命令连接符？</strong> A：<code>;</code> 无条件、<code>&amp;&amp;</code> 成功才执行、<code>||</code> 失败才执行、<code>|</code> 管道。</li>
+<li><strong>反序列化漏洞原理？</strong> A：不可信序列化串直接 unserialize，触发魔术方法执行代码。</li>
+<li><strong>反序列化常见组件？</strong> A：WebLogic、Shiro、Fastjson、Apache Commons。</li>
+<li><strong>什么是 SSRF？</strong> A：服务端代替攻击者发请求，可探测内网、读文件。</li>
+<li><strong>SSRF 绕过？</strong> A：进制转换、IP 简写、@ 解析、重定向。</li>
+<li><strong>什么是 XXE？</strong> A：XML 外部实体注入，读文件&#x2F;内网请求，无回显用报错或外带。</li>
+<li><strong>逻辑漏洞为什么扫不出来？</strong> A：无特征码，藏在业务逻辑里，只能手工结合业务测。</li>
+<li><strong>常见逻辑漏洞？</strong> A：支付改价、状态参数篡改、密码找回绕过、短信轰炸、越权。</li>
+<li><strong>越权分类？</strong> A：未授权访问、水平越权（同级换 ID）、垂直越权（低权限高操作）。</li>
+<li><strong>怎么测垂直越权？</strong> A：两个账号，管理员操作抓包，换普通用户身份信息放包。</li>
+<li><strong>暴力破解验证码绕过？</strong> A：前端删 JS&#x2F;删字段；后端吃时效（60 秒内复用）或纯数字爆破。</li>
+</ol>
+<h2 id="四、工具与对抗（10）"><a href="#四、工具与对抗（10）" class="headerlink" title="四、工具与对抗（10）"></a>四、工具与对抗（10）</h2><ol start="55">
+<li><strong>AWVS 定位？</strong> A：Web 漏洞扫描器，配登录态扫后台，报告分级，高危必须手工验证。</li>
+<li><strong>Xray 特点？</strong> A：单文件免装、少发包高精准、POC 可定制、反连平台，和 Burp 联动。</li>
+<li><strong>Xray 和 AWVS 分工？</strong> A：AWVS 全量初筛，Xray 精准复核&#x2F;免打扰扫描。</li>
+<li><strong>Nessus 做什么？</strong> A：系统漏洞扫描，8834 网页管理，免费版限 16 IP。</li>
+<li><strong>CS 是什么？</strong> A：红队平台，客户端-服务端，Beacon 控主机，集成提权&#x2F;凭据&#x2F;代理&#x2F;钓鱼。</li>
+<li><strong>CS 和 MSF 配合？</strong> A：会话互转，能力互补。</li>
+<li><strong>有状态&#x2F;无状态木马？</strong> A：有状态自动持久化易被杀；无状态只起进程，需手动 sc create 持久化。</li>
+<li><strong>WAF 怎么识别？</strong> A：发攻击载荷看响应&#x2F;wafw00f；规则库匹配不到&#x3D;放行。</li>
+<li><strong>WAF 绕过思路？</strong> A：编码、大小写、注释、等价替换、分块传输、换请求位置。</li>
+<li><strong>免杀怎么做？</strong> A：基于语言特性变形（变量&#x2F;拼接&#x2F;编码&#x2F;自定义函数）+加壳；写完用杀软测、能连才算。</li>
+</ol>
+<h2 id="五、内网与域（15）"><a href="#五、内网与域（15）" class="headerlink" title="五、内网与域（15）"></a>五、内网与域（15）</h2><ol start="65">
+<li><strong>内网渗透思路？</strong> A：先完全控制外网主机 → 信息收集 → 代理&#x2F;隧道打通 → 横向扩大。</li>
+<li><strong>不出网怎么办？</strong> A：Socks 代理（EW&#x2F;reGeorg）或隧道（ICMP&#x2F;DNS）转出。</li>
+<li><strong>代理和隧道区别？</strong> A：代理转发不换协议；隧道把数据加工成其他协议绕过过滤。</li>
+<li><strong>FRP 干什么？</strong> A：NAT 穿透，公网服务器做映射，目标经公网回连。</li>
+<li><strong>内网信息收集什么？</strong> A：系统&#x2F;补丁、用户组、杀软、防火墙、端口服务、域信息。</li>
+<li><strong>端口转发工具？</strong> A：NC、LCX（转出什么端口用对应工具接）。</li>
+<li><strong>横向渗透手法？</strong> A：口令复用、PTH、永恒之蓝、弱口令爆破、Web 漏洞复用。</li>
+<li><strong>工作组 vs 域？</strong> A：工作组只分组无统一管理认证；域靠 DC 统一管理和认证。</li>
+<li><strong>Kerberos 认证链？</strong> A：AS 验身份→TGT→TGS 换票→ST→服务放行。</li>
+<li><strong>黄金票据？</strong> A：伪造 TGT，需要 krbtgt 哈希+SID，可申请任意服务票，通常做权限维持。</li>
+<li><strong>白银票据？</strong> A：伪造 ST，需要目标服务账号哈希+SID，只能访问单个服务。</li>
+<li><strong>PTH 和 PTT？</strong> A：PTH 用哈希直接认证；PTT 导入票据冒充身份。</li>
+<li><strong>定位域控？</strong> A：nltest &#x2F; net group “domain controllers” &#x2F; whoami &#x2F;all；拿下域控&#x3D;控制全域。</li>
+<li><strong>Kerberoasting？</strong> A：申请服务票据离线爆破服务账号密码。</li>
+<li><strong>提权思路？</strong> A：先信息收集（版本&#x2F;补丁&#x2F;权限），再匹配漏洞 EXP；Windows 补丁、Linux SUID&#x2F;内核、数据库 SA。</li>
+</ol>
+<h2 id="六、应急与运营（13）"><a href="#六、应急与运营（13）" class="headerlink" title="六、应急与运营（13）"></a>六、应急与运营（13）</h2><ol start="80">
+<li><strong>应急响应六阶段？</strong> A：准备→启动→检测→抑制→根除→恢复→跟进。</li>
+<li><strong>挖矿病毒怎么处理？</strong> A：断网→查异常连接&#x2F;进程→删文件→清计划任务启动项→修漏洞→复查。</li>
+<li><strong>为什么先杀进程再删文件？</strong> A：运行中的程序会自我恢复&#x2F;保护文件。</li>
+<li><strong>映像劫持？</strong> A：注册表把杀软路径改错导致打不开；改名绕过&#x2F;SREng 清理。</li>
+<li><strong>Linux 排查要点？</strong> A：passwd 异常账号、authorized_keys 后门、计划任务、日志。</li>
+<li><strong>Web 应急流程？</strong> A：隔离→扫 WebShell→日志定位→清理→修复→复测。</li>
+<li><strong>护网蓝队分组？</strong> A：监测→研判→处置(封IP)→溯源→反制。</li>
+<li><strong>怎么研判攻击？</strong> A：数据包特征+攻击次数+历史行为，结合资产判断真假与成败。</li>
+<li><strong>等保流程？</strong> A：定级备案→差距评估→建设整改→等级测评。</li>
+<li><strong>等保 2.0 十方面？</strong> A：物理、通信、区域边界、计算环境、管理中心+管理五方面。</li>
+<li><strong>安全加固做什么？</strong> A：口令复杂度&#x2F;锁定、账号清理、日志开启、补丁、关端口。</li>
+<li><strong>常见安全设备？</strong> A：防火墙、WAF、IDS&#x2F;IPS、态势感知、VPN、抗DDoS、审计。</li>
+<li><strong>渗透测试报告要素？</strong> A：概述、资产、漏洞清单分级、复现截图、修复建议、总结。</li>
+</ol>
+<h2 id="七、安全开发（8）"><a href="#七、安全开发（8）" class="headerlink" title="七、安全开发（8）"></a>七、安全开发（8）</h2><ol start="93">
+<li><strong>POC 和 EXP 区别？</strong> A：POC 验证漏洞存在；EXP 利用漏洞拿权限；Payload 是恶意载荷。</li>
+<li><strong>为什么安全要学 Python？</strong> A：大量安全工具&#x2F;POC 是 Python 写的，能看懂能改能自写。</li>
+<li><strong>requests 和 socket？</strong> A：requests 应用层 HTTP 封装；socket 底层灵活（端口扫描&#x2F;自定义协议）。</li>
+<li><strong>怎么模拟登录态爬数据？</strong> A：浏览器复制 Cookie&#x2F;UA 放进 headers。</li>
+<li><strong>端口扫描为什么用 connect_ex？</strong> A：不抛异常、返回 0&#x3D;开放、速度快。</li>
+<li><strong>爆破脚本怎么提速？</strong> A：queue 队列+threading 多线程并发取任务，避免重复。</li>
+<li><strong>代码审计从哪入手？</strong> A：搜危险函数（system&#x2F;eval&#x2F;include&#x2F;unserialize）→追数据来源→查过滤。</li>
+<li><strong>怎么保证脚本稳定？</strong> A：try&#x2F;except 容错、timeout、控制线程、打印进度。</li>
+</ol>
+<hr>
+<p><span class="badge-key">★重点</span> 面试加分技巧：<strong>答题用”先结论后展开+带真实场景”</strong>（如”我在靶场&#x2F;项目里…”），比背概念更让面试官认可。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://cx-5w.github.io/security-notes/interview-100/" data-id="cuidEnmrZbX0t8fTA75F82jFU" data-title="面试高频问答 100 题" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%A2%98%E5%BA%93/" rel="tag">题库</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%AB%98%E9%A2%91/" rel="tag">高频</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/security-notes/incident-response/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">应急响应速查</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" style="font-size: 10px;">SQL注入</a> <a href="/tags/SSRF/" style="font-size: 10px;">SSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/XXE/" style="font-size: 10px;">XXE</a> <a href="/tags/%E4%B8%8A%E4%BC%A0/" style="font-size: 10px;">上传</a> <a href="/tags/%E4%BB%A3%E7%90%86/" style="font-size: 10px;">代理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" style="font-size: 10px;">信息收集</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" style="font-size: 10px;">命令执行</a> <a href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" style="font-size: 10px;">域渗透</a> <a href="/tags/%E5%BA%94%E6%80%A5/" style="font-size: 10px;">应急</a> <a href="/tags/%E6%8A%A4%E7%BD%91/" style="font-size: 10px;">护网</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 10px;">报告</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 10px;">提权</a> <a href="/tags/%E6%9F%A5%E6%9D%80/" style="font-size: 10px;">查杀</a> <a href="/tags/%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">流程</a> <a href="/tags/%E7%AD%89%E4%BF%9D/" style="font-size: 10px;">等保</a> <a href="/tags/%E9%9A%A7%E9%81%93/" style="font-size: 10px;">隧道</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a> <a href="/tags/%E9%A2%98%E5%BA%93/" style="font-size: 10px;">题库</a> <a href="/tags/%E9%AB%98%E9%A2%91/" style="font-size: 10px;">高频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">应急响应</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">1</span></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/08/">八月 2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/security-notes/interview-100/">面试高频问答 100 题</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/incident-response/">应急响应速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/intranet-domain/">内网渗透与域渗透速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/pentest-checklist/">渗透测试全流程速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/payload-handbook/">Web 漏洞速查与 Payload 手册</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 CX-5W<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/security-notes/" class="mobile-nav-link">安全笔记</a>
+  
+    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
+  
+    <a href="/tools" class="mobile-nav-link">工具</a>
+  
+    <a href="/projects" class="mobile-nav-link">项目</a>
+  
+    <a href="/resume" class="mobile-nav-link">简历</a>
+  
+    <a href="/about" class="mobile-nav-link">关于我</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

