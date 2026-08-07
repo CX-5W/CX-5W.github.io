@@ -9,25 +9,25 @@
   <meta name="description" content="🕸 Web 安全 CTF 题解 前端校验绕过 &#x2F; 编码识别 &#x2F; 请求头伪造 实战题解。题目来自 ctf.show 系列靶场与竞赛。  ★重点 题解核心套路：前端没有秘密，所有校验代码都能在 JS 里看到；后端校验则看错误提示缺什么补什么。  📑 题解目录   # 题目 考点 难度 直达    01 前端登录校验 前端 JS 分析 + Base64 识别 ⭐ 入门 跳转 ↓">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Web 安全 CTF 题解">
-<meta property="og:url" content="https://cx-5w.github.io/ctf-web/index.html">
+<meta property="og:url" content="https://tongui66.github.io/ctf-web/index.html">
 <meta property="og:site_name" content="tongui 的安全笔记">
 <meta property="og:description" content="🕸 Web 安全 CTF 题解 前端校验绕过 &#x2F; 编码识别 &#x2F; 请求头伪造 实战题解。题目来自 ctf.show 系列靶场与竞赛。  ★重点 题解核心套路：前端没有秘密，所有校验代码都能在 JS 里看到；后端校验则看错误提示缺什么补什么。  📑 题解目录   # 题目 考点 难度 直达    01 前端登录校验 前端 JS 分析 + Base64 识别 ⭐ 入门 跳转 ↓">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://cx-5w.github.io/ctf-web/img/one/1.png">
-<meta property="og:image" content="https://cx-5w.github.io/ctf-web/img/one/2.png">
-<meta property="og:image" content="https://cx-5w.github.io/ctf-web/img/two/1.png">
-<meta property="og:image" content="https://cx-5w.github.io/ctf-web/img/two/2.png">
-<meta property="og:image" content="https://cx-5w.github.io/ctf-web/img/two/3.png">
-<meta property="og:image" content="https://cx-5w.github.io/ctf-web/img/two/4.png">
-<meta property="og:image" content="https://cx-5w.github.io/ctf-web/img/two/5.png">
-<meta property="og:image" content="https://cx-5w.github.io/ctf-web/img/three/1.png">
-<meta property="og:image" content="https://cx-5w.github.io/ctf-web/img/three/2.png">
+<meta property="og:image" content="https://tongui66.github.io/ctf-web/img/one/1.png">
+<meta property="og:image" content="https://tongui66.github.io/ctf-web/img/one/2.png">
+<meta property="og:image" content="https://tongui66.github.io/ctf-web/img/two/1.png">
+<meta property="og:image" content="https://tongui66.github.io/ctf-web/img/two/2.png">
+<meta property="og:image" content="https://tongui66.github.io/ctf-web/img/two/3.png">
+<meta property="og:image" content="https://tongui66.github.io/ctf-web/img/two/4.png">
+<meta property="og:image" content="https://tongui66.github.io/ctf-web/img/two/5.png">
+<meta property="og:image" content="https://tongui66.github.io/ctf-web/img/three/1.png">
+<meta property="og:image" content="https://tongui66.github.io/ctf-web/img/three/2.png">
 <meta property="article:published_time" content="2026-08-07T03:20:00.000Z">
 <meta property="article:modified_time" content="2026-08-07T03:14:41.127Z">
 <meta property="article:author" content="tongui">
 <meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://cx-5w.github.io/ctf-web/img/one/1.png">
+<meta name="twitter:image" content="https://tongui66.github.io/ctf-web/img/one/1.png">
   
     <link rel="alternate" href="/atom.xml" title="tongui 的安全笔记" type="application/atom+xml">
   
@@ -91,7 +91,7 @@
         <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://cx-5w.github.io"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tongui66.github.io"></form>
       </div>
     </div>
   </div>
@@ -280,7 +280,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://cx-5w.github.io/ctf-web/index.html" data-id="cuid4eke8lgfEakUtIzAQP_lq" data-title="Web 安全 CTF 题解" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://tongui66.github.io/ctf-web/index.html" data-id="cuid4eke8lgfEakUtIzAQP_lq" data-title="Web 安全 CTF 题解" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
