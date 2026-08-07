@@ -28,8 +28,12 @@ a:hover {
 #header {
     background: transparent !important;
     border-bottom: 1px solid #e5e7eb;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: #ffffff !important;
+    box-shadow: 0 1px 6px rgba(17, 24, 39, 0.06);
     height: auto !important;
-    position: relative;
 }
 
 #header:before,
@@ -41,113 +45,81 @@ a:hover {
     height: auto !important;
     padding: 0;
     position: relative;
+    background: #ffffff;
 }
 
 #header-inner {
     overflow: visible;
     padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
 /* 导航菜单容器 */
 #nav-bar {
-    background: #ffffff;
-    border-bottom: 1px solid #e5e7eb;
-    padding: 0 20px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    display: none;
 }
 
 /* 导航菜单项 */
 #nav-bar .nav {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+    display: none;
+}
+
+#header #main-nav {
+    float: none;
+    margin-left: 0;
     display: flex;
+    align-items: center;
     gap: 4px;
 }
 
-#nav-bar .nav li {
-    margin: 0;
-}
-
-#nav-bar .nav a {
-    display: block;
-    padding: 14px 18px;
-    color: #000000;
+#header #main-nav .main-nav-link {
+    display: inline-block;
+    padding: 12px 16px;
+    color: #4b5563;
     font-size: 15px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
     border-radius: 8px;
     transition: all 0.2s ease;
     text-decoration: none;
 }
 
-#nav-bar .nav a:hover,
-#nav-bar .nav a.current {
-    color: #000000;
+#header #main-nav .main-nav-link:hover,
+#header #main-nav .main-nav-link.current {
+    color: #2563eb;
     background: #f3f4f6;
     text-decoration: none;
+}
+
+#header #main-nav .main-nav-link.current {
+    color: #ffffff;
+    background: #2563eb;
+    font-weight: 700;
+}
+
+#header #main-nav .main-nav-link.current:hover {
+    color: #ffffff;
+    background: #1d4ed8;
 }
 
 /* 博客标题/Logo */
 #logo {
     display: inline-block;
-    padding: 24px 20px 8px;
-}
-
-#logo .site-title {
+    padding: 0 24px 0 0;
     color: #1f2937;
-    font-size: 28px;
+    font-size: 19px;
     font-weight: 700;
-    letter-spacing: -0.5px;
+    letter-spacing: 0.2px;
     text-decoration: none;
+    white-space: nowrap;
 }
-
-#logo .site-subtitle {
-    color: #6b7280;
-    font-size: 14px;
-    margin-top: 4px;
-}
-
-/* ===== 3. 首屏 Banner ===== */
-#banner {
-    display: none !important;
-}
-
-#header-outer::before {
-    content: "CX-5W";
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 200px;
-    background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 40%, #f0fdf4 70%, #fefce8 100%);
-    position: relative;
-    overflow: hidden;
-    font-size: 64px;
-    font-weight: 900;
-    color: transparent;
-    background-clip: text;
-    -webkit-background-clip: text;
-    background-image: linear-gradient(135deg, #2563eb, #059669, #d97706);
-    letter-spacing: 8px;
-    text-shadow: none;
-    font-family: "Noto Sans SC", -apple-system, sans-serif;
-}
-
-/* 装饰网格线条 */
-#header-outer::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 200px;
-    background:
-        linear-gradient(rgba(37, 99, 235, 0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(37, 99, 235, 0.04) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
+#logo:hover {
+    color: #2563eb;
 }
 
 /* ===== 4. 文章卡片布局 ===== */
@@ -327,56 +299,103 @@ a:hover {
 /* ===== 5. 侧边栏 ===== */
 #sidebar {
     color: #374151;
-}
-
-#sidebar h2,
-.sidebar-title {
-    color: #111827;
     font-size: 14px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    border-bottom: 1px solid #e5e7eb;
-    padding-bottom: 8px;
-    margin-bottom: 12px;
 }
 
 .widget-wrap {
     background: #ffffff;
     border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    padding: 16px;
+    border-radius: 12px;
     margin-bottom: 20px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
-.widget-wrap a {
-    color: #6b7280;
+.widget-wrap .widget-title {
+    color: #111827;
     font-size: 14px;
-    transition: color 0.2s ease;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin: 0;
+    padding: 14px 18px 10px;
+    border-bottom: 1px solid #f0f1f3;
+    position: relative;
 }
 
-.widget-wrap a:hover {
+.widget-wrap .widget-title:before {
+    content: "";
+    display: inline-block;
+    width: 4px;
+    height: 14px;
+    background: linear-gradient(180deg, #2563eb, #06b6d4);
+    border-radius: 2px;
+    margin-right: 8px;
+    vertical-align: -2px;
+}
+
+.widget-wrap .widget {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 6px 18px 16px;
+    color: #4b5563;
+    text-shadow: none;
+    font-size: 13.5px;
+}
+
+.widget-wrap .widget a {
+    color: #4b5563;
+}
+
+.widget-wrap .widget a:hover {
     color: #2563eb;
     text-decoration: none;
 }
 
-/* 标签云 */
-.tag-cloud a {
-    display: inline-block;
-    padding: 2px 8px;
-    margin: 2px;
-    background: #f3f4f6;
-    border-radius: 4px;
-    font-size: 13px !important;
-    color: #6b7280;
-    border: 1px solid transparent;
-    transition: all 0.2s ease;
+.widget-wrap .widget ul {
+    margin: 0;
+    padding: 0;
 }
 
-.tag-cloud a:hover {
+.widget-wrap .widget ul li {
+    padding: 5px 0;
+    border-bottom: 1px dashed #f0f1f3;
+}
+
+.widget-wrap .widget ul li:last-child {
+    border-bottom: none;
+}
+
+.widget-wrap .widget ul li a {
+    display: inline-block;
+    max-width: 100%;
+}
+
+/* 标签云 — 整齐胶囊 */
+.widget.tagcloud {
+    padding-top: 14px;
+}
+
+.widget.tagcloud a {
+    display: inline-block;
+    padding: 3px 11px;
+    margin: 3px 4px 3px 0;
+    background: #f3f4f6;
+    border: 1px solid #eef0f2;
+    border-radius: 999px;
+    font-size: 12.5px !important;
+    color: #4b5563 !important;
+    line-height: 1.6;
+    transition: all 0.15s ease;
+}
+
+.widget.tagcloud a:hover {
     color: #2563eb;
-    border-color: #d1d5db;
+    border-color: #bfdbfe;
     background: #eef2ff;
+    text-decoration: none;
+    transform: translateY(-1px);
 }
 
 /* 分类列表 */
@@ -391,6 +410,11 @@ a:hover {
     color: #6b7280;
     font-size: 12px;
     margin-left: 4px;
+}
+
+.archive-list-count {
+    color: #6b7280;
+    font-size: 12px;
 }
 
 /* ===== 6. 底部页脚 ===== */
@@ -488,32 +512,23 @@ a:hover {
 
 /* ===== 9. 响应式 — 手机 ===== */
 @media (max-width: 767px) {
-    #header-outer::before {
-        height: 140px;
-        font-size: 36px;
-        letter-spacing: 4px;
-    }
-
-    #header-outer::after {
-        height: 140px;
-    }
-
     #logo {
-        padding: 16px 16px 4px;
+        padding: 0 12px 0 0;
+        font-size: 16px;
     }
 
-    #logo .site-title {
-        font-size: 22px;
-    }
-
-    #nav-bar .nav {
+    #header #main-nav {
         gap: 0;
-        flex-wrap: wrap;
+        overflow-x: auto;
     }
 
-    #nav-bar .nav a {
-        padding: 10px 12px;
+    #header #main-nav .main-nav-link {
+        padding: 14px 10px;
         font-size: 13px;
+    }
+
+    #header-inner {
+        padding: 0 12px;
     }
 
     .article {
@@ -561,7 +576,7 @@ a:hover {
 @media print {
     #header, #nav-bar, #sidebar, #footer,
     .home-welcome, .quick-links, .banner-gradient,
-    #banner, #header-outer::before, #header-outer::after {
+    #banner {
         display: none !important;
     }
     body {
@@ -642,7 +657,12 @@ a:hover {
 /* ===== 首页 Hero ===== */
 .home-welcome {
     text-align: center;
-    padding: 12px 20px 20px;
+    padding: 6px 16px 10px;
+}
+
+/* 首页欢迎卡片：隐藏日期徽标，保持落地页干净 */
+.article-type-post #post-welcome .article-meta {
+    display: none;
 }
 
 /* ===== 导航「简历」高亮按钮 ===== */
@@ -670,33 +690,29 @@ a:hover {
     }
 }
 .home-welcome h2 {
-    font-size: 34px;
+    font-size: 22px;
     font-weight: 900;
     letter-spacing: 1px;
-    margin: 8px 0 4px;
+    margin: 0 0 8px;
     background: linear-gradient(135deg, #2563eb, #059669, #d97706);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
 }
 .home-welcome .hero-sub {
-    color: #6b7280;
-    font-size: 16px;
-    letter-spacing: 3px;
-    margin: 4px 0 14px;
+    display: none;
+}
+.home-welcome p {
+    display: none;
 }
 .home-welcome .hero-actions {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin: 14px 0;
+    display: none;
 }
 .hero-btn {
     display: inline-block;
-    padding: 10px 24px;
+    padding: 7px 20px;
     border-radius: 999px;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 600;
     text-decoration: none !important;
     transition: all 0.2s ease;
@@ -721,22 +737,37 @@ a:hover {
     background: #f0f4ff;
 }
 .home-welcome .quick-links {
-    margin-top: 8px;
+    margin-top: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
 }
 .home-welcome .quick-links a {
     display: inline-block;
-    margin: 4px;
-    padding: 6px 16px;
-    border-radius: 8px;
+    margin: 0;
+    padding: 5px 14px;
+    border-radius: 999px;
     background: #f3f4f6;
     color: #374151;
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: 500;
     transition: all 0.2s ease;
     text-decoration: none;
 }
 .home-welcome .quick-links a:hover {
     background: #2563eb;
     color: #ffffff !important;
+}
+.home-welcome .quick-links a.quick-resume {
+    background: #2563eb;
+    color: #ffffff !important;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+}
+.home-welcome .quick-links a.quick-resume:hover {
+    background: #1d4ed8;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.45);
 }
 
 /* ===== 深色代码块（Payload 更醒目） ===== */

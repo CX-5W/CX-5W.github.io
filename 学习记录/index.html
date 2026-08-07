@@ -4,17 +4,17 @@
   <meta charset="utf-8">
   
   
-  <title>学习记录 | CX-5W 的安全笔记</title>
+  <title>CTF 题解 | CX-5W 的安全笔记</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="📖 学习笔记 学习Markdown语法 学习hexo，常用操作 终端命令汇总 编码解码学习  🏁 CTF 题解 ctf-web — Web 漏洞 ctf-Crypto — 密码学 ctf-Forensis — 数字取证 ctf-Misc — 杂项 ctf-Pwn — 二进制 ctf-Reverse — 逆向  📋 个人项目 在线简历 — 求职简历 XCTF 复盘 — 竞赛解题总结 安全工具">
+  <meta name="description" content="🏁 CTF 题解总览 个人 CTF 实战题解与方向知识库。题解来自 百城千赛 · 吉林师范大学站（第一名） 及日常刷题，知识框架对应渗透测试课程笔记，方便按方向快速检索。  ★重点 所有题解均含完整思路与操作流程，靶场&#x2F;竞赛环境仅限授权测试使用。  📂 按方向分类   方向 内容 状态 入口    Web 安全 前端校验 &#x2F; Base64 &#x2F; User-Agent">
 <meta property="og:type" content="website">
-<meta property="og:title" content="学习记录">
+<meta property="og:title" content="CTF 题解">
 <meta property="og:url" content="https://cx-5w.github.io/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/index.html">
 <meta property="og:site_name" content="CX-5W 的安全笔记">
-<meta property="og:description" content="📖 学习笔记 学习Markdown语法 学习hexo，常用操作 终端命令汇总 编码解码学习  🏁 CTF 题解 ctf-web — Web 漏洞 ctf-Crypto — 密码学 ctf-Forensis — 数字取证 ctf-Misc — 杂项 ctf-Pwn — 二进制 ctf-Reverse — 逆向  📋 个人项目 在线简历 — 求职简历 XCTF 复盘 — 竞赛解题总结 安全工具">
+<meta property="og:description" content="🏁 CTF 题解总览 个人 CTF 实战题解与方向知识库。题解来自 百城千赛 · 吉林师范大学站（第一名） 及日常刷题，知识框架对应渗透测试课程笔记，方便按方向快速检索。  ★重点 所有题解均含完整思路与操作流程，靶场&#x2F;竞赛环境仅限授权测试使用。  📂 按方向分类   方向 内容 状态 入口    Web 安全 前端校验 &#x2F; Base64 &#x2F; User-Agent">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-05-30T13:11:30.000Z">
-<meta property="article:modified_time" content="2026-06-25T03:38:04.681Z">
+<meta property="article:published_time" content="2026-08-07T03:20:00.000Z">
+<meta property="article:modified_time" content="2026-08-07T03:13:26.921Z">
 <meta property="article:author" content="CX-5W">
 <meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
 <meta name="twitter:card" content="summary">
@@ -47,21 +47,12 @@
   <div id="container">
     <div id="wrap">
       <header id="header">
-  <div id="banner"></div>
   <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">CX-5W 的安全笔记</a>
-      </h1>
-      
-        <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">Web 安全 · CTF · 渗透测试</a>
-        </h2>
-      
-    </div>
     <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">CX-5W 的安全笔记</a>
       <nav id="main-nav">
         <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
         
           <a class="main-nav-link" href="/">Home</a>
         
@@ -75,7 +66,7 @@
         
           <a class="main-nav-link nav-resume" href="/resume">简历</a>
         
-          <a class="main-nav-link" href="/about">关于我</a>
+          <a class="main-nav-link current" href="/about">关于我</a>
         
       </nav>
       <nav id="sub-nav">
@@ -100,7 +91,7 @@
         <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/index.html" class="article-date">
-  <time class="dt-published" datetime="2026-05-30T13:11:30.000Z" itemprop="datePublished">2026-05-30</time>
+  <time class="dt-published" datetime="2026-08-07T03:20:00.000Z" itemprop="datePublished">2026-08-07</time>
 </a>
     
   </div>
@@ -111,7 +102,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      学习记录
+      CTF 题解
     </h1>
   
 
@@ -119,34 +110,81 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="📖-学习笔记"><a href="#📖-学习笔记" class="headerlink" title="📖 学习笔记"></a>📖 学习笔记</h2><ul>
-<li><a href="/%E5%AD%A6%E4%B9%A0Markdown%E8%AF%AD%E6%B3%95/">学习Markdown语法</a></li>
-<li><a href="/%E5%AD%A6%E4%B9%A0hexo%EF%BC%8C%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/">学习hexo，常用操作</a></li>
-<li><a href="/%E7%BB%88%E7%AB%AF%E5%91%BD%E4%BB%A4%E6%B1%87%E6%80%BB/">终端命令汇总</a></li>
-<li><a href="/%E7%BC%96%E7%A0%81%E8%A7%A3%E7%A0%81%E5%AD%A6%E4%B9%A0/">编码解码学习</a></li>
+        <h1 id="🏁-CTF-题解总览"><a href="#🏁-CTF-题解总览" class="headerlink" title="🏁 CTF 题解总览"></a>🏁 CTF 题解总览</h1><blockquote>
+<p>个人 CTF 实战题解与方向知识库。题解来自 <strong>百城千赛 · 吉林师范大学站（第一名）</strong> 及日常刷题，知识框架对应渗透测试课程笔记，方便按方向快速检索。</p>
+</blockquote>
+<p><span class="badge-key">★重点</span> 所有题解均含完整思路与操作流程，靶场&#x2F;竞赛环境仅限授权测试使用。</p>
+<hr>
+<h2 id="📂-按方向分类"><a href="#📂-按方向分类" class="headerlink" title="📂 按方向分类"></a>📂 按方向分类</h2><table>
+<thead>
+<tr>
+<th>方向</th>
+<th>内容</th>
+<th>状态</th>
+<th>入口</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Web 安全</strong></td>
+<td>前端校验 &#x2F; Base64 &#x2F; User-Agent 伪造 &#x2F; 多层编码逆向 + SQL注入·XSS·上传·命令执行框架</td>
+<td>✅ 3 题解</td>
+<td><a href="/ctf-web/">进入 →</a></td>
+</tr>
+<tr>
+<td><strong>密码学</strong></td>
+<td>RSA &#x2F; AES &#x2F; 古典密码 &#x2F; 编码识别 知识框架</td>
+<td>📖 知识库</td>
+<td><a href="/ctf-Crypto/">进入 →</a></td>
+</tr>
+<tr>
+<td><strong>数字取证</strong></td>
+<td>流量分析 &#x2F; 文件隐写 &#x2F; 取证工具链</td>
+<td>📖 知识库</td>
+<td><a href="/ctf-Forensis/">进入 →</a></td>
+</tr>
+<tr>
+<td><strong>杂项 Misc</strong></td>
+<td>图片隐写 &#x2F; 文件分析 &#x2F; 编码杂项</td>
+<td>✅ 1 题解</td>
+<td><a href="/ctf-Misc/">进入 →</a></td>
+</tr>
+<tr>
+<td><strong>二进制 Pwn</strong></td>
+<td>栈溢出 &#x2F; 格式化字符串 &#x2F; pwntools 基础</td>
+<td>📖 知识库</td>
+<td><a href="/ctf-Pwn/">进入 →</a></td>
+</tr>
+<tr>
+<td><strong>逆向 Reverse</strong></td>
+<td>ELF 静态分析 &#x2F; IDA·Ghidra·gdb 流程</td>
+<td>✅ 1 题解</td>
+<td><a href="/ctf-Reverse/">进入 →</a></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🏆-竞赛战绩"><a href="#🏆-竞赛战绩" class="headerlink" title="🏆 竞赛战绩"></a>🏆 竞赛战绩</h2><p><strong>百城千赛 · 吉林师范大学站 — 第一名（个人）</strong>，4 道题（Web &#x2F; Crypto &#x2F; Misc &#x2F; Reverse）全部独立解出。</p>
+<p><a href="/xctf/">查看完整复盘 →</a></p>
+<hr>
+<h2 id="🔗-配套知识库"><a href="#🔗-配套知识库" class="headerlink" title="🔗 配套知识库"></a>🔗 配套知识库</h2><ul>
+<li><a href="/security-notes/">安全笔记总览</a> — 渗透测试课程笔记 45 篇 &#x2F; 8 大主题核心速查</li>
+<li><a href="/security-notes/payload-handbook/">Web 漏洞 Payload 手册</a> — 每漏洞：原理一句话 + 核心 Payload + 防御</li>
+<li><a href="/%E7%BC%96%E7%A0%81%E8%A7%A3%E7%A0%81%E5%AD%A6%E4%B9%A0/">编码解码学习</a> — Base 家族 &#x2F; 古典密码 &#x2F; Hex &#x2F; URL 编码识别与 Python 解码</li>
+<li><a href="/security-notes/interview-100/">面试高频 100 题</a> — CTF 相关面试题速查</li>
 </ul>
-<h2 id="🏁-CTF-题解"><a href="#🏁-CTF-题解" class="headerlink" title="🏁 CTF 题解"></a>🏁 CTF 题解</h2><ul>
-<li><a href="/ctf-web/">ctf-web</a> — Web 漏洞</li>
-<li><a href="/ctf-Crypto/">ctf-Crypto</a> — 密码学</li>
-<li><a href="/ctf-Forensis/">ctf-Forensis</a> — 数字取证</li>
-<li><a href="/ctf-Misc/">ctf-Misc</a> — 杂项</li>
-<li><a href="/ctf-Pwn/">ctf-Pwn</a> — 二进制</li>
-<li><a href="/ctf-Reverse/">ctf-Reverse</a> — 逆向</li>
-</ul>
-<h2 id="📋-个人项目"><a href="#📋-个人项目" class="headerlink" title="📋 个人项目"></a>📋 个人项目</h2><ul>
-<li><a href="/resume/">在线简历</a> — 求职简历</li>
-<li><a href="/xctf/">XCTF 复盘</a> — 竞赛解题总结</li>
-<li><a href="/tools/">安全工具</a> — 工具技能记录</li>
-<li><a href="/projects/">开源项目</a> — GitHub 仓库介绍</li>
-</ul>
-<h2 id="👤-关于"><a href="#👤-关于" class="headerlink" title="👤 关于"></a>👤 关于</h2><ul>
-<li><a href="/about/">关于我</a></li>
-</ul>
+<hr>
+<h2 id="📌-刷题方法论"><a href="#📌-刷题方法论" class="headerlink" title="📌 刷题方法论"></a>📌 刷题方法论</h2><p><strong>CTF 通用五步</strong>：</p>
+<ol>
+<li><strong>信息收集</strong>：看附件类型（<code>file</code>）、看页面源码（F12）、看响应头</li>
+<li><strong>识别考点</strong>：编码特征（Base64&#x2F;Hex&#x2F;ROT13）→ 漏洞类型（注入&#x2F;上传&#x2F;反序列化）→ 加密算法（RSA&#x2F;AES&#x2F;古典）</li>
+<li><strong>工具先行</strong>：<code>binwalk</code> &#x2F; <code>strings</code> &#x2F; <code>xxd</code> &#x2F; Burp Suite &#x2F; IDA &#x2F; Ghidra &#x2F; pwntools</li>
+<li><strong>逆向推理</strong>：加密题从外层往内层剥，前端校验题在 JS 里找硬编码密文</li>
+<li><strong>沉淀脚本</strong>：赛后把解题过程写成 Python 脚本，归档复用</li>
+</ol>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://cx-5w.github.io/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/index.html" data-id="cuidYkwAvDz1M1wrlbiinJ8YL" data-title="学习记录" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://cx-5w.github.io/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/index.html" data-id="cuidNKkJndasKw359rn2K0gLH" data-title="CTF 题解" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -268,6 +306,28 @@
 
 
 <script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
 
 
 

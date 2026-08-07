@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   
   
-  <title>ctf wed | CX-5W 的安全笔记</title>
+  <title>Web 安全 CTF 题解 | CX-5W 的安全笔记</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="one用burpsuite 拿到页面后，我看到是一个登录页面，用户名固定为 admin，要输密码。这种前端做的登录校验，密码一定是暴露在前端代码里的——因为后端没参与校验。 看到数据我们因该先看script 往下翻，看到 script 标签里的核心逻辑：const correctPassword &#x3D; “Q1RGe2Vhc3lfYmFzZTY0fQ&#x3D;&#x3D;”;const e">
+  <meta name="description" content="🕸 Web 安全 CTF 题解 前端校验绕过 &#x2F; 编码识别 &#x2F; 请求头伪造 实战题解。题目来自 ctf.show 系列靶场与竞赛。  ★重点 题解核心套路：前端没有秘密，所有校验代码都能在 JS 里看到；后端校验则看错误提示缺什么补什么。  📑 题解目录   # 题目 考点 难度 直达    01 前端登录校验 前端 JS 分析 + Base64 识别 ⭐ 入门 跳转 ↓">
 <meta property="og:type" content="website">
-<meta property="og:title" content="ctf wed">
+<meta property="og:title" content="Web 安全 CTF 题解">
 <meta property="og:url" content="https://cx-5w.github.io/ctf-web/index.html">
 <meta property="og:site_name" content="CX-5W 的安全笔记">
-<meta property="og:description" content="one用burpsuite 拿到页面后，我看到是一个登录页面，用户名固定为 admin，要输密码。这种前端做的登录校验，密码一定是暴露在前端代码里的——因为后端没参与校验。 看到数据我们因该先看script 往下翻，看到 script 标签里的核心逻辑：const correctPassword &#x3D; “Q1RGe2Vhc3lfYmFzZTY0fQ&#x3D;&#x3D;”;const e">
+<meta property="og:description" content="🕸 Web 安全 CTF 题解 前端校验绕过 &#x2F; 编码识别 &#x2F; 请求头伪造 实战题解。题目来自 ctf.show 系列靶场与竞赛。  ★重点 题解核心套路：前端没有秘密，所有校验代码都能在 JS 里看到；后端校验则看错误提示缺什么补什么。  📑 题解目录   # 题目 考点 难度 直达    01 前端登录校验 前端 JS 分析 + Base64 识别 ⭐ 入门 跳转 ↓">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://cx-5w.github.io/ctf-web/img/one/1.png">
 <meta property="og:image" content="https://cx-5w.github.io/ctf-web/img/one/2.png">
@@ -22,8 +22,8 @@
 <meta property="og:image" content="https://cx-5w.github.io/ctf-web/img/two/5.png">
 <meta property="og:image" content="https://cx-5w.github.io/ctf-web/img/three/1.png">
 <meta property="og:image" content="https://cx-5w.github.io/ctf-web/img/three/2.png">
-<meta property="article:published_time" content="2026-06-06T14:05:41.000Z">
-<meta property="article:modified_time" content="2026-06-07T13:04:49.783Z">
+<meta property="article:published_time" content="2026-08-07T03:20:00.000Z">
+<meta property="article:modified_time" content="2026-08-07T03:14:41.127Z">
 <meta property="article:author" content="CX-5W">
 <meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
 <meta name="twitter:card" content="summary">
@@ -57,21 +57,12 @@
   <div id="container">
     <div id="wrap">
       <header id="header">
-  <div id="banner"></div>
   <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">CX-5W 的安全笔记</a>
-      </h1>
-      
-        <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">Web 安全 · CTF · 渗透测试</a>
-        </h2>
-      
-    </div>
     <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">CX-5W 的安全笔记</a>
       <nav id="main-nav">
         <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
         
           <a class="main-nav-link" href="/">Home</a>
         
@@ -85,7 +76,7 @@
         
           <a class="main-nav-link nav-resume" href="/resume">简历</a>
         
-          <a class="main-nav-link" href="/about">关于我</a>
+          <a class="main-nav-link current" href="/about">关于我</a>
         
       </nav>
       <nav id="sub-nav">
@@ -110,7 +101,7 @@
         <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/ctf-web/index.html" class="article-date">
-  <time class="dt-published" datetime="2026-06-06T14:05:41.000Z" itemprop="datePublished">2026-06-06</time>
+  <time class="dt-published" datetime="2026-08-07T03:20:00.000Z" itemprop="datePublished">2026-08-07</time>
 </a>
     
   </div>
@@ -121,7 +112,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      ctf wed
+      Web 安全 CTF 题解
     </h1>
   
 
@@ -129,7 +120,45 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h1 id="one"><a href="#one" class="headerlink" title="one"></a>one</h1><p><img src="/ctf-web/img/one/1.png" alt="ruler"><br>用burpsuite<br><img src="/ctf-web/img/one/2.png" alt="bp"></p>
+        <h1 id="🕸-Web-安全-CTF-题解"><a href="#🕸-Web-安全-CTF-题解" class="headerlink" title="🕸 Web 安全 CTF 题解"></a>🕸 Web 安全 CTF 题解</h1><blockquote>
+<p>前端校验绕过 &#x2F; 编码识别 &#x2F; 请求头伪造 实战题解。题目来自 ctf.show 系列靶场与竞赛。</p>
+</blockquote>
+<p><span class="badge-key">★重点</span> 题解核心套路：<strong>前端没有秘密，所有校验代码都能在 JS 里看到；后端校验则看错误提示缺什么补什么。</strong></p>
+<hr>
+<h2 id="📑-题解目录"><a href="#📑-题解目录" class="headerlink" title="📑 题解目录"></a>📑 题解目录</h2><table>
+<thead>
+<tr>
+<th>#</th>
+<th>题目</th>
+<th>考点</th>
+<th>难度</th>
+<th>直达</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>01</td>
+<td>前端登录校验</td>
+<td>前端 JS 分析 + Base64 识别</td>
+<td>⭐ 入门</td>
+<td><a href="#%E9%A2%98%E8%A7%A3-01">跳转 ↓</a></td>
+</tr>
+<tr>
+<td>02</td>
+<td>前端校验 + 后端提交</td>
+<td>Burp 抓包 + User-Agent 伪造</td>
+<td>⭐⭐ 进阶</td>
+<td><a href="#%E9%A2%98%E8%A7%A3-02">跳转 ↓</a></td>
+</tr>
+<tr>
+<td>03</td>
+<td>多层 Base64 编码</td>
+<td>多层编码逆向 + 暴力补全</td>
+<td>⭐⭐⭐ 困难</td>
+<td><a href="#%E9%A2%98%E8%A7%A3-03">跳转 ↓</a></td>
+</tr>
+</tbody></table>
+<hr>
+<h1 id="题解-01-·-前端登录校验（入门）"><a href="#题解-01-·-前端登录校验（入门）" class="headerlink" title="题解 01 · 前端登录校验（入门）"></a>题解 01 · 前端登录校验（入门）</h1><p><img src="/ctf-web/img/one/1.png" alt="ruler"><br>用burpsuite<br><img src="/ctf-web/img/one/2.png" alt="bp"></p>
 <p>拿到页面后，我看到是一个登录页面，用户名固定为 admin，要输密码。这种前端做的登录校验，密码一定是暴露在前端代码里的——因为后端没参与校验。</p>
 <p>看到数据我们因该先看script</p>
 <p>往下翻，看到 script 标签里的核心逻辑：<br>const correctPassword &#x3D; “Q1RGe2Vhc3lfYmFzZTY0fQ&#x3D;&#x3D;”;<br>const enteredPassword &#x3D; document.getElementById(‘password’).value;</p>
@@ -139,7 +168,7 @@
 <p>看到 Q1RGe2Vhc3lfYmFzZTY0fQ&#x3D;&#x3D; —— 以 &#x3D;&#x3D; 结尾，只含字母数字和 +&#x2F;&#x3D; 字符，这明显是 Base64 编码。</p>
 <p>核心套路总结<br>下次遇到类似前端登录的 CTF 题：</p>
 <p>步骤	做什么<br>①	看页面源码（F12 或 curl）<br>②	找 script 里的登录逻辑<br>③	寻找硬编码的密码 &#x2F; token &#x2F; 密文<br>④	识别编码&#x2F;加密方式（Base64、hex、rot13、AES 等）<br>⑤	解码&#x2F;解密，得到原文<br>前端校验的题通常就是找藏在 JS 里的密文 → 解码，因为前端没有秘密，所有代码和数据都是用户能看到的。</p>
-<h1 id="two"><a href="#two" class="headerlink" title="two"></a>two</h1><p><img src="/ctf-web/img/two/1.png" alt="抓包规则"><br>本题与上一题的区别<br>先看代码对比：<br><img src="/ctf-web/img/two/2.png"><br>上一题（纯前端校验）<br>const correctPassword &#x3D; “Q1RGe2Vhc3lfYmFzZTY0fQ&#x3D;&#x3D;”;<br>if (btoa(enteredPassword) &#x3D;&#x3D;&#x3D; correctPassword) {<br>    &#x2F;&#x2F; 直接在前端显示 flag<br>}</p>
+<h1 id="题解-02-·-前端校验-后端提交（进阶）"><a href="#题解-02-·-前端校验-后端提交（进阶）" class="headerlink" title="题解 02 · 前端校验 + 后端提交（进阶）"></a>题解 02 · 前端校验 + 后端提交（进阶）</h1><p><img src="/ctf-web/img/two/1.png" alt="抓包规则"><br>本题与上一题的区别<br>先看代码对比：<br><img src="/ctf-web/img/two/2.png"><br>上一题（纯前端校验）<br>const correctPassword &#x3D; “Q1RGe2Vhc3lfYmFzZTY0fQ&#x3D;&#x3D;”;<br>if (btoa(enteredPassword) &#x3D;&#x3D;&#x3D; correctPassword) {<br>    &#x2F;&#x2F; 直接在前端显示 flag<br>}</p>
 <p>这一题（前端校验 + 后端提交）<br>const correctPassword &#x3D; “Q1RGe2Vhc3lfYmFzZTY0fQ&#x3D;&#x3D;”;<br>if (btoa(enteredPassword) !&#x3D;&#x3D; correctPassword) {<br>    e.preventDefault();   &#x2F;&#x2F; ❌ 密码不对就阻止表单提交<br>}<br>&#x2F;&#x2F; 密码对了 → 不阻止提交，表单正常发到 check.php</p>
 <p>而且表单是：<br>form id&#x3D;”loginForm” action&#x3D;”check.php” method&#x3D;”POST”</p>
 <h3 id="不使用bp的时候"><a href="#不使用bp的时候" class="headerlink" title="不使用bp的时候"></a>不使用bp的时候</h3><p>在你还没输密码之前，我们先看看页面里藏了什么。</p>
@@ -174,8 +203,8 @@
 <p>服务端怎么检查的（想象成伪代码）<br>里大概有这么一段逻辑：<br>if ($_SERVER[‘HTTP_USER_AGENT’] !&#x3D;&#x3D; “ctf-show-brower”) {<br>    echo “Invalid User-Agent”;<br>    exit;<br>}<br>也就是：</p>
 <p>读请求里的 User-Agent 字段<br>如果不等于 “ctf-show-brower” → 拒绝<br>如果等于 → 继续执行，返回 flag</p>
 <p>如果再遇到类似题<br>不管以后碰到要求改什么头，套路都一样：</p>
-<p>服务端提示	你要改的请求头	Burp 里怎么改<br>“Invalid User-Agent”	User-Agent	找到这行，替换值<br>“Invalid Referer”	Referer	找到这行，替换值<br>“Invalid Cookie”	Cookie	找到这行，替换值<br>“Invalid X-Forwarded-For”	X-Forwarded-For	加一行新头<br>错误信息就是答案，它告诉你缺什么，你就补什么。<br> –&gt;</p>
-<h2 id="three"><a href="#three" class="headerlink" title="three"></a>three</h2><p><img src="/ctf-web/img/three/1.png"></p>
+<p>服务端提示	你要改的请求头	Burp 里怎么改<br>“Invalid User-Agent”	User-Agent	找到这行，替换值<br>“Invalid Referer”	Referer	找到这行，替换值<br>“Invalid Cookie”	Cookie	找到这行，替换值<br>“Invalid X-Forwarded-For”	X-Forwarded-For	加一行新头<br>错误信息就是答案，它告诉你缺什么，你就补什么。</p>
+<h1 id=""><a href="#" class="headerlink" title=""></a></h1><h2 id="题解-03-·-多层-Base64-编码逆向（难）"><a href="#题解-03-·-多层-Base64-编码逆向（难）" class="headerlink" title="题解 03 · 多层 Base64 编码逆向（难）"></a>题解 03 · 多层 Base64 编码逆向（难）</h2><p><img src="/ctf-web/img/three/1.png"></p>
 <p>第 1 步：看页面 JS 代码</p>
 <p>F12 看源码，找到这段 JS：<br><img src="/ctf-web/img/three/2.png"><br>const correctPassword &#x3D; “SXpVRlF4TTFVelJtdFNSazB3VTJ4U1UwNXFSWGRVVlZrOWNWYzU&#x3D;”;</p>
 <p>function validatePassword(input) {<br>    let encoded &#x3D; btoa(input);                              &#x2F;&#x2F; ①<br>    encoded &#x3D; btoa(encoded + ‘xH7jK’).slice(3);             &#x2F;&#x2F; ②<br>    encoded &#x3D; btoa(encoded.split(‘’).reverse().join(‘’));   &#x2F;&#x2F; ③<br>    encoded &#x3D; btoa(‘aB3’ + encoded + ‘qW9’).substr(2);      &#x2F;&#x2F; ④<br>    return btoa(encoded) &#x3D;&#x3D;&#x3D; correctPassword;                &#x2F;&#x2F; ⑤<br>}</p>
@@ -190,12 +219,68 @@
 <p>第①步逆向： e1 &#x3D; btoa(input) → input &#x3D; atob(e1)<br>→ input &#x3D; {A7316</p>
 <p>第 4 步：用 Burp 提交<br>有了密码 {A7316，回到 Burp：</p>
 <p>拦截登录请求<br>密码填 {A7316<br>改 User-Agent 为 ctf-show-brower<br>Forward → 拿到 flag</p>
-<p>关键知识点<br>概念	说明<br>多层编码逆向	从最外层一层层往里推，每层都是一次编码变换<br>Base64 裁剪	.slice(3) 去掉前3字符后，需要暴力补全才可能解码<br>约束条件	逆向时要加”合法字符”约束来缩小搜索范围<br>这题比前两题复杂很多，核心思路就是从外到内一层层剥开，每次补充被裁掉的字符，直到还原出原始密码。</p>
+<h2 id="关键知识点概念说明多层编码逆向从最外层一层层往里推，每层都是一次编码变换Base64-裁剪-slice-3-去掉前3字符后，需要暴力补全才可能解码约束条件逆向时要加”合法字符”约束来缩小搜索范围这题比前两题复杂很多，核心思路就是从外到内一层层剥开，每次补充被裁掉的字符，直到还原出原始密码。"><a href="#关键知识点概念说明多层编码逆向从最外层一层层往里推，每层都是一次编码变换Base64-裁剪-slice-3-去掉前3字符后，需要暴力补全才可能解码约束条件逆向时要加”合法字符”约束来缩小搜索范围这题比前两题复杂很多，核心思路就是从外到内一层层剥开，每次补充被裁掉的字符，直到还原出原始密码。" class="headerlink" title="关键知识点概念	说明多层编码逆向	从最外层一层层往里推，每层都是一次编码变换Base64 裁剪	.slice(3) 去掉前3字符后，需要暴力补全才可能解码约束条件	逆向时要加”合法字符”约束来缩小搜索范围这题比前两题复杂很多，核心思路就是从外到内一层层剥开，每次补充被裁掉的字符，直到还原出原始密码。"></a>关键知识点<br>概念	说明<br>多层编码逆向	从最外层一层层往里推，每层都是一次编码变换<br>Base64 裁剪	.slice(3) 去掉前3字符后，需要暴力补全才可能解码<br>约束条件	逆向时要加”合法字符”约束来缩小搜索范围<br>这题比前两题复杂很多，核心思路就是从外到内一层层剥开，每次补充被裁掉的字符，直到还原出原始密码。</h2><h2 id="🧰-Web-漏洞知识框架（对应课程笔记）"><a href="#🧰-Web-漏洞知识框架（对应课程笔记）" class="headerlink" title="🧰 Web 漏洞知识框架（对应课程笔记）"></a>🧰 Web 漏洞知识框架（对应课程笔记）</h2><table>
+<thead>
+<tr>
+<th>漏洞类型</th>
+<th>一句话原理</th>
+<th>核心思路</th>
+<th>详细手册</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SQL 注入</td>
+<td>用户输入直接拼接 SQL 执行</td>
+<td>闭合 → 测列数 → 联合&#x2F;报错&#x2F;盲注</td>
+<td><a href="/security-notes/payload-handbook/#sql-%E6%B3%A8%E5%85%A5">Payload 手册</a></td>
+</tr>
+<tr>
+<td>XSS</td>
+<td>用户输入未过滤回显到页面</td>
+<td>反射型找参数 → 存储型找留言框 → DOM 型找 JS 取值</td>
+<td><a href="/security-notes/payload-handbook/#xss">Payload 手册</a></td>
+</tr>
+<tr>
+<td>文件上传</td>
+<td>服务端未严格校验文件类型</td>
+<td>改 MIME &#x2F; 图片马 &#x2F; 解析漏洞绕过</td>
+<td><a href="/security-notes/payload-handbook/#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0">Payload 手册</a></td>
+</tr>
+<tr>
+<td>命令执行</td>
+<td>用户输入进入系统命令</td>
+<td>管道符 &#96;</td>
+<td><code> </code></td>
+</tr>
+<tr>
+<td>SSRF &#x2F; XXE</td>
+<td>服务端请求可被诱导 &#x2F; XML 实体加载</td>
+<td>SSRF 探测内网 → XXE 读文件</td>
+<td><a href="/security-notes/payload-handbook/#ssrfxxe">Payload 手册</a></td>
+</tr>
+<tr>
+<td>越权 &#x2F; 逻辑</td>
+<td>接口未校验身份&#x2F;业务逻辑缺陷</td>
+<td>改 ID 测水平越权 → 改角色测垂直越权</td>
+<td><a href="/security-notes/payload-handbook/#%E8%B6%8A%E6%9D%83">Payload 手册</a></td>
+</tr>
+<tr>
+<td>暴力破解</td>
+<td>弱口令 &#x2F; 无验证码限制</td>
+<td>Hydra &#x2F; Burp Intruder 字典爆破</td>
+<td><a href="/security-notes/">安全笔记</a></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🎯-Web-刷题速查"><a href="#🎯-Web-刷题速查" class="headerlink" title="🎯 Web 刷题速查"></a>🎯 Web 刷题速查</h2><p><strong>识别前端校验题</strong>：F12 找 script → 找硬编码密文&#x2F;逻辑 → 识别编码 → 解码或改包绕过。</p>
+<p><strong>识别后端校验题</strong>：错误提示即线索——“Invalid User-Agent” 就改 User-Agent，”Invalid Referer” 就改 Referer，”Invalid Cookie” 就改 Cookie。</p>
+<p><strong>常用工具</strong>：Burp Suite（抓包&#x2F;改包&#x2F;Intruder）、浏览器 F12（Sources&#x2F;Console）、curl（命令行请求）。</p>
+<p><a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">← 返回 CTF 题解总览</a></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://cx-5w.github.io/ctf-web/index.html" data-id="cuidql3jbi5cybaafpdKTO9pl" data-title="ctf wed" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://cx-5w.github.io/ctf-web/index.html" data-id="cuid4eke8lgfEakUtIzAQP_lq" data-title="Web 安全 CTF 题解" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -317,6 +402,28 @@
 
 
 <script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
 
 
 

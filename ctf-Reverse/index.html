@@ -4,17 +4,17 @@
   <meta charset="utf-8">
   
   
-  <title>ctf Reverse | CX-5W 的安全笔记</title>
+  <title>逆向 Reverse | CX-5W 的安全笔记</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="🚧 施工中 本分类的题解正在整理中，后续会补全。">
+  <meta name="description" content="🔧 逆向 Reverse 逆向是”读机器语言写成的书”：静态分析看逻辑，动态调试验证猜想。CTF 常见目标是 ELF&#x2F;EXE 程序、APK、固件。   ✅ 实战题解：ELF 二进制逆向（百城千赛 · 吉林师范大学站）附件：46spim（ELF 64-bit 可执行文件） 解题流程123456① file 46spim              # 确认文件类型：ELF 64-bit②">
 <meta property="og:type" content="website">
-<meta property="og:title" content="ctf Reverse">
+<meta property="og:title" content="逆向 Reverse">
 <meta property="og:url" content="https://cx-5w.github.io/ctf-Reverse/index.html">
 <meta property="og:site_name" content="CX-5W 的安全笔记">
-<meta property="og:description" content="🚧 施工中 本分类的题解正在整理中，后续会补全。">
+<meta property="og:description" content="🔧 逆向 Reverse 逆向是”读机器语言写成的书”：静态分析看逻辑，动态调试验证猜想。CTF 常见目标是 ELF&#x2F;EXE 程序、APK、固件。   ✅ 实战题解：ELF 二进制逆向（百城千赛 · 吉林师范大学站）附件：46spim（ELF 64-bit 可执行文件） 解题流程123456① file 46spim              # 确认文件类型：ELF 64-bit②">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-06-06T14:06:58.000Z">
-<meta property="article:modified_time" content="2026-06-25T02:35:51.183Z">
+<meta property="article:published_time" content="2026-08-07T03:20:00.000Z">
+<meta property="article:modified_time" content="2026-08-07T03:16:07.714Z">
 <meta property="article:author" content="CX-5W">
 <meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
 <meta name="twitter:card" content="summary">
@@ -47,21 +47,12 @@
   <div id="container">
     <div id="wrap">
       <header id="header">
-  <div id="banner"></div>
   <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">CX-5W 的安全笔记</a>
-      </h1>
-      
-        <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">Web 安全 · CTF · 渗透测试</a>
-        </h2>
-      
-    </div>
     <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">CX-5W 的安全笔记</a>
       <nav id="main-nav">
         <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
         
           <a class="main-nav-link" href="/">Home</a>
         
@@ -75,7 +66,7 @@
         
           <a class="main-nav-link nav-resume" href="/resume">简历</a>
         
-          <a class="main-nav-link" href="/about">关于我</a>
+          <a class="main-nav-link current" href="/about">关于我</a>
         
       </nav>
       <nav id="sub-nav">
@@ -100,7 +91,7 @@
         <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/ctf-Reverse/index.html" class="article-date">
-  <time class="dt-published" datetime="2026-06-06T14:06:58.000Z" itemprop="datePublished">2026-06-06</time>
+  <time class="dt-published" datetime="2026-08-07T03:20:00.000Z" itemprop="datePublished">2026-08-07</time>
 </a>
     
   </div>
@@ -111,7 +102,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      ctf Reverse
+      逆向 Reverse
     </h1>
   
 
@@ -119,14 +110,98 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h1 id="🚧-施工中"><a href="#🚧-施工中" class="headerlink" title="🚧 施工中"></a>🚧 施工中</h1><blockquote>
-<p>本分类的题解正在整理中，后续会补全。</p>
+        <h1 id="🔧-逆向-Reverse"><a href="#🔧-逆向-Reverse" class="headerlink" title="🔧 逆向 Reverse"></a>🔧 逆向 Reverse</h1><blockquote>
+<p>逆向是”读机器语言写成的书”：静态分析看逻辑，动态调试验证猜想。CTF 常见目标是 ELF&#x2F;EXE 程序、APK、固件。</p>
 </blockquote>
+<hr>
+<h2 id="✅-实战题解：ELF-二进制逆向（百城千赛-·-吉林师范大学站）"><a href="#✅-实战题解：ELF-二进制逆向（百城千赛-·-吉林师范大学站）" class="headerlink" title="✅ 实战题解：ELF 二进制逆向（百城千赛 · 吉林师范大学站）"></a>✅ 实战题解：ELF 二进制逆向（百城千赛 · 吉林师范大学站）</h2><p><strong>附件</strong>：<code>46spim</code>（ELF 64-bit 可执行文件）</p>
+<h3 id="解题流程"><a href="#解题流程" class="headerlink" title="解题流程"></a>解题流程</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">① file 46spim              # 确认文件类型：ELF 64-bit</span><br><span class="line">② checksec --file=46spim   # 看保护：NX / PIE / Canary / RELRO</span><br><span class="line">③ strings 46spim           # 提取可读字符串，找 flag 格式/提示</span><br><span class="line">④ 静态分析：IDA / Ghidra   # 反汇编看 main 函数逻辑</span><br><span class="line">⑤ 动态调试：gdb            # 断点验证输入与比较逻辑</span><br><span class="line">⑥ 推导输入 → 拿到 flag</span><br></pre></td></tr></table></figure>
+
+<h3 id="关键操作"><a href="#关键操作" class="headerlink" title="关键操作"></a>关键操作</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">strings 46spim | grep -iE <span class="string">&#x27;flag|ctf|usage|input&#x27;</span></span><br><span class="line">./46spim                    <span class="comment"># 先跑一遍看交互提示</span></span><br><span class="line">gdb ./46spim</span><br><span class="line">  <span class="built_in">break</span> main</span><br><span class="line">  run</span><br><span class="line">  info registers</span><br></pre></td></tr></table></figure>
+
+<h3 id="常见考点"><a href="#常见考点" class="headerlink" title="常见考点"></a>常见考点</h3><table>
+<thead>
+<tr>
+<th>考点</th>
+<th>特征</th>
+<th>解法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>字符串比较</td>
+<td>输入与明文比对</td>
+<td>strings &#x2F; 交叉引用直接看比较值</td>
+</tr>
+<tr>
+<td>简单加密算法</td>
+<td>输入先变换再比较</td>
+<td>逆向变换写解密脚本</td>
+</tr>
+<tr>
+<td>反调试</td>
+<td>检测 ptrace &#x2F; 时间差</td>
+<td>绕过检测或 patch 掉</td>
+</tr>
+<tr>
+<td>花指令&#x2F;混淆</td>
+<td>代码不可直接读</td>
+<td>动态调试跳过混淆</td>
+</tr>
+<tr>
+<td>自解密</td>
+<td>运行时解密代码</td>
+<td>断点 dump 内存</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🧰-工具链"><a href="#🧰-工具链" class="headerlink" title="🧰 工具链"></a>🧰 工具链</h2><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>file &#x2F; strings &#x2F; xxd</td>
+<td>快速侦察</td>
+</tr>
+<tr>
+<td>IDA Pro</td>
+<td>主流静态分析（F5 伪代码）</td>
+</tr>
+<tr>
+<td>Ghidra</td>
+<td>免费强大的静态分析</td>
+</tr>
+<tr>
+<td>gdb + pwndbg</td>
+<td>动态调试</td>
+</tr>
+<tr>
+<td>checksec</td>
+<td>看二进制保护机制</td>
+</tr>
+<tr>
+<td>APK：jadx &#x2F; frida</td>
+<td>Android 逆向</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🎯-静态分析思路（IDA-Ghidra）"><a href="#🎯-静态分析思路（IDA-Ghidra）" class="headerlink" title="🎯 静态分析思路（IDA &#x2F; Ghidra）"></a>🎯 静态分析思路（IDA &#x2F; Ghidra）</h2><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">① 找入口：main / _start</span><br><span class="line">② 看字符串引用：双击可疑字符串 → 跳到引用位置</span><br><span class="line">③ 看比较逻辑：strcmp / memcmp / 逐字节异或</span><br><span class="line">④ 逆向算法：把加密逻辑反过来写 Python</span><br><span class="line">⑤ 验证：gdb 动态跑一遍，输入还原出的值</span><br></pre></td></tr></table></figure>
+
+<p><strong>核心心法</strong>：程序里所有”比较”都是突破口——找到它比对的目标值，就能反推出正确输入。</p>
+<hr>
+<h2 id="🔗-相关资源"><a href="#🔗-相关资源" class="headerlink" title="🔗 相关资源"></a>🔗 相关资源</h2><ul>
+<li><a href="/xctf/#reverseelf%E9%80%86%E5%90%91">XCTF 竞赛复盘</a> — ELF 逆向完整流程</li>
+<li><a href="/tools/">安全工具</a> — IDA Pro &#x2F; Ghidra 使用记录</li>
+<li><a href="/ctf-Misc/">杂项 Misc</a> — 文件分析联动</li>
+</ul>
+<p><a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">← 返回 CTF 题解总览</a></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://cx-5w.github.io/ctf-Reverse/index.html" data-id="cuid6_jJbrtwIlJlB6T_Qynt-" data-title="ctf Reverse" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://cx-5w.github.io/ctf-Reverse/index.html" data-id="cuidMMfk_F8MUNzVcZgPP5cNa" data-title="逆向 Reverse" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -248,6 +323,28 @@
 
 
 <script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
 
 
 

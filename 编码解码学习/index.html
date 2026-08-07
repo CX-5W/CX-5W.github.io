@@ -47,21 +47,12 @@
   <div id="container">
     <div id="wrap">
       <header id="header">
-  <div id="banner"></div>
   <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">CX-5W 的安全笔记</a>
-      </h1>
-      
-        <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">Web 安全 · CTF · 渗透测试</a>
-        </h2>
-      
-    </div>
     <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">CX-5W 的安全笔记</a>
       <nav id="main-nav">
         <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
         
           <a class="main-nav-link" href="/">Home</a>
         
@@ -75,7 +66,7 @@
         
           <a class="main-nav-link nav-resume" href="/resume">简历</a>
         
-          <a class="main-nav-link" href="/about">关于我</a>
+          <a class="main-nav-link current" href="/about">关于我</a>
         
       </nav>
       <nav id="sub-nav">
@@ -322,7 +313,7 @@ return result
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://cx-5w.github.io/%E7%BC%96%E7%A0%81%E8%A7%A3%E7%A0%81%E5%AD%A6%E4%B9%A0/index.html" data-id="cuidiAq-tfGqLhi6JpHIm4UHb" data-title="编码解码学习" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://cx-5w.github.io/%E7%BC%96%E7%A0%81%E8%A7%A3%E7%A0%81%E5%AD%A6%E4%B9%A0/index.html" data-id="cuidpptGHwv-uhYKKs91nRV6x" data-title="编码解码学习" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -444,6 +435,28 @@ return result
 
 
 <script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
 
 
 

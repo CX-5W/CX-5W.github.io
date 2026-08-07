@@ -4,17 +4,17 @@
   <meta charset="utf-8">
   
   
-  <title>安全工具 | CX-5W 的安全笔记</title>
+  <title>安全工具库 | CX-5W 的安全笔记</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="安全工具与技能 Burp SuiteBurp Suite 是 Web 安全测试中最常用的抓包改包工具，我在 CTF 和日常练习中主要使用以下功能： 抓包与改包  设置浏览器代理，拦截 HTTP&#x2F;HTTPS 请求 修改请求头、请求参数、Cookie 等字段 结合 Repeater 模块进行重放攻击测试  典型场景  修改 User-Agent 绕过服务端校验 修改 Referer、X-Fo">
+  <meta name="description" content="🧰 安全工具库 个人常用的安全测试工具整理：按用途分类，附官方下载地址与快速上手命令。所有工具仅用于授权测试与自有靶场。   🕸 抓包与 Web 测试Burp SuiteWeb 安全测试必备工具：抓包改包、重放、爆破、漏洞扫描。    版本 说明 下载    Community（免费） 社区版，含代理&#x2F;Repeater&#x2F;Intruder 基础功能 PortSwigger 官">
 <meta property="og:type" content="website">
-<meta property="og:title" content="安全工具">
+<meta property="og:title" content="安全工具库">
 <meta property="og:url" content="https://cx-5w.github.io/tools/index.html">
 <meta property="og:site_name" content="CX-5W 的安全笔记">
-<meta property="og:description" content="安全工具与技能 Burp SuiteBurp Suite 是 Web 安全测试中最常用的抓包改包工具，我在 CTF 和日常练习中主要使用以下功能： 抓包与改包  设置浏览器代理，拦截 HTTP&#x2F;HTTPS 请求 修改请求头、请求参数、Cookie 等字段 结合 Repeater 模块进行重放攻击测试  典型场景  修改 User-Agent 绕过服务端校验 修改 Referer、X-Fo">
+<meta property="og:description" content="🧰 安全工具库 个人常用的安全测试工具整理：按用途分类，附官方下载地址与快速上手命令。所有工具仅用于授权测试与自有靶场。   🕸 抓包与 Web 测试Burp SuiteWeb 安全测试必备工具：抓包改包、重放、爆破、漏洞扫描。    版本 说明 下载    Community（免费） 社区版，含代理&#x2F;Repeater&#x2F;Intruder 基础功能 PortSwigger 官">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-06-25T04:00:00.000Z">
-<meta property="article:modified_time" content="2026-06-25T03:37:18.664Z">
+<meta property="article:published_time" content="2026-08-07T03:30:00.000Z">
+<meta property="article:modified_time" content="2026-08-07T03:21:34.026Z">
 <meta property="article:author" content="CX-5W">
 <meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
 <meta name="twitter:card" content="summary">
@@ -47,21 +47,12 @@
   <div id="container">
     <div id="wrap">
       <header id="header">
-  <div id="banner"></div>
   <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">CX-5W 的安全笔记</a>
-      </h1>
-      
-        <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">Web 安全 · CTF · 渗透测试</a>
-        </h2>
-      
-    </div>
     <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">CX-5W 的安全笔记</a>
       <nav id="main-nav">
         <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
         
           <a class="main-nav-link" href="/">Home</a>
         
@@ -75,7 +66,7 @@
         
           <a class="main-nav-link nav-resume" href="/resume">简历</a>
         
-          <a class="main-nav-link" href="/about">关于我</a>
+          <a class="main-nav-link current" href="/about">关于我</a>
         
       </nav>
       <nav id="sub-nav">
@@ -100,7 +91,7 @@
         <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/tools/index.html" class="article-date">
-  <time class="dt-published" datetime="2026-06-25T04:00:00.000Z" itemprop="datePublished">2026-06-25</time>
+  <time class="dt-published" datetime="2026-08-07T03:30:00.000Z" itemprop="datePublished">2026-08-07</time>
 </a>
     
   </div>
@@ -111,7 +102,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      安全工具
+      安全工具库
     </h1>
   
 
@@ -119,78 +110,220 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h1 id="安全工具与技能"><a href="#安全工具与技能" class="headerlink" title="安全工具与技能"></a>安全工具与技能</h1><hr>
-<h2 id="Burp-Suite"><a href="#Burp-Suite" class="headerlink" title="Burp Suite"></a>Burp Suite</h2><p>Burp Suite 是 Web 安全测试中最常用的抓包改包工具，我在 CTF 和日常练习中主要使用以下功能：</p>
-<p><strong>抓包与改包</strong></p>
-<ul>
-<li>设置浏览器代理，拦截 HTTP&#x2F;HTTPS 请求</li>
-<li>修改请求头、请求参数、Cookie 等字段</li>
-<li>结合 Repeater 模块进行重放攻击测试</li>
-</ul>
-<p><strong>典型场景</strong></p>
-<ul>
-<li>修改 User-Agent 绕过服务端校验</li>
-<li>修改 Referer、X-Forwarded-For 等请求头</li>
-<li>拦截表单提交，修改隐藏字段或前端校验参数</li>
-</ul>
-<p><strong>操作流程</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">浏览器设置代理 → Burp Proxy 开启拦截 → </span><br><span class="line">浏览器操作触发请求 → Burp 拦截到请求 →</span><br><span class="line">修改请求内容 → Forward 放行 → 查看响应</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>详细实战案例见 <a href="/ctf-web/">ctf-web 题解</a></p>
+        <h1 id="🧰-安全工具库"><a href="#🧰-安全工具库" class="headerlink" title="🧰 安全工具库"></a>🧰 安全工具库</h1><blockquote>
+<p>个人常用的安全测试工具整理：按用途分类，附<strong>官方下载地址</strong>与快速上手命令。所有工具仅用于<strong>授权测试</strong>与自有靶场。</p>
 </blockquote>
 <hr>
-<h2 id="Nmap"><a href="#Nmap" class="headerlink" title="Nmap"></a>Nmap</h2><p>Nmap 用于网络扫描与服务发现，是渗透测试信息收集阶段的核心工具。</p>
-<p><strong>常用命令</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 端口扫描</span></span><br><span class="line">nmap -sS -p- target.com</span><br><span class="line"></span><br><span class="line"><span class="comment"># 服务版本识别</span></span><br><span class="line">nmap -sV target.com</span><br><span class="line"></span><br><span class="line"><span class="comment"># 操作系统检测</span></span><br><span class="line">nmap -O target.com</span><br><span class="line"></span><br><span class="line"><span class="comment"># 漏洞脚本扫描</span></span><br><span class="line">nmap --script=vuln target.com</span><br></pre></td></tr></table></figure>
+<h2 id="🕸-抓包与-Web-测试"><a href="#🕸-抓包与-Web-测试" class="headerlink" title="🕸 抓包与 Web 测试"></a>🕸 抓包与 Web 测试</h2><h3 id="Burp-Suite"><a href="#Burp-Suite" class="headerlink" title="Burp Suite"></a>Burp Suite</h3><p>Web 安全测试必备工具：抓包改包、重放、爆破、漏洞扫描。</p>
+<table>
+<thead>
+<tr>
+<th>版本</th>
+<th>说明</th>
+<th>下载</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Community（免费）</td>
+<td>社区版，含代理&#x2F;Repeater&#x2F;Intruder 基础功能</td>
+<td><a target="_blank" rel="noopener" href="https://portswigger.net/burp/communitydownload">PortSwigger 官网</a></td>
+</tr>
+<tr>
+<td>Professional（付费）</td>
+<td>专业版，扫描器 + 更多扩展</td>
+<td><a target="_blank" rel="noopener" href="https://portswigger.net/burp/pro">PortSwigger 官网</a></td>
+</tr>
+</tbody></table>
+<p><strong>核心模块</strong>：Proxy（抓包）→ Repeater（重放）→ Intruder（爆破）→ Decoder（编码解码）</p>
+<p><strong>快速上手</strong></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">浏览器设置代理 127.0.0.1:8080 → Proxy 开启拦截 →</span><br><span class="line">操作页面触发请求 → 修改请求头/参数 → Forward 放行</span><br></pre></td></tr></table></figure>
 
-<p><strong>学习进度</strong></p>
-<ul>
-<li>掌握 SYN 扫描、TCP 连接扫描原理</li>
-<li>能识别常见开放端口与服务（22 SSH、80 HTTP、443 HTTPS 等）</li>
-<li>能结合端口信息初步判断机器角色</li>
-</ul>
-<hr>
-<h2 id="Wireshark"><a href="#Wireshark" class="headerlink" title="Wireshark"></a>Wireshark</h2><p>Wireshark 用于网络流量抓包与分析，在 CTF 取证题和网络排障中非常实用。</p>
-<p><strong>常用功能</strong></p>
-<ul>
-<li>设置过滤条件（<code>http</code>、<code>tcp.port==80</code>、<code>ip.addr==x.x.x.x</code>）</li>
-<li>跟踪 TCP 流 &#x2F; HTTP 流</li>
-<li>导出 HTTP 对象（文件、图片等）</li>
-<li>分析 TLS 握手过程</li>
-</ul>
-<p><strong>CTF 中的应用</strong></p>
-<ul>
-<li>从流量包中提取敏感文件</li>
-<li>分析攻击者的请求路径</li>
-<li>还原通信过程</li>
-</ul>
-<hr>
-<h2 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h2><p>Docker 用于快速搭建各类漏洞靶场和测试环境。</p>
-<p><strong>常用操作</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 拉取漏洞镜像</span></span><br><span class="line">docker pull vulnerables/web-dvwa</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行容器</span></span><br><span class="line">docker run -d -p 80:80 vulnerables/web-dvwa</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建自定义靶场</span></span><br><span class="line">docker build -t my-lab .</span><br></pre></td></tr></table></figure>
-
-<p><strong>已搭建过的靶场</strong></p>
-<ul>
-<li>DVWA（Damn Vulnerable Web Application）</li>
-<li>Upload-labs 文件上传靶场</li>
-<li>SQLi-labs SQL 注入靶场</li>
-</ul>
-<hr>
-<h2 id="编码与密码工具"><a href="#编码与密码工具" class="headerlink" title="编码与密码工具"></a>编码与密码工具</h2><p>日常 CTF 解题中，我使用 Python 编写了以下工具脚本（已开源至 GitHub）：</p>
-<ul>
-<li><strong>XOR 爆破器</strong> — 自动尝试 256 种密钥，输出可打印结果</li>
-<li><strong>递进凯撒解码器</strong> — 处理偏移量递增的凯撒密码变种</li>
-<li><strong>Base 家族识别器</strong> — 自动判断 Base64 &#x2F; Base32 &#x2F; Base58 并解码</li>
-</ul>
 <blockquote>
-<p>这些脚本已归档至 <a target="_blank" rel="noopener" href="https://github.com/CX-5W/Security-Scripts">Security-Scripts</a></p>
+<p>实战案例见 <a href="/ctf-web/">ctf-web 题解</a>；抓包配置见 <a href="/ctf-web/">Burp CA 证书与 HTTPS 抓包</a>。</p>
 </blockquote>
+<hr>
+<h3 id="OWASP-ZAP"><a href="#OWASP-ZAP" class="headerlink" title="OWASP ZAP"></a>OWASP ZAP</h3><p>免费开源的 Web 应用安全扫描器，Burp 的替代方案。</p>
+<table>
+<thead>
+<tr>
+<th>说明</th>
+<th>下载</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>开源免费，支持主动&#x2F;被动扫描</td>
+<td><a target="_blank" rel="noopener" href="https://www.zaproxy.org/download/">官网下载</a></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🔭-信息收集与扫描"><a href="#🔭-信息收集与扫描" class="headerlink" title="🔭 信息收集与扫描"></a>🔭 信息收集与扫描</h2><h3 id="Nmap"><a href="#Nmap" class="headerlink" title="Nmap"></a>Nmap</h3><p>端口扫描与服务发现的事实标准。</p>
+<p><strong>下载</strong>：<a target="_blank" rel="noopener" href="https://nmap.org/download.html">nmap.org</a>（Windows &#x2F; Linux &#x2F; macOS 全平台）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">nmap -sS -p- target.com      <span class="comment"># SYN 全端口扫描</span></span><br><span class="line">nmap -sV target.com          <span class="comment"># 服务版本识别</span></span><br><span class="line">nmap -O target.com           <span class="comment"># 操作系统指纹</span></span><br><span class="line">nmap --script=vuln target    <span class="comment"># 漏洞脚本扫描</span></span><br><span class="line">nmap -sn 192.168.1.0/24      <span class="comment"># 主机发现</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="SQLMap"><a href="#SQLMap" class="headerlink" title="SQLMap"></a>SQLMap</h3><p>SQL 注入自动化检测与利用工具（Python，开源）。</p>
+<p><strong>下载</strong>：<a target="_blank" rel="noopener" href="https://github.com/sqlmapproject/sqlmap">github.com&#x2F;sqlmapproject&#x2F;sqlmap</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u <span class="string">&quot;http://target/?id=1&quot;</span> --dbs      <span class="comment"># 枚举数据库</span></span><br><span class="line">python sqlmap.py -u <span class="string">&quot;http://target/?id=1&quot;</span> -D db --tables</span><br><span class="line">python sqlmap.py -u <span class="string">&quot;http://target/?id=1&quot;</span> --os-shell <span class="comment"># 尝试 getshell</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Hydra"><a href="#Hydra" class="headerlink" title="Hydra"></a>Hydra</h3><p>在线口令爆破工具，支持 SSH&#x2F;FTP&#x2F;HTTP 表单等几十种协议。</p>
+<p><strong>下载</strong>：<a target="_blank" rel="noopener" href="https://github.com/vanhauser-thc/thc-hydra">GitHub thc-hydra</a>（Kali 自带 <code>hydra</code>）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hydra -l admin -P pass.txt ssh://target</span><br><span class="line">hydra -l admin -P pass.txt target http-post-form <span class="string">&quot;/login:user=^USER^&amp;pass=^PASS^:F=error&quot;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Xray"><a href="#Xray" class="headerlink" title="Xray"></a>Xray</h3><p>长亭出品的被动扫描器：流量经过即可自动检测漏洞，社区版免费。</p>
+<table>
+<thead>
+<tr>
+<th>说明</th>
+<th>下载</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>社区版免费，配合 Burp 被动扫描</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/chaitin/xray/releases">GitHub Releases</a> &#x2F; <a target="_blank" rel="noopener" href="https://stack.chaitin.com/tool/detail?id=1">国内下载</a></td>
+</tr>
+</tbody></table>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./xray webscan --listen 127.0.0.1:7777 --html-output report.html</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="AWVS（Acunetix）"><a href="#AWVS（Acunetix）" class="headerlink" title="AWVS（Acunetix）"></a>AWVS（Acunetix）</h3><p>商业级 Web 漏洞扫描器，自动爬取 + 深度扫描，提供 14 天试用。</p>
+<p><strong>下载</strong>：<a target="_blank" rel="noopener" href="https://www.acunetix.com/vulnerability-scanner/download/">Acunetix 官网</a>（试用版免费）</p>
+<hr>
+<h3 id="Nessus"><a href="#Nessus" class="headerlink" title="Nessus"></a>Nessus</h3><p>系统与网络漏洞扫描器，覆盖主机&#x2F;中间件&#x2F;Web 多层面。</p>
+<p><strong>下载</strong>：<a target="_blank" rel="noopener" href="https://www.tenable.com/products/nessus/nessus-essentials">Nessus Essentials 免费版</a></p>
+<hr>
+<h2 id="🌐-流量分析"><a href="#🌐-流量分析" class="headerlink" title="🌐 流量分析"></a>🌐 流量分析</h2><h3 id="Wireshark"><a href="#Wireshark" class="headerlink" title="Wireshark"></a>Wireshark</h3><p>网络抓包分析工具，取证与排障必备。</p>
+<p><strong>下载</strong>：<a target="_blank" rel="noopener" href="https://www.wireshark.org/download.html">wireshark.org</a>（全平台免费开源）</p>
+<p><strong>常用过滤</strong></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">http                    # HTTP 流量</span><br><span class="line">tcp.stream eq 0         # 追踪某条 TCP 流</span><br><span class="line">dns                     # DNS 查询</span><br><span class="line">http contains &quot;flag&quot;</span><br><span class="line">frame contains &quot;CTF&quot;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>取证场景完整教程见 <a href="/ctf-Forensis/">数字取证</a>。</p>
+</blockquote>
+<hr>
+<h2 id="🔬-逆向与二进制"><a href="#🔬-逆向与二进制" class="headerlink" title="🔬 逆向与二进制"></a>🔬 逆向与二进制</h2><h3 id="Ghidra"><a href="#Ghidra" class="headerlink" title="Ghidra"></a>Ghidra</h3><p>NSA 开源的逆向分析套件，功能对标 IDA，免费。</p>
+<p><strong>下载</strong>：<a target="_blank" rel="noopener" href="https://github.com/NationalSecurityAgency/ghidra/releases">GitHub Releases</a>（需 JDK 21）</p>
+<p><strong>特点</strong>：反编译伪代码、脚本化（Python&#x2F;Java）、跨平台。</p>
+<hr>
+<h3 id="IDA-Free"><a href="#IDA-Free" class="headerlink" title="IDA Free"></a>IDA Free</h3><p>Hex-Rays 出品的免费版反汇编器（支持 x86&#x2F;x64&#x2F;ARM 等）。</p>
+<p><strong>下载</strong>：<a target="_blank" rel="noopener" href="https://hex-rays.com/ida-free/">Hex-Rays IDA Free</a>（免费，专业版需购买）</p>
+<hr>
+<h3 id="gdb-pwndbg"><a href="#gdb-pwndbg" class="headerlink" title="gdb + pwndbg"></a>gdb + pwndbg</h3><p>Linux 动态调试组合，Pwn 题调试利器。</p>
+<p><strong>安装</strong>：Kali 自带 gdb；pwndbg 见 <a target="_blank" rel="noopener" href="https://github.com/pwndbg/pwndbg">GitHub</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/pwndbg/pwndbg</span><br><span class="line"><span class="built_in">cd</span> pwndbg &amp;&amp; ./setup.sh</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="🐳-靶场与容器"><a href="#🐳-靶场与容器" class="headerlink" title="🐳 靶场与容器"></a>🐳 靶场与容器</h2><h3 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h3><p>快速搭建漏洞靶场与测试环境。</p>
+<p><strong>下载</strong>：<a target="_blank" rel="noopener" href="https://www.docker.com/products/docker-desktop/">Docker Desktop 官网</a>（个人免费）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull vulnerables/web-dvwa</span><br><span class="line">docker run -d -p 80:80 vulnerables/web-dvwa</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="常见靶场"><a href="#常见靶场" class="headerlink" title="常见靶场"></a>常见靶场</h3><table>
+<thead>
+<tr>
+<th>靶场</th>
+<th>用途</th>
+<th>下载</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DVWA</td>
+<td>入门综合靶场（SQLi&#x2F;XSS&#x2F;上传等）</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/digininja/DVWA">GitHub</a></td>
+</tr>
+<tr>
+<td>SQLi-Labs</td>
+<td>SQL 注入专项靶场</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/Audi-1/sqli-labs">GitHub</a></td>
+</tr>
+<tr>
+<td>Upload-Labs</td>
+<td>文件上传绕过专项</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/c0ny1/upload-labs">GitHub</a></td>
+</tr>
+<tr>
+<td>Pikachu</td>
+<td>Web 漏洞综合靶场（中文）</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/zhuifengshaonianhanlu/pikachu">GitHub</a></td>
+</tr>
+<tr>
+<td>Vulhub</td>
+<td>Docker 一键漏洞环境集合</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/vulhub/vulhub">GitHub</a></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🎯-后渗透与红队"><a href="#🎯-后渗透与红队" class="headerlink" title="🎯 后渗透与红队"></a>🎯 后渗透与红队</h2><h3 id="Metasploit-Framework"><a href="#Metasploit-Framework" class="headerlink" title="Metasploit Framework"></a>Metasploit Framework</h3><p>渗透测试框架：漏洞利用、后渗透、内网横向。</p>
+<p><strong>下载</strong>：<a target="_blank" rel="noopener" href="https://github.com/rapid7/metasploit-framework">GitHub</a>（Kali 自带 <code>msfconsole</code>）</p>
+<hr>
+<h3 id="Cobalt-Strike"><a href="#Cobalt-Strike" class="headerlink" title="Cobalt Strike"></a>Cobalt Strike</h3><p>商业后渗透框架（团队协作、C2 通信），需要许可证。</p>
+<p><strong>下载</strong>：<a target="_blank" rel="noopener" href="https://www.cobaltstrike.com/download">官网</a>（试用版需申请）</p>
+<blockquote>
+<p>⚠️ 仅限授权红队场景使用。</p>
+</blockquote>
+<hr>
+<h2 id="🧩-其他实用工具"><a href="#🧩-其他实用工具" class="headerlink" title="🧩 其他实用工具"></a>🧩 其他实用工具</h2><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>用途</th>
+<th>下载</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Fiddler</td>
+<td>Windows 抓包调试</td>
+<td><a target="_blank" rel="noopener" href="https://www.telerik.com/fiddler">官网</a></td>
+</tr>
+<tr>
+<td>Postman</td>
+<td>API 调试</td>
+<td><a target="_blank" rel="noopener" href="https://www.postman.com/downloads/">官网</a></td>
+</tr>
+<tr>
+<td>CyberChef</td>
+<td>编码&#x2F;加密在线分析</td>
+<td><a target="_blank" rel="noopener" href="https://gchq.github.io/CyberChef/">官网</a></td>
+</tr>
+<tr>
+<td>Hashcat</td>
+<td>GPU 密码爆破</td>
+<td><a target="_blank" rel="noopener" href="https://hashcat.net/hashcat/">官网</a></td>
+</tr>
+<tr>
+<td>exiftool</td>
+<td>文件元数据查看</td>
+<td><a target="_blank" rel="noopener" href="https://exiftool.org/">官网</a></td>
+</tr>
+<tr>
+<td>binwalk</td>
+<td>固件&#x2F;文件分析提取</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ReFirmLabs/binwalk">GitHub</a></td>
+</tr>
+<tr>
+<td>Autopsy</td>
+<td>磁盘取证</td>
+<td><a target="_blank" rel="noopener" href="https://www.autopsy.com/download/">官网</a></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="📎-自研脚本"><a href="#📎-自研脚本" class="headerlink" title="📎 自研脚本"></a>📎 自研脚本</h2><p>日常解题沉淀的 Python 工具（开源）：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/CX-5W/Security-Scripts">Security-Scripts</a> — XOR 爆破、RSA 攻击、LCG 恢复、维吉尼亚破解、Base 家族识别、TCP 端口扫描</li>
+</ul>
+<hr>
+<h2 id="⚖️-使用须知"><a href="#⚖️-使用须知" class="headerlink" title="⚖️ 使用须知"></a>⚖️ 使用须知</h2><ul>
+<li>所有扫描、爆破、利用工具请<strong>只对授权目标</strong>使用</li>
+<li>违规使用工具造成的后果由使用者自行承担</li>
+<li>商业工具试用版仅用于学习验证</li>
+</ul>
+<p><a href="/">← 返回首页</a></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://cx-5w.github.io/tools/index.html" data-id="cuidCn45Yh5GVkndyH7Yyw_Nk" data-title="安全工具" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://cx-5w.github.io/tools/index.html" data-id="cuidgdX38LYRGhWmkD9nSEu8K" data-title="安全工具库" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -312,6 +445,28 @@
 
 
 <script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
 
 
 

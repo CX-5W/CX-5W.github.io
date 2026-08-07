@@ -4,17 +4,17 @@
   <meta charset="utf-8">
   
   
-  <title>ctf Pwn | CX-5W 的安全笔记</title>
+  <title>二进制漏洞利用 Pwn | CX-5W 的安全笔记</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="🚧 施工中 本分类的题解正在整理中，后续会补全。">
+  <meta name="description" content="💥 二进制漏洞利用 Pwn Pwn 是”打二进制程序”：找内存漏洞 → 劫持控制流 → 拿 shell。核心三件套：栈溢出、格式化字符串、堆利用。  ★重点 所有利用代码仅在靶机&#x2F;授权环境测试。  🛡 保护机制速查（checksec）   保护 含义 绕过思路    NX 栈不可执行 ROP 链调用 system   PIE 地址随机化 先泄露地址再计算基址   Canary 栈金丝">
 <meta property="og:type" content="website">
-<meta property="og:title" content="ctf Pwn">
+<meta property="og:title" content="二进制漏洞利用 Pwn">
 <meta property="og:url" content="https://cx-5w.github.io/ctf-Pwn/index.html">
 <meta property="og:site_name" content="CX-5W 的安全笔记">
-<meta property="og:description" content="🚧 施工中 本分类的题解正在整理中，后续会补全。">
+<meta property="og:description" content="💥 二进制漏洞利用 Pwn Pwn 是”打二进制程序”：找内存漏洞 → 劫持控制流 → 拿 shell。核心三件套：栈溢出、格式化字符串、堆利用。  ★重点 所有利用代码仅在靶机&#x2F;授权环境测试。  🛡 保护机制速查（checksec）   保护 含义 绕过思路    NX 栈不可执行 ROP 链调用 system   PIE 地址随机化 先泄露地址再计算基址   Canary 栈金丝">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-06-06T14:07:08.000Z">
-<meta property="article:modified_time" content="2026-06-25T02:35:51.181Z">
+<meta property="article:published_time" content="2026-08-07T03:20:00.000Z">
+<meta property="article:modified_time" content="2026-08-07T03:16:10.093Z">
 <meta property="article:author" content="CX-5W">
 <meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
 <meta name="twitter:card" content="summary">
@@ -47,21 +47,12 @@
   <div id="container">
     <div id="wrap">
       <header id="header">
-  <div id="banner"></div>
   <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">CX-5W 的安全笔记</a>
-      </h1>
-      
-        <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">Web 安全 · CTF · 渗透测试</a>
-        </h2>
-      
-    </div>
     <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">CX-5W 的安全笔记</a>
       <nav id="main-nav">
         <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
         
           <a class="main-nav-link" href="/">Home</a>
         
@@ -75,7 +66,7 @@
         
           <a class="main-nav-link nav-resume" href="/resume">简历</a>
         
-          <a class="main-nav-link" href="/about">关于我</a>
+          <a class="main-nav-link current" href="/about">关于我</a>
         
       </nav>
       <nav id="sub-nav">
@@ -100,7 +91,7 @@
         <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/ctf-Pwn/index.html" class="article-date">
-  <time class="dt-published" datetime="2026-06-06T14:07:08.000Z" itemprop="datePublished">2026-06-06</time>
+  <time class="dt-published" datetime="2026-08-07T03:20:00.000Z" itemprop="datePublished">2026-08-07</time>
 </a>
     
   </div>
@@ -111,7 +102,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      ctf Pwn
+      二进制漏洞利用 Pwn
     </h1>
   
 
@@ -119,14 +110,72 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h1 id="🚧-施工中"><a href="#🚧-施工中" class="headerlink" title="🚧 施工中"></a>🚧 施工中</h1><blockquote>
-<p>本分类的题解正在整理中，后续会补全。</p>
+        <h1 id="💥-二进制漏洞利用-Pwn"><a href="#💥-二进制漏洞利用-Pwn" class="headerlink" title="💥 二进制漏洞利用 Pwn"></a>💥 二进制漏洞利用 Pwn</h1><blockquote>
+<p>Pwn 是”打二进制程序”：找内存漏洞 → 劫持控制流 → 拿 shell。核心三件套：<strong>栈溢出、格式化字符串、堆利用</strong>。</p>
 </blockquote>
+<p><span class="badge-key">★重点</span> 所有利用代码仅在靶机&#x2F;授权环境测试。</p>
+<hr>
+<h2 id="🛡-保护机制速查（checksec）"><a href="#🛡-保护机制速查（checksec）" class="headerlink" title="🛡 保护机制速查（checksec）"></a>🛡 保护机制速查（checksec）</h2><table>
+<thead>
+<tr>
+<th>保护</th>
+<th>含义</th>
+<th>绕过思路</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>NX</td>
+<td>栈不可执行</td>
+<td>ROP 链调用 system</td>
+</tr>
+<tr>
+<td>PIE</td>
+<td>地址随机化</td>
+<td>先泄露地址再计算基址</td>
+</tr>
+<tr>
+<td>Canary</td>
+<td>栈金丝雀</td>
+<td>泄露 canary 或爆破</td>
+</tr>
+<tr>
+<td>RELRO</td>
+<td>GOT 只读</td>
+<td>Partial 可改 GOT</td>
+</tr>
+<tr>
+<td>Fortify</td>
+<td>编译加固</td>
+<td>找未加固函数</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="📚-基础漏洞类型"><a href="#📚-基础漏洞类型" class="headerlink" title="📚 基础漏洞类型"></a>📚 基础漏洞类型</h2><h3 id="1-栈溢出（Stack-Overflow）"><a href="#1-栈溢出（Stack-Overflow）" class="headerlink" title="1. 栈溢出（Stack Overflow）"></a>1. 栈溢出（Stack Overflow）</h3><p><strong>原理</strong>：<code>gets</code>&#x2F;<code>strcpy</code> 等不检查长度 → 覆盖返回地址。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">p = process(<span class="string">&#x27;./vuln&#x27;</span>)</span><br><span class="line">p.sendline(<span class="string">b&#x27;A&#x27;</span> * offset + p64(win_addr))   <span class="comment"># offset 用 cyclic 测</span></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><strong>关键</strong>：<code>cyclic(100)</code> 找偏移 → 覆盖返回地址 → 跳转到目标函数&#x2F;ROP。</p>
+<h3 id="2-格式化字符串（Format-String）"><a href="#2-格式化字符串（Format-String）" class="headerlink" title="2. 格式化字符串（Format String）"></a>2. 格式化字符串（Format String）</h3><p><strong>原理</strong>：<code>printf(user_input)</code> → <code>%n</code> 写任意地址，<code>%x</code> 泄露栈数据。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">%p.%p.%p.%p.%p     # 逐格泄露栈地址</span><br><span class="line">%7$s               # 读取第 7 个参数指向的字符串</span><br><span class="line">%hhn               # 按字节写入任意地址</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-整数溢出-逻辑漏洞"><a href="#3-整数溢出-逻辑漏洞" class="headerlink" title="3. 整数溢出 &#x2F; 逻辑漏洞"></a>3. 整数溢出 &#x2F; 逻辑漏洞</h3><p>符号问题、长度截断、负数绕过检查，导致越界读写。</p>
+<hr>
+<h2 id="🛠-pwntools-常用模板"><a href="#🛠-pwntools-常用模板" class="headerlink" title="🛠 pwntools 常用模板"></a>🛠 pwntools 常用模板</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line"></span><br><span class="line">p = process(<span class="string">&#x27;./vuln&#x27;</span>)              <span class="comment"># 本地</span></span><br><span class="line"><span class="comment"># p = remote(&#x27;1.2.3.4&#x27;, 10001)     # 远程</span></span><br><span class="line"></span><br><span class="line">offset = <span class="number">72</span>                        <span class="comment"># cyclic 测出的偏移</span></span><br><span class="line">payload = <span class="string">b&#x27;A&#x27;</span> * offset</span><br><span class="line">payload += p64(<span class="number">0x4006e2</span>)          <span class="comment"># 目标地址</span></span><br><span class="line"></span><br><span class="line">p.sendlineafter(<span class="string">b&#x27;&gt; &#x27;</span>, payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="🧗-入门学习路线"><a href="#🧗-入门学习路线" class="headerlink" title="🧗 入门学习路线"></a>🧗 入门学习路线</h2><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">① 栈溢出基础（ret2win / ret2shellcode）</span><br><span class="line">② ROP 入门（ret2libc / ROPgadget）</span><br><span class="line">③ 格式化字符串（泄露 + 写入）</span><br><span class="line">④ Canary / PIE 绕过</span><br><span class="line">⑤ 堆利用入门（UAF / tcache）</span><br></pre></td></tr></table></figure>
+
+<p><strong>推荐靶场</strong>：pwn.college、CTF-Wiki、BUUCTF Pwn 入门题。</p>
+<hr>
+<h2 id="🔗-相关资源"><a href="#🔗-相关资源" class="headerlink" title="🔗 相关资源"></a>🔗 相关资源</h2><ul>
+<li><a href="/tools/">安全工具</a> — Docker 靶场搭建</li>
+<li><a href="/security-notes/">安全笔记</a> — 二进制安全相关基础</li>
+</ul>
+<p><a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">← 返回 CTF 题解总览</a></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://cx-5w.github.io/ctf-Pwn/index.html" data-id="cuidrZELZG4YIjtX2M7cgCVc7" data-title="ctf Pwn" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://cx-5w.github.io/ctf-Pwn/index.html" data-id="cuidU3XsfP07Uuw8ZWli6dTwW" data-title="二进制漏洞利用 Pwn" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -248,6 +297,28 @@
 
 
 <script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
 
 
 

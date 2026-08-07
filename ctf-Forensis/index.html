@@ -4,17 +4,17 @@
   <meta charset="utf-8">
   
   
-  <title>ctf Forensis | CX-5W 的安全笔记</title>
+  <title>数字取证 Forensics | CX-5W 的安全笔记</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="🚧 施工中 本分类的题解正在整理中，后续会补全。">
+  <meta name="description" content="🔍 数字取证 Forensics 取证方向两大主线：流量分析（抓包文件）和文件取证（磁盘&#x2F;内存&#x2F;日志）。CTF 里最常见的是 PCAP 流量分析和文件隐写。   📡 流量分析（PCAP）工具链   工具 用途    Wireshark 图形化看包，过滤 + 追踪流   tshark 命令行版，适合批量提取   NetworkMiner 自动提取文件&#x2F;图片   在线">
 <meta property="og:type" content="website">
-<meta property="og:title" content="ctf Forensis">
+<meta property="og:title" content="数字取证 Forensics">
 <meta property="og:url" content="https://cx-5w.github.io/ctf-Forensis/index.html">
 <meta property="og:site_name" content="CX-5W 的安全笔记">
-<meta property="og:description" content="🚧 施工中 本分类的题解正在整理中，后续会补全。">
+<meta property="og:description" content="🔍 数字取证 Forensics 取证方向两大主线：流量分析（抓包文件）和文件取证（磁盘&#x2F;内存&#x2F;日志）。CTF 里最常见的是 PCAP 流量分析和文件隐写。   📡 流量分析（PCAP）工具链   工具 用途    Wireshark 图形化看包，过滤 + 追踪流   tshark 命令行版，适合批量提取   NetworkMiner 自动提取文件&#x2F;图片   在线">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-06-06T14:07:29.000Z">
-<meta property="article:modified_time" content="2026-06-25T02:35:51.181Z">
+<meta property="article:published_time" content="2026-08-07T03:20:00.000Z">
+<meta property="article:modified_time" content="2026-08-07T03:15:40.793Z">
 <meta property="article:author" content="CX-5W">
 <meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
 <meta name="twitter:card" content="summary">
@@ -47,21 +47,12 @@
   <div id="container">
     <div id="wrap">
       <header id="header">
-  <div id="banner"></div>
   <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">CX-5W 的安全笔记</a>
-      </h1>
-      
-        <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">Web 安全 · CTF · 渗透测试</a>
-        </h2>
-      
-    </div>
     <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">CX-5W 的安全笔记</a>
       <nav id="main-nav">
         <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
         
           <a class="main-nav-link" href="/">Home</a>
         
@@ -75,7 +66,7 @@
         
           <a class="main-nav-link nav-resume" href="/resume">简历</a>
         
-          <a class="main-nav-link" href="/about">关于我</a>
+          <a class="main-nav-link current" href="/about">关于我</a>
         
       </nav>
       <nav id="sub-nav">
@@ -100,7 +91,7 @@
         <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/ctf-Forensis/index.html" class="article-date">
-  <time class="dt-published" datetime="2026-06-06T14:07:29.000Z" itemprop="datePublished">2026-06-06</time>
+  <time class="dt-published" datetime="2026-08-07T03:20:00.000Z" itemprop="datePublished">2026-08-07</time>
 </a>
     
   </div>
@@ -111,7 +102,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      ctf Forensis
+      数字取证 Forensics
     </h1>
   
 
@@ -119,14 +110,94 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h1 id="🚧-施工中"><a href="#🚧-施工中" class="headerlink" title="🚧 施工中"></a>🚧 施工中</h1><blockquote>
-<p>本分类的题解正在整理中，后续会补全。</p>
+        <h1 id="🔍-数字取证-Forensics"><a href="#🔍-数字取证-Forensics" class="headerlink" title="🔍 数字取证 Forensics"></a>🔍 数字取证 Forensics</h1><blockquote>
+<p>取证方向两大主线：<strong>流量分析</strong>（抓包文件）和<strong>文件取证</strong>（磁盘&#x2F;内存&#x2F;日志）。CTF 里最常见的是 PCAP 流量分析和文件隐写。</p>
 </blockquote>
+<hr>
+<h2 id="📡-流量分析（PCAP）"><a href="#📡-流量分析（PCAP）" class="headerlink" title="📡 流量分析（PCAP）"></a>📡 流量分析（PCAP）</h2><h3 id="工具链"><a href="#工具链" class="headerlink" title="工具链"></a>工具链</h3><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Wireshark</td>
+<td>图形化看包，过滤 + 追踪流</td>
+</tr>
+<tr>
+<td>tshark</td>
+<td>命令行版，适合批量提取</td>
+</tr>
+<tr>
+<td>NetworkMiner</td>
+<td>自动提取文件&#x2F;图片</td>
+</tr>
+<tr>
+<td>在线分析</td>
+<td>大型 pcap 快速预览</td>
+</tr>
+</tbody></table>
+<h3 id="Wireshark-常用过滤"><a href="#Wireshark-常用过滤" class="headerlink" title="Wireshark 常用过滤"></a>Wireshark 常用过滤</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">http             # 只看 HTTP 流量</span><br><span class="line">tcp.stream eq 0  # 追踪某条 TCP 流</span><br><span class="line">dns              # DNS 查询（可能泄露域名/flag）</span><br><span class="line">ftp-data         # FTP 传输内容</span><br><span class="line">http contains &quot;flag&quot;</span><br><span class="line">frame contains &quot;CTF&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="常见套路"><a href="#常见套路" class="headerlink" title="常见套路"></a>常见套路</h3><ol>
+<li><strong>看协议统计</strong>：Statistics → Protocol Hierarchy，找异常协议</li>
+<li><strong>追踪 HTTP 流</strong>：登录表单、上传文件、POST 参数里常藏 flag</li>
+<li><strong>提取传输文件</strong>：File → Export Objects → HTTP&#x2F;SMB，导出可疑文件</li>
+<li><strong>DNS 隧道</strong>：子域名里拼字母 → 按序拼接</li>
+<li><strong>USB 键盘流量</strong>：USB HID 数据还原按键</li>
+<li><strong>蓝牙&#x2F;无线包</strong>：配对过程提取密钥</li>
+</ol>
+<hr>
+<h2 id="📁-文件取证"><a href="#📁-文件取证" class="headerlink" title="📁 文件取证"></a>📁 文件取证</h2><table>
+<thead>
+<tr>
+<th>场景</th>
+<th>手法</th>
+<th>工具</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>磁盘镜像</td>
+<td>文件恢复 &#x2F; 删除文件找回</td>
+<td>Autopsy &#x2F; foremost</td>
+</tr>
+<tr>
+<td>内存镜像</td>
+<td>进程 &#x2F; 命令行 &#x2F; 文件提取</td>
+<td>volatility3</td>
+</tr>
+<tr>
+<td>日志分析</td>
+<td>登录记录 &#x2F; 攻击痕迹</td>
+<td>grep &#x2F; splunk</td>
+</tr>
+<tr>
+<td>Office 文档</td>
+<td>宏病毒 &#x2F; 隐藏内容</td>
+<td>olevba &#x2F; 7z 解包</td>
+</tr>
+<tr>
+<td>PDF 恶意样本</td>
+<td>JS 提取分析</td>
+<td>pdf-parser</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🧪-取证五步法"><a href="#🧪-取证五步法" class="headerlink" title="🧪 取证五步法"></a>🧪 取证五步法</h2><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">① 保全：原样复制，不改动原始文件</span><br><span class="line">② 识别：file / hash 确认文件类型与完整性</span><br><span class="line">③ 提取：strings / binwalk / foremost 提取线索</span><br><span class="line">④ 分析：还原文件 / 追踪流量 / 解密数据</span><br><span class="line">⑤ 归档：整理时间线，输出结论</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="🔗-相关资源"><a href="#🔗-相关资源" class="headerlink" title="🔗 相关资源"></a>🔗 相关资源</h2><ul>
+<li><a href="/ctf-Misc/">杂项 Misc</a> — 图片隐写题解</li>
+<li><a href="/security-notes/incident-response/">安全笔记 · 应急响应</a> — 真实环境排查思路</li>
+<li><a href="/tools/">Wireshark 工具记录</a></li>
+</ul>
+<p><a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">← 返回 CTF 题解总览</a></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://cx-5w.github.io/ctf-Forensis/index.html" data-id="cuidbjanWUzXsK4I2TE1bPfDu" data-title="ctf Forensis" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://cx-5w.github.io/ctf-Forensis/index.html" data-id="cuidXx_P6gcKZepYAQktWUwT-" data-title="数字取证 Forensics" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -248,6 +319,28 @@
 
 
 <script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
 
 
 

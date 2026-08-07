@@ -4,17 +4,17 @@
   <meta charset="utf-8">
   
   
-  <title>开源项目 | CX-5W 的安全笔记</title>
+  <title>项目实践 | CX-5W 的安全笔记</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="开源项目 CTF-Writeups CTF 竞赛题解归档 · github.com&#x2F;CX-5W&#x2F;CTF-Writeups  个人 CTF 竞赛题解仓库，将比赛和练习中解出的题目按分类整理归档，每道题附带完整的解题思路、操作步骤和代码。 已收录内容    方向 内容    Web 前端校验绕过、User-Agent 伪造、多层 Base64 编码逆向   Crypto 编码识别速">
+  <meta name="description" content="🚀 项目实践 个人项目与开源仓库汇总：安全笔记体系、CTF 题解、自研工具脚本、竞赛复盘。   📚 安全笔记体系（45 篇 &#x2F; 8 大主题）在线入口：安全笔记总览 基于渗透测试课程整理的体系化学习笔记，覆盖完整知识闭环，并沉淀为 4 大速查手册：    手册 内容    Web 漏洞 Payload 手册 SQLi &#x2F; XSS &#x2F; 上传 &#x2F; 命令执行 &amp;">
 <meta property="og:type" content="website">
-<meta property="og:title" content="开源项目">
+<meta property="og:title" content="项目实践">
 <meta property="og:url" content="https://cx-5w.github.io/projects/index.html">
 <meta property="og:site_name" content="CX-5W 的安全笔记">
-<meta property="og:description" content="开源项目 CTF-Writeups CTF 竞赛题解归档 · github.com&#x2F;CX-5W&#x2F;CTF-Writeups  个人 CTF 竞赛题解仓库，将比赛和练习中解出的题目按分类整理归档，每道题附带完整的解题思路、操作步骤和代码。 已收录内容    方向 内容    Web 前端校验绕过、User-Agent 伪造、多层 Base64 编码逆向   Crypto 编码识别速">
+<meta property="og:description" content="🚀 项目实践 个人项目与开源仓库汇总：安全笔记体系、CTF 题解、自研工具脚本、竞赛复盘。   📚 安全笔记体系（45 篇 &#x2F; 8 大主题）在线入口：安全笔记总览 基于渗透测试课程整理的体系化学习笔记，覆盖完整知识闭环，并沉淀为 4 大速查手册：    手册 内容    Web 漏洞 Payload 手册 SQLi &#x2F; XSS &#x2F; 上传 &#x2F; 命令执行 &amp;">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-06-25T04:00:00.000Z">
-<meta property="article:modified_time" content="2026-06-25T03:37:26.545Z">
+<meta property="article:published_time" content="2026-08-07T03:40:00.000Z">
+<meta property="article:modified_time" content="2026-08-07T03:27:14.967Z">
 <meta property="article:author" content="CX-5W">
 <meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
 <meta name="twitter:card" content="summary">
@@ -47,21 +47,12 @@
   <div id="container">
     <div id="wrap">
       <header id="header">
-  <div id="banner"></div>
   <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">CX-5W 的安全笔记</a>
-      </h1>
-      
-        <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">Web 安全 · CTF · 渗透测试</a>
-        </h2>
-      
-    </div>
     <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">CX-5W 的安全笔记</a>
       <nav id="main-nav">
         <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
         
           <a class="main-nav-link" href="/">Home</a>
         
@@ -75,7 +66,7 @@
         
           <a class="main-nav-link nav-resume" href="/resume">简历</a>
         
-          <a class="main-nav-link" href="/about">关于我</a>
+          <a class="main-nav-link current" href="/about">关于我</a>
         
       </nav>
       <nav id="sub-nav">
@@ -100,7 +91,7 @@
         <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/projects/index.html" class="article-date">
-  <time class="dt-published" datetime="2026-06-25T04:00:00.000Z" itemprop="datePublished">2026-06-25</time>
+  <time class="dt-published" datetime="2026-08-07T03:40:00.000Z" itemprop="datePublished">2026-08-07</time>
 </a>
     
   </div>
@@ -111,7 +102,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      开源项目
+      项目实践
     </h1>
   
 
@@ -119,55 +110,155 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h1 id="开源项目"><a href="#开源项目" class="headerlink" title="开源项目"></a>开源项目</h1><hr>
-<h2 id="CTF-Writeups"><a href="#CTF-Writeups" class="headerlink" title="CTF-Writeups"></a>CTF-Writeups</h2><blockquote>
-<p><strong>CTF 竞赛题解归档</strong> · <a target="_blank" rel="noopener" href="https://github.com/CX-5W/CTF-Writeups">github.com&#x2F;CX-5W&#x2F;CTF-Writeups</a></p>
+        <h1 id="🚀-项目实践"><a href="#🚀-项目实践" class="headerlink" title="🚀 项目实践"></a>🚀 项目实践</h1><blockquote>
+<p>个人项目与开源仓库汇总：安全笔记体系、CTF 题解、自研工具脚本、竞赛复盘。</p>
 </blockquote>
-<p>个人 CTF 竞赛题解仓库，将比赛和练习中解出的题目按分类整理归档，每道题附带完整的解题思路、操作步骤和代码。</p>
-<p><strong>已收录内容</strong></p>
+<hr>
+<h2 id="📚-安全笔记体系（45-篇-8-大主题）"><a href="#📚-安全笔记体系（45-篇-8-大主题）" class="headerlink" title="📚 安全笔记体系（45 篇 &#x2F; 8 大主题）"></a>📚 安全笔记体系（45 篇 &#x2F; 8 大主题）</h2><p><strong>在线入口</strong>：<a href="/security-notes/">安全笔记总览</a></p>
+<p>基于渗透测试课程整理的体系化学习笔记，覆盖完整知识闭环，并沉淀为 4 大速查手册：</p>
 <table>
 <thead>
 <tr>
-<th>方向</th>
+<th>手册</th>
 <th>内容</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>Web</td>
-<td>前端校验绕过、User-Agent 伪造、多层 Base64 编码逆向</td>
+<td><a href="/security-notes/payload-handbook/">Web 漏洞 Payload 手册</a></td>
+<td>SQLi &#x2F; XSS &#x2F; 上传 &#x2F; 命令执行 &#x2F; SSRF&#x2F;XXE &#x2F; 越权 速查</td>
 </tr>
 <tr>
-<td>Crypto</td>
-<td>编码识别速查表（Base 家族、古典密码、XOR 等）</td>
+<td><a href="/security-notes/pentest-checklist/">渗透测试全流程速查</a></td>
+<td>七步流程 + 信息收集清单 + 报告要素</td>
+</tr>
+<tr>
+<td><a href="/security-notes/intranet-domain/">内网与域渗透速查</a></td>
+<td>代理隧道 &#x2F; 横向 &#x2F; 提权 &#x2F; 票据攻击</td>
+</tr>
+<tr>
+<td><a href="/security-notes/incident-response/">应急响应速查</a></td>
+<td>六阶段 &#x2F; 排查命令 &#x2F; 护网 &#x2F; 等保</td>
 </tr>
 </tbody></table>
-<p><strong>仓库结构</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CTF-Writeups/</span><br><span class="line">├── README.md</span><br><span class="line">├── web/           # Web 漏洞题解</span><br><span class="line">│   ├── ctfshow-base64-decode.md</span><br><span class="line">│   ├── ctfshow-user-agent-bypass.md</span><br><span class="line">│   └── ctfshow-multilayer-encode.md</span><br><span class="line">└── crypto/        # 密码学题解</span><br><span class="line">    └── encoding-reference.md</span><br></pre></td></tr></table></figure>
-
-<p><strong>持续更新</strong>：后续会不断补充新的题解。</p>
+<p><strong>亮点</strong>：每个知识点按「核心速记 → 原理详解 → 对比表 → 命令速查 → 面试问答 → 记忆口诀」组织，标注 ★重点 与 面试高频 徽章，适合反复复习与面试突击。</p>
 <hr>
-<h2 id="Security-Scripts"><a href="#Security-Scripts" class="headerlink" title="Security-Scripts"></a>Security-Scripts</h2><blockquote>
-<p><strong>自用安全脚本合集</strong> · <a target="_blank" rel="noopener" href="https://github.com/CX-5W/Security-Scripts">github.com&#x2F;CX-5W&#x2F;Security-Scripts</a></p>
+<h2 id="🏁-CTF-题解归档"><a href="#🏁-CTF-题解归档" class="headerlink" title="🏁 CTF 题解归档"></a>🏁 CTF 题解归档</h2><p><strong>在线入口</strong>：<a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">CTF 题解总览</a></p>
+<p>比赛与练习题解按方向分类归档，每题含完整思路与操作流程：</p>
+<ul>
+<li><strong>Web</strong>：前端校验绕过、User-Agent 伪造、多层 Base64 编码逆向（3 题实战）</li>
+<li><strong>Crypto</strong>：RSA 攻击 &#x2F; AES &#x2F; 古典密码 &#x2F; 编码识别知识库</li>
+<li><strong>Misc &#x2F; Forensis</strong>：图片隐写题解 + 取证工具链</li>
+<li><strong>Pwn &#x2F; Reverse</strong>：二进制利用与逆向知识框架</li>
+</ul>
+<blockquote>
+<p>对应 GitHub 仓库：<a target="_blank" rel="noopener" href="https://github.com/CX-5W/CTF-Writeups">CTF-Writeups</a>（持续归档中）</p>
 </blockquote>
-<p>在日常 CTF 练习和渗透测试中积累的 Python 脚本工具合集，主要用于加解密、编码识别和漏洞测试。</p>
-<p><strong>脚本列表</strong></p>
-<h3 id="XOR-爆破器"><a href="#XOR-爆破器" class="headerlink" title="XOR 爆破器"></a>XOR 爆破器</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 自动尝试 256 种密钥</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">brute_single_byte_xor</span>(<span class="params">hex_str</span>):</span><br><span class="line">    ct = <span class="built_in">bytes</span>.fromhex(hex_str)</span><br><span class="line">    <span class="keyword">for</span> key <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">256</span>):</span><br><span class="line">        pt = <span class="built_in">bytes</span>(b ^ key <span class="keyword">for</span> b <span class="keyword">in</span> ct)</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">all</span>(c <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>, <span class="number">127</span>) <span class="keyword">for</span> c <span class="keyword">in</span> pt):</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;key=0x<span class="subst">&#123;key:02x&#125;</span> → <span class="subst">&#123;pt.decode()&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-
-<h3 id="递进凯撒解码器"><a href="#递进凯撒解码器" class="headerlink" title="递进凯撒解码器"></a>递进凯撒解码器</h3><p>处理偏移量逐位递增的凯撒变种密码，支持暴力试起始偏移。</p>
-<h3 id="Base-家族编码识别器"><a href="#Base-家族编码识别器" class="headerlink" title="Base 家族编码识别器"></a>Base 家族编码识别器</h3><p>自动识别 Base64 &#x2F; Base32 &#x2F; Base58 编码类型并解码，适合快速处理 CTF 中的编码题。</p>
-<p><strong>目录结构</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Security-Scripts/</span><br><span class="line">├── README.md</span><br><span class="line">├── crypto/</span><br><span class="line">│   ├── xor_brute.py           # 单字节 XOR 爆破</span><br><span class="line">│   ├── progressive_caesar.py  # 递进凯撒解码</span><br><span class="line">│   └── __init__.py</span><br><span class="line">└── encoding/</span><br><span class="line">    └── base_family.py         # Base 编码自动识别</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="🏆-百城千赛-·-吉林师范大学站-复盘"><a href="#🏆-百城千赛-·-吉林师范大学站-复盘" class="headerlink" title="🏆 百城千赛 · 吉林师范大学站 复盘"></a>🏆 百城千赛 · 吉林师范大学站 复盘</h2><p><strong>在线入口</strong>：<a href="/xctf/">竞赛复盘</a></p>
+<p>个人赛 4 道题（Web &#x2F; Crypto &#x2F; Misc &#x2F; Reverse）全部独立解出，总分第一名：</p>
+<ul>
+<li><strong>Web</strong>：前端 JS 分析 + Base64 识别</li>
+<li><strong>Crypto</strong>：AES-CBC + Feistel + LCG 混合加密逆向</li>
+<li><strong>Misc</strong>：图片隐写（binwalk &#x2F; zsteg 工具链）</li>
+<li><strong>Reverse</strong>：ELF 静态分析（IDA &#x2F; Ghidra &#x2F; gdb）</li>
+</ul>
+<p>赛后编写自动化解题脚本并归档至 GitHub。</p>
+<hr>
+<h2 id="🛠-Security-Scripts-·-安全脚本"><a href="#🛠-Security-Scripts-·-安全脚本" class="headerlink" title="🛠 Security-Scripts · 安全脚本"></a>🛠 Security-Scripts · 安全脚本</h2><blockquote>
+<p><strong>GitHub</strong>：<a target="_blank" rel="noopener" href="https://github.com/CX-5W/Security-Scripts">github.com&#x2F;CX-5W&#x2F;Security-Scripts</a> · Python</p>
+</blockquote>
+<p>日常 CTF 解题沉淀的 Python 工具脚本：</p>
+<table>
+<thead>
+<tr>
+<th>目录</th>
+<th>脚本</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>crypto</td>
+<td><code>xor_brute.py</code></td>
+<td>单字节 XOR 爆破</td>
+</tr>
+<tr>
+<td>crypto</td>
+<td><code>progressive_caesar.py</code></td>
+<td>递进凯撒解码</td>
+</tr>
+<tr>
+<td>crypto</td>
+<td><code>vigenere_crack.py</code></td>
+<td>维吉尼亚密码自动破解</td>
+</tr>
+<tr>
+<td>crypto</td>
+<td><code>rsa_attacks.py</code></td>
+<td>RSA 共模&#x2F;低指数&#x2F;Wiener 攻击</td>
+</tr>
+<tr>
+<td>crypto</td>
+<td><code>lcg_crack.py</code></td>
+<td>LCG 线性同余状态恢复</td>
+</tr>
+<tr>
+<td>encoding</td>
+<td><code>base_family.py</code></td>
+<td>Base64&#x2F;32&#x2F;58 自动识别与解码</td>
+</tr>
+<tr>
+<td>utils</td>
+<td><code>net_scan.py</code></td>
+<td>TCP 端口扫描</td>
+</tr>
+</tbody></table>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/CX-5W/Security-Scripts.git</span><br><span class="line">python crypto/xor_brute.py &lt;hex_string&gt;</span><br><span class="line">python encoding/base_family.py &lt;encoded_string&gt;</span><br></pre></td></tr></table></figure>
 
 <hr>
-<h2 id="博客"><a href="#博客" class="headerlink" title="博客"></a>博客</h2><blockquote>
-<p><a href="https://cx-5w.github.io/">cx-5w.github.io</a></p>
+<h2 id="🌐-个人博客"><a href="#🌐-个人博客" class="headerlink" title="🌐 个人博客"></a>🌐 个人博客</h2><blockquote>
+<p><a href="https://cx-5w.github.io/">cx-5w.github.io</a> · 源码仓库：<a target="_blank" rel="noopener" href="https://github.com/CX-5W/CX-5W.github.io">CX-5W.github.io</a></p>
 </blockquote>
-<p>Hexo 搭建的个人技术博客，用于沉淀 CTF 题解、编码密码笔记和安全技术总结。配置了 GitHub Actions 自动部署，所有源代码托管在 <a target="_blank" rel="noopener" href="https://github.com/CX-5W/CX-5W.github.io">CX-5W.github.io</a> 仓库。</p>
+<p>Hexo + Landscape 搭建的个人技术博客：</p>
+<ul>
+<li>浅色主题深度定制（导航吸顶 + 当前页高亮 + 卡片式布局）</li>
+<li>六大板块：CTF 题解 &#x2F; 安全笔记 &#x2F; 工具库 &#x2F; 项目 &#x2F; 在线简历 &#x2F; 关于我</li>
+<li>GitHub Pages 自动部署，全站支持打印简历样式</li>
+</ul>
+<hr>
+<h2 id="👤-在线简历"><a href="#👤-在线简历" class="headerlink" title="👤 在线简历"></a>👤 在线简历</h2><p><strong>在线入口</strong>：<a href="/resume/">在线简历</a></p>
+<p>Web 安全 &#x2F; 渗透测试实习生求职简历：核心亮点量化（竞赛第一、45 篇笔记、靶场闭环），支持直接打印为 PDF。</p>
+<hr>
+<h2 id="🎯-靶场实战"><a href="#🎯-靶场实战" class="headerlink" title="🎯 靶场实战"></a>🎯 靶场实战</h2><table>
+<thead>
+<tr>
+<th>靶场</th>
+<th>完成内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DVWA</td>
+<td>SQL 注入 &#x2F; XSS &#x2F; 上传 &#x2F; 越权 全流程复现</td>
+</tr>
+<tr>
+<td>Pikachu</td>
+<td>常见 Web 漏洞练习</td>
+</tr>
+<tr>
+<td>Upload-Labs</td>
+<td>文件上传绕过全关卡</td>
+</tr>
+<tr>
+<td>SQLi-Labs</td>
+<td>SQL 注入专项练习</td>
+</tr>
+</tbody></table>
+<hr>
+<p><a href="/">← 返回首页</a></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://cx-5w.github.io/projects/index.html" data-id="cuidlsHe0Pt4CoA7x0p896aF4" data-title="开源项目" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://cx-5w.github.io/projects/index.html" data-id="cuidbV5aDX3iZ2c9xOIH-BByv" data-title="项目实践" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -289,6 +380,28 @@
 
 
 <script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
 
 
 
