@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>26 · Cookie/Session 与数据库网站 | tongui 的安全笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Cookie&#x2F;Session 与数据库网站 ⭐ 一句话总结:HTTP 无状态,登录状态靠 Cookie(存客户端)&#x2F;Session(存服务端)维持;动态网站 &#x3D; 前端 + 后端语言 + Web 服务器 + 数据库;渗透测试就是从这些组件里找突破口。  学习目标 理解 Cookie 与 Session 的原理和区别 记住常见网站架构(LNMP&#x2F;LAMP 等)">
+<meta property="og:type" content="website">
+<meta property="og:title" content="26 · Cookie&#x2F;Session 与数据库网站">
+<meta property="og:url" content="https://tongui66.github.io/course-notes/chapter1-web-dev/26-Cookie-Session-%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BD%91%E7%AB%99/index.html">
+<meta property="og:site_name" content="tongui 的安全笔记">
+<meta property="og:description" content="Cookie&#x2F;Session 与数据库网站 ⭐ 一句话总结:HTTP 无状态,登录状态靠 Cookie(存客户端)&#x2F;Session(存服务端)维持;动态网站 &#x3D; 前端 + 后端语言 + Web 服务器 + 数据库;渗透测试就是从这些组件里找突破口。  学习目标 理解 Cookie 与 Session 的原理和区别 记住常见网站架构(LNMP&#x2F;LAMP 等)">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-08T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-08T01:54:51.748Z">
+<meta property="article:author" content="tongui">
+<meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="tongui 的安全笔记" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">tongui 的安全笔记</a>
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/security-notes/">安全笔记</a>
+        
+          <a class="main-nav-link" href="/course-notes/">课程</a>
+        
+          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
+        
+          <a class="main-nav-link" href="/tools">工具</a>
+        
+          <a class="main-nav-link" href="/projects">项目</a>
+        
+          <a class="main-nav-link nav-resume" href="/resume">简历</a>
+        
+          <a class="main-nav-link" href="/about">关于我</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/tongui66"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tongui66.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/course-notes/chapter1-web-dev/26-Cookie-Session-%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BD%91%E7%AB%99/index.html" class="article-date">
+  <time class="dt-published" datetime="2026-08-08T02:00:00.000Z" itemprop="datePublished">2026-08-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      26 · Cookie/Session 与数据库网站
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Cookie-Session-与数据库网站"><a href="#Cookie-Session-与数据库网站" class="headerlink" title="Cookie&#x2F;Session 与数据库网站"></a>Cookie&#x2F;Session 与数据库网站</h1><blockquote>
+<p>⭐ <strong>一句话总结</strong>:HTTP 无状态,登录状态靠 Cookie(存客户端)&#x2F;Session(存服务端)维持;动态网站 &#x3D; 前端 + 后端语言 + Web 服务器 + 数据库;渗透测试就是从这些组件里找突破口。</p>
+</blockquote>
+<h2 id="学习目标"><a href="#学习目标" class="headerlink" title="学习目标"></a>学习目标</h2><ul>
+<li>理解 Cookie 与 Session 的原理和区别</li>
+<li>记住常见网站架构(LNMP&#x2F;LAMP 等)</li>
+<li>会 MySQL 基本操作、创建库&#x2F;用户&#x2F;授权</li>
+<li>会部署 WordPress、Discuz(PHP + MySQL)</li>
+<li>理解静态、动态、伪静态页面</li>
+</ul>
+<h2 id="一、为什么需要-Cookie-Session"><a href="#一、为什么需要-Cookie-Session" class="headerlink" title="一、为什么需要 Cookie &#x2F; Session"></a>一、为什么需要 Cookie &#x2F; Session</h2><ul>
+<li><strong>HTTP 是无状态协议</strong>:不记录登录状态,每次请求都是”陌生人”。</li>
+<li>解决:登录成功后,服务端发一个”身份令牌”,下次请求带上它,服务端就知道你是谁。</li>
+</ul>
+<h3 id="Cookie-存在客户端"><a href="#Cookie-存在客户端" class="headerlink" title="Cookie(存在客户端)"></a>Cookie(存在客户端)</h3><ol>
+<li>登录 → 服务端在<strong>响应头</strong>里返回 <code>Set-Cookie</code>(键值对,如 username&#x3D;jadon)。</li>
+<li>浏览器自动保存到本地缓存,下次请求<strong>自动携带</strong>(请求头 Cookie)。</li>
+<li>缺点:存在客户端、<strong>明文</strong>、能存的数据少(约 30 组键值对)、数据量大影响速度。</li>
+</ol>
+<h3 id="Session-存在服务端"><a href="#Session-存在服务端" class="headerlink" title="Session(存在服务端)"></a>Session(存在服务端)</h3><ol>
+<li>登录成功 → 服务端把用户数据加密保存到<strong>服务端文件</strong>,只把 <code>Session ID</code>(随机字符串)通过 Set-Cookie 发给客户端。</li>
+<li>客户端再请求时带上 Session ID,服务端据此找到对应数据。</li>
+<li>优点:数据在服务端(想存多少存多少)、客户端只有一把”钥匙”、不是明文。</li>
+</ol>
+<blockquote>
+<p>⭐ 重点:客户端删 Cookie &#x3D; 退出登录;服务端删 Session 文件 &#x3D; 也退出。<strong>偷到别人的 Cookie&#x2F;Session ID 就能冒充登录状态</strong>——这是后面会话攻击的基础。</p>
+</blockquote>
+<h2 id="二、网站架构"><a href="#二、网站架构" class="headerlink" title="二、网站架构"></a>二、网站架构</h2><table>
+<thead>
+<tr>
+<th>架构</th>
+<th>组成</th>
+<th>跑什么项目</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>LNMP</td>
+<td>Linux + Nginx + MySQL + PHP</td>
+<td>PHP 网站</td>
+</tr>
+<tr>
+<td>LAMP</td>
+<td>Linux + Apache + MySQL + PHP</td>
+<td>PHP 网站(早期经典)</td>
+</tr>
+<tr>
+<td>WAMP</td>
+<td>Windows + Apache + MySQL + PHP</td>
+<td>Windows 下 PHP</td>
+</tr>
+<tr>
+<td>LNMT</td>
+<td>Linux + Nginx + MySQL + <strong>Tomcat</strong></td>
+<td>Java 项目</td>
+</tr>
+<tr>
+<td>LNMU</td>
+<td>Linux + Nginx + MySQL + UWSGI</td>
+<td>Python 项目</td>
+</tr>
+</tbody></table>
+<ul>
+<li>中间件 &#x3D; Web 服务器(Nginx&#x2F;Apache&#x2F;Tomcat);数据库存数据(MySQL 等)。</li>
+<li>渗透时先判断架构,就知道从哪下手(如 LNMP → 打 PHP + MySQL)。</li>
+</ul>
+<h2 id="三、MySQL-数据库基础"><a href="#三、MySQL-数据库基础" class="headerlink" title="三、MySQL 数据库基础"></a>三、MySQL 数据库基础</h2><ul>
+<li>MySQL &#x3D; 数据库管理系统(DBMS);开源免费,后被 Oracle 收购;创始人另立 <strong>MariaDB</strong>(几乎一样)。</li>
+<li>结构:<strong>库 → 表 → 记录(行)</strong>,表第一行是列名。</li>
+<li>安装:<code>yum install -y mariadb-server</code>,启动后监听 <strong>3306</strong> 端口。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql                     # 本地客户端(默认 root 无密码)</span><br><span class="line">show databases;           # 查看所有库</span><br><span class="line">create database 库名;     # 建库</span><br><span class="line">use 库名;                 # 切换库</span><br><span class="line">show tables;              # 查看表</span><br><span class="line">select * from 表名;       # 查询</span><br><span class="line">select user,host,password from mysql.user;   # 查看用户</span><br><span class="line">drop database 库名;       # 删库(极度危险!)</span><br></pre></td></tr></table></figure>
+
+<p>创建用户并授权(一条指令):</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grant all on wordpress.* to &#x27;wordpress&#x27;@&#x27;192.168.61.%&#x27; identified by &#x27;123456&#x27;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>库名.*</code> &#x3D; 该库所有表;<code>&#39;用户&#39;@&#39;主机&#39;</code> 控制从哪连(本地用 localhost&#x2F;主机名,远程用 IP 段或 %)。</li>
+<li>连接:<code>mysql -u用户 -p密码 -h主机IP</code>。</li>
+<li>⚠️ <strong>删库跑路要判刑</strong>:删除操作必须万分小心,公司数据损失可能上千万。</li>
+</ul>
+<blockquote>
+<p>扩充:图形化客户端 Navicat(可连接远程 MySQL);密码在库里是加密存储的(如 MD5),可尝试在线破解。</p>
+</blockquote>
+<h2 id="四、部署动态网站-WordPress-与-Discuz"><a href="#四、部署动态网站-WordPress-与-Discuz" class="headerlink" title="四、部署动态网站:WordPress 与 Discuz"></a>四、部署动态网站:WordPress 与 Discuz</h2><h3 id="WordPress-博客-CMS-内容管理系统"><a href="#WordPress-博客-CMS-内容管理系统" class="headerlink" title="WordPress(博客,CMS 内容管理系统)"></a>WordPress(博客,CMS 内容管理系统)</h3><ol>
+<li>建库建用户(如 wordpress&#x2F;123456)→ Nginx 加站点配置(域名+root+PHP 转发)→ 代码放站点目录,<code>chown -R nginx:nginx</code>。</li>
+<li>浏览器访问 → 填写数据库名&#x2F;用户名&#x2F;密码 → 设置站点名、后台管理员账号密码 → 完成。</li>
+<li>结构:<strong>前台</strong>(给游客看文章)+ <strong>后台</strong>(管理文章&#x2F;评论&#x2F;插件)。</li>
+<li>概念:<strong>百度收录&#x2F;SEO</strong>:网站上线后百度抓取页面存库,用户搜索能搜到;”禁止搜索引擎检索”可关掉收录。</li>
+</ol>
+<h3 id="Discuz-论坛"><a href="#Discuz-论坛" class="headerlink" title="Discuz(论坛)"></a>Discuz(论坛)</h3><ul>
+<li>同样 PHP + MySQL;建 discuz 库&#x2F;用户 → 部署 → 初始化(选全新安装 + UCenter 后台)。</li>
+<li>后台可建板块、发帖、投票;很多国内论坛(吾爱破解、恩山等)都是它改的。</li>
+</ul>
+<h2 id="五、静态-动态-伪静态页面"><a href="#五、静态-动态-伪静态页面" class="headerlink" title="五、静态 &#x2F; 动态 &#x2F; 伪静态页面"></a>五、静态 &#x2F; 动态 &#x2F; 伪静态页面</h2><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>特点</th>
+<th>安全&#x2F;速度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>静态</td>
+<td>每个 URL 对应一个 HTML 文件,内容固定</td>
+<td>安全、快、方便 SEO</td>
+</tr>
+<tr>
+<td>动态</td>
+<td>一个 PHP 文件 + 参数查数据库,数据因人而异</td>
+<td>有交互,<strong>容易被攻击</strong>、较慢</td>
+</tr>
+<tr>
+<td>伪静态</td>
+<td>动态页面”伪装”成 .html 网址(底层还是动态)</td>
+<td>看着像静态,实际仍是动态</td>
+</tr>
+</tbody></table>
+<ul>
+<li>伪静态实现:Discuz 后台开启”URL 静态化” → Nginx 配置里加 <strong>rewrite 规则</strong>(正则把 .html 路径转回 .php?参数)。</li>
+<li>好处:防小白误以为可攻击 + 利于 SEO;代价:多一次转换,速度略慢。</li>
+</ul>
+<blockquote>
+<p>⭐ 重点:动态页面能交互 &#x3D; 攻击面(用户可提交恶意数据);渗透测试主要打动态部分。</p>
+</blockquote>
+<h2 id="六、重点速记"><a href="#六、重点速记" class="headerlink" title="六、重点速记"></a>六、重点速记</h2><ul>
+<li>HTTP 无状态;Cookie 存客户端(明文、量小),Session 存服务端(加密,只发 Session ID)</li>
+<li>删 Cookie&#x2F;清 Session &#x3D; 退出登录;偷到 Session ID 可冒充登录</li>
+<li>架构:LNMP&#x2F;LAMP&#x2F;LNMT&#x2F;LNMU;中间件 + 数据库 + 开发语言</li>
+<li>MySQL:库→表→记录;3306;grant 授权;删库危险</li>
+<li>WordPress&#x2F;Discuz 都是 PHP+MySQL 的 CMS;前台给用户、后台给管理</li>
+<li>伪静态 &#x3D; rewrite 把动态 URL 伪装成 .html</li>
+</ul>
+<h2 id="自测题"><a href="#自测题" class="headerlink" title="自测题"></a>自测题</h2><ol>
+<li>为什么需要 Cookie?HTTP 有什么特点?</li>
+<li>Cookie 和 Session 各存在哪里?有什么区别?</li>
+<li>删掉浏览器 Cookie 会发生什么?</li>
+<li>LNMP 和 LNMT 分别是什么?</li>
+<li>MySQL 里”库、表、记录”是什么关系?</li>
+<li>给用户授权 MySQL 库的指令怎么写?</li>
+<li>WordPress 和 Discuz 是什么类型网站?部署需要哪几样东西?</li>
+<li>伪静态是什么?靠什么实现?</li>
+</ol>
+<details><summary>参考答案</summary>
+1. HTTP 无状态不记录登录,需要 Cookie 记住登录身份。<br>
+2. Cookie 存在客户端(明文),Session 数据存在服务端,客户端只有 Session ID。<br>
+3. 服务端认为你未登录,要求重新登录。<br>
+4. Linux+Nginx+MySQL+PHP;Linux+Nginx+MySQL+Tomcat(Java)。<br>
+5. 库包含多张表,表由多行记录组成。<br>
+6. `grant all on 库名.* to '用户'@'主机' identified by '密码';`。<br>
+7. CMS 内容管理系统(博客/论坛);需要 Nginx+PHP+MySQL+网站源码。<br>
+8. 把动态 URL(带 ? 参数)用 rewrite 规则伪装成 .html,底层仍是动态处理。
+</details>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tongui66.github.io/course-notes/chapter1-web-dev/26-Cookie-Session-%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BD%91%E7%AB%99/index.html" data-id="cuidEwHxHknu4g4iOsEmXz_dU" data-title="26 · Cookie/Session 与数据库网站" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" style="font-size: 10px;">SQL注入</a> <a href="/tags/SSRF/" style="font-size: 10px;">SSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/XXE/" style="font-size: 10px;">XXE</a> <a href="/tags/%E4%B8%8A%E4%BC%A0/" style="font-size: 10px;">上传</a> <a href="/tags/%E4%BB%A3%E7%90%86/" style="font-size: 10px;">代理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" style="font-size: 10px;">信息收集</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" style="font-size: 10px;">命令执行</a> <a href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" style="font-size: 10px;">域渗透</a> <a href="/tags/%E5%BA%94%E6%80%A5/" style="font-size: 10px;">应急</a> <a href="/tags/%E6%8A%A4%E7%BD%91/" style="font-size: 10px;">护网</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 10px;">报告</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 10px;">提权</a> <a href="/tags/%E6%9F%A5%E6%9D%80/" style="font-size: 10px;">查杀</a> <a href="/tags/%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">流程</a> <a href="/tags/%E7%AD%89%E4%BF%9D/" style="font-size: 10px;">等保</a> <a href="/tags/%E9%9A%A7%E9%81%93/" style="font-size: 10px;">隧道</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a> <a href="/tags/%E9%A2%98%E5%BA%93/" style="font-size: 10px;">题库</a> <a href="/tags/%E9%AB%98%E9%A2%91/" style="font-size: 10px;">高频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">应急响应</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">1</span></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/08/">八月 2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/security-notes/interview-100/">面试高频问答 100 题</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/incident-response/">应急响应速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/intranet-domain/">内网渗透与域渗透速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/pentest-checklist/">渗透测试全流程速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/payload-handbook/">Web 漏洞速查与 Payload 手册</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 tongui<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/security-notes/" class="mobile-nav-link">安全笔记</a>
+  
+    <a href="/course-notes/" class="mobile-nav-link">课程</a>
+  
+    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
+  
+    <a href="/tools" class="mobile-nav-link">工具</a>
+  
+    <a href="/projects" class="mobile-nav-link">项目</a>
+  
+    <a href="/resume" class="mobile-nav-link">简历</a>
+  
+    <a href="/about" class="mobile-nav-link">关于我</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
+
+
+
+
+
+  </div>
+</body>
+</html>

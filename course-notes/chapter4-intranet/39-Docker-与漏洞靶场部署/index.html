@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>39 · Docker 与漏洞靶场部署 | tongui 的安全笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Docker 与漏洞靶场部署 ⭐ 一句话总结:Docker 把”装好的软件”打包成小体积镜像,一条命令就能运行;配合 docker compose 和 Vulhub,几分钟就能搭出任意漏洞环境做漏洞复现。  学习目标 理解镜像、容器、仓库三个核心概念 会安装 Docker 并掌握常用镜像&#x2F;容器命令 会用 docker compose 一键启动多容器项目 会用 Vulhub 搭建漏洞靶场并">
+<meta property="og:type" content="website">
+<meta property="og:title" content="39 · Docker 与漏洞靶场部署">
+<meta property="og:url" content="https://tongui66.github.io/course-notes/chapter4-intranet/39-Docker-%E4%B8%8E%E6%BC%8F%E6%B4%9E%E9%9D%B6%E5%9C%BA%E9%83%A8%E7%BD%B2/index.html">
+<meta property="og:site_name" content="tongui 的安全笔记">
+<meta property="og:description" content="Docker 与漏洞靶场部署 ⭐ 一句话总结:Docker 把”装好的软件”打包成小体积镜像,一条命令就能运行;配合 docker compose 和 Vulhub,几分钟就能搭出任意漏洞环境做漏洞复现。  学习目标 理解镜像、容器、仓库三个核心概念 会安装 Docker 并掌握常用镜像&#x2F;容器命令 会用 docker compose 一键启动多容器项目 会用 Vulhub 搭建漏洞靶场并">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-08T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-08T01:54:51.794Z">
+<meta property="article:author" content="tongui">
+<meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="tongui 的安全笔记" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">tongui 的安全笔记</a>
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/security-notes/">安全笔记</a>
+        
+          <a class="main-nav-link" href="/course-notes/">课程</a>
+        
+          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
+        
+          <a class="main-nav-link" href="/tools">工具</a>
+        
+          <a class="main-nav-link" href="/projects">项目</a>
+        
+          <a class="main-nav-link nav-resume" href="/resume">简历</a>
+        
+          <a class="main-nav-link" href="/about">关于我</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/tongui66"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tongui66.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/course-notes/chapter4-intranet/39-Docker-%E4%B8%8E%E6%BC%8F%E6%B4%9E%E9%9D%B6%E5%9C%BA%E9%83%A8%E7%BD%B2/index.html" class="article-date">
+  <time class="dt-published" datetime="2026-08-08T02:00:00.000Z" itemprop="datePublished">2026-08-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      39 · Docker 与漏洞靶场部署
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Docker-与漏洞靶场部署"><a href="#Docker-与漏洞靶场部署" class="headerlink" title="Docker 与漏洞靶场部署"></a>Docker 与漏洞靶场部署</h1><blockquote>
+<p>⭐ <strong>一句话总结</strong>:Docker 把”装好的软件”打包成小体积镜像,一条命令就能运行;配合 docker compose 和 Vulhub,几分钟就能搭出任意漏洞环境做漏洞复现。</p>
+</blockquote>
+<h2 id="学习目标"><a href="#学习目标" class="headerlink" title="学习目标"></a>学习目标</h2><ul>
+<li>理解镜像、容器、仓库三个核心概念</li>
+<li>会安装 Docker 并掌握常用镜像&#x2F;容器命令</li>
+<li>会用 docker compose 一键启动多容器项目</li>
+<li>会用 Vulhub 搭建漏洞靶场并复现漏洞</li>
+</ul>
+<h2 id="一、Docker-是什么"><a href="#一、Docker-是什么" class="headerlink" title="一、Docker 是什么"></a>一、Docker 是什么</h2><ul>
+<li>2013 年诞生的<strong>容器化</strong>技术:把软件连同运行环境打包成”镜像”,别人拉下来直接运行。</li>
+<li>对比虚拟机:虚拟机打包整个操作系统(十几~20G),镜像只有软件本身(Nginx 约 200M),体积小、传输快、复用性强。</li>
+<li>架构:C&#x2F;S 模式,<code>docker</code> 命令是客户端,daemon 是服务端。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>镜像 image</td>
+<td>安装好软件的”压缩包”,只读模板</td>
+</tr>
+<tr>
+<td>容器 container</td>
+<td>镜像运行起来的实例(相当于一个微型虚拟机)</td>
+</tr>
+<tr>
+<td>仓库</td>
+<td>存镜像的地方,公共仓库 Docker Hub(hub.docker.com)</td>
+</tr>
+</tbody></table>
+<h2 id="二、安装-Docker"><a href="#二、安装-Docker" class="headerlink" title="二、安装 Docker"></a>二、安装 Docker</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Kali/Debian 系(课程环境)</span></span><br><span class="line">apt-key ...                              <span class="comment"># 添加 Docker 官方密钥</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;deb https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/debian ...&quot;</span> &gt;&gt; /etc/apt/sources.list</span><br><span class="line">apt update</span><br><span class="line">apt install docker docker-compose -y</span><br><span class="line">systemctl start docker                   <span class="comment"># 启动服务</span></span><br><span class="line">docker -v                                <span class="comment"># 查看版本</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>CentOS&#x2F;RedHat 系用 <code>yum install docker</code>。</li>
+<li>下载慢时配置国内镜像源:<code>/etc/docker/daemon.json</code> 写入 Docker 中国镜像&#x2F;清华&#x2F;阿里源,重启生效。</li>
+</ul>
+<h2 id="三、镜像操作"><a href="#三、镜像操作" class="headerlink" title="三、镜像操作"></a>三、镜像操作</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">docker search nginx          <span class="comment"># 搜索镜像(official=官方,star=点赞数)</span></span><br><span class="line">docker pull nginx:latest     <span class="comment"># 只拉取不运行(:后面是版本标签)</span></span><br><span class="line">docker images                <span class="comment"># 查看本地镜像</span></span><br><span class="line">docker run nginx             <span class="comment"># 拉取并运行(生成容器)</span></span><br><span class="line">docker rmi nginx:1.16        <span class="comment"># 删除镜像(被容器占用时删不掉)</span></span><br><span class="line">docker save -o nginx.tar.gz nginx:latest   <span class="comment"># 导出镜像成压缩包</span></span><br><span class="line">docker load -i nginx.tar.gz               <span class="comment"># 导入镜像</span></span><br><span class="line">docker commit 容器ID 用户名/镜像名:v1      <span class="comment"># 把容器打包成新镜像</span></span><br><span class="line">docker login &amp;&amp; docker push 用户名/镜像名:v1  <span class="comment"># 推送到仓库</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>官方镜像名简短(nginx);用户上传的带用户名前缀(jadon&#x2F;nginx)。</li>
+<li>用 <code>镜像名:版本</code> 打包导出,别人 load 后才有名称和版本;用 image ID 打包会丢失名称。</li>
+<li>指定版本可能因仓库问题拉不到对应版本,可去 hub.docker.com 的 tags 页确认。</li>
+</ul>
+<h2 id="四、容器操作"><a href="#四、容器操作" class="headerlink" title="四、容器操作"></a>四、容器操作</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker ps            <span class="comment"># 运行中的容器</span></span><br><span class="line">docker ps -a         <span class="comment"># 所有容器(含已退出)</span></span><br><span class="line">docker run -d --name web -p 8080:80 --restart=always nginx</span><br><span class="line"><span class="comment"># -d 后台运行;--name 容器名;-p 宿主机端口:容器端口;--restart=always 开机自启</span></span><br><span class="line">docker run -it ubuntu bash      <span class="comment"># 交互式进入容器</span></span><br><span class="line">docker <span class="built_in">exec</span> -it 容器ID bash     <span class="comment"># 进入运行中的容器</span></span><br><span class="line">docker stop/start/rm 容器ID     <span class="comment"># 停止/启动/删除</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>端口映射:容器有自己的内网 IP(172.17.0.x),浏览器访问宿主机 IP:端口,数据转发到容器内部端口。</li>
+<li>重启 docker 服务后普通容器会停止,只有 <code>--restart=always</code> 的会自动拉起。</li>
+<li><code>-e</code> 设置环境变量,如 <code>-e MYSQL_ROOT_PASSWORD=123456</code>。</li>
+</ul>
+<h2 id="五、docker-compose-批量管理"><a href="#五、docker-compose-批量管理" class="headerlink" title="五、docker compose 批量管理"></a>五、docker compose 批量管理</h2><p>用 yml 文件描述多个容器,一条命令全部启动。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">db:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mysql:5.7</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="attr">MYSQL_ROOT_PASSWORD:</span> <span class="string">root123</span></span><br><span class="line">  <span class="attr">wp:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">wordpress:5.6</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">db</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;83:80&quot;</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="attr">WORDPRESS_DB_HOST:</span> <span class="string">db</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker compose up -d      <span class="comment"># 启动(在 yml 所在目录执行)</span></span><br><span class="line">docker compose down       <span class="comment"># 停止并删除容器</span></span><br><span class="line">docker compose restart    <span class="comment"># 重启</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>yml 语法:<strong>严格缩进,只能用空格,不能用 Tab</strong>。</li>
+<li>文件名固定为 docker-compose.yml &#x2F; docker-compose.yaml。</li>
+<li>示例:一条命令同时启动 MySQL+WordPress,浏览器访问 <code>IP:83</code> 完成安装。</li>
+</ul>
+<h2 id="六、Vulhub-漏洞靶场"><a href="#六、Vulhub-漏洞靶场" class="headerlink" title="六、Vulhub 漏洞靶场"></a>六、Vulhub 漏洞靶场</h2><ul>
+<li>Vulhub &#x3D; Vulnerability(漏洞)+ Hub(仓库),开源的漏洞复现环境集合,每个漏洞一个目录。</li>
+<li>使用流程:</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">下载源码包并解压</span><br><span class="line"><span class="built_in">cd</span> vulhub/nginx/nginx_parsing_vulnerability   <span class="comment"># 进入某个漏洞目录</span></span><br><span class="line">docker compose up -d                           <span class="comment"># 启动环境</span></span><br><span class="line">浏览器访问 http://IP:80</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>启动失败常见原因:网络拉不到镜像、端口冲突(先停掉其他容器)。</li>
+<li><strong>漏洞复现</strong> &#x3D; 搭建和线上相同版本的环境 → 用攻击载荷打进去 → 证明漏洞真实存在(如拿到敏感信息&#x2F;控制服务器)。</li>
+</ul>
+<h2 id="七、实例-Nginx-解析漏洞-图片马"><a href="#七、实例-Nginx-解析漏洞-图片马" class="headerlink" title="七、实例:Nginx 解析漏洞 + 图片马"></a>七、实例:Nginx 解析漏洞 + 图片马</h2><ol>
+<li>制作”图片马”:图片文件末尾拼接 PHP 代码,如 <code>&lt;?=phpinfo();?&gt;</code>。</li>
+<li>上传图片马后访问 <code>shell.png/.php</code>。</li>
+<li>由于 Nginx 配置问题(<code>cgi.fix_pathinfo=1</code>),服务器把图片按 PHP 解析,图片里的代码被执行。</li>
+<li>执行 phpinfo 只是信息泄露;若换成 <code>system()</code> 命令,直接控制服务器。</li>
+</ol>
+<blockquote>
+<p>⭐ 重点:漏洞复现流程 &#x3D; 找环境 → 搭环境 → 上传载荷 → 验证利用 → 查配置找根因;这就是后面做漏洞检测的标准思路。</p>
+</blockquote>
+<h2 id="八、重点速记"><a href="#八、重点速记" class="headerlink" title="八、重点速记"></a>八、重点速记</h2><ul>
+<li>镜像&#x3D;模板、容器&#x3D;运行实例、仓库&#x3D;Docker Hub</li>
+<li>search&#x2F;pull&#x2F;run&#x2F;rmi&#x2F;save&#x2F;load&#x2F;push&#x2F;commit</li>
+<li>容器参数:-d -p –name -it -e –restart&#x3D;always</li>
+<li>compose 用 yml 管理多容器;up 启动、down 停止</li>
+<li>Vulhub 每个漏洞一个目录,docker compose up -d 秒搭靶场</li>
+<li>Nginx 解析漏洞:cgi.fix_pathinfo&#x3D;1 + 图片马 → 代码执行</li>
+</ul>
+<h2 id="自测题"><a href="#自测题" class="headerlink" title="自测题"></a>自测题</h2><ol>
+<li>镜像、容器、仓库分别是什么?</li>
+<li>docker pull 和 docker run 的区别?</li>
+<li>-p 8080:80 是什么意思?</li>
+<li>–restart&#x3D;always 有什么用?</li>
+<li>docker save 和 docker load 干什么?</li>
+<li>docker compose 的配置文件有什么语法要求?</li>
+<li>Vulhub 是干什么的?怎么启动一个漏洞环境?</li>
+<li>Nginx 解析漏洞是怎么利用图片马的?</li>
+</ol>
+<details><summary>参考答案</summary>
+1. 镜像是被打包好的软件模板,容器是镜像运行后的实例,仓库是存放镜像的地方。<br>
+2. pull 只下载,run 下载并运行。<br>
+3. 把宿主机 8080 端口映射到容器 80 端口。<br>
+4. 容器开机或 docker 重启后自动启动。<br>
+5. save 导出镜像为文件,load 从文件导入镜像。<br>
+6. 严格缩进、只能用空格、文件名 docker-compose.yml。<br>
+7. 开源漏洞复现环境集合;进入漏洞目录执行 docker compose up -d。<br>
+8. 图片里拼 PHP 代码,利用 cgi.fix_pathinfo=1 让 Nginx 把图片当 PHP 解析执行。
+</details>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tongui66.github.io/course-notes/chapter4-intranet/39-Docker-%E4%B8%8E%E6%BC%8F%E6%B4%9E%E9%9D%B6%E5%9C%BA%E9%83%A8%E7%BD%B2/index.html" data-id="cuid3xWDGuowziAA7YQ-MfMll" data-title="39 · Docker 与漏洞靶场部署" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" style="font-size: 10px;">SQL注入</a> <a href="/tags/SSRF/" style="font-size: 10px;">SSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/XXE/" style="font-size: 10px;">XXE</a> <a href="/tags/%E4%B8%8A%E4%BC%A0/" style="font-size: 10px;">上传</a> <a href="/tags/%E4%BB%A3%E7%90%86/" style="font-size: 10px;">代理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" style="font-size: 10px;">信息收集</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" style="font-size: 10px;">命令执行</a> <a href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" style="font-size: 10px;">域渗透</a> <a href="/tags/%E5%BA%94%E6%80%A5/" style="font-size: 10px;">应急</a> <a href="/tags/%E6%8A%A4%E7%BD%91/" style="font-size: 10px;">护网</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 10px;">报告</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 10px;">提权</a> <a href="/tags/%E6%9F%A5%E6%9D%80/" style="font-size: 10px;">查杀</a> <a href="/tags/%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">流程</a> <a href="/tags/%E7%AD%89%E4%BF%9D/" style="font-size: 10px;">等保</a> <a href="/tags/%E9%9A%A7%E9%81%93/" style="font-size: 10px;">隧道</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a> <a href="/tags/%E9%A2%98%E5%BA%93/" style="font-size: 10px;">题库</a> <a href="/tags/%E9%AB%98%E9%A2%91/" style="font-size: 10px;">高频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">应急响应</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">1</span></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/08/">八月 2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/security-notes/interview-100/">面试高频问答 100 题</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/incident-response/">应急响应速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/intranet-domain/">内网渗透与域渗透速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/pentest-checklist/">渗透测试全流程速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/payload-handbook/">Web 漏洞速查与 Payload 手册</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 tongui<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/security-notes/" class="mobile-nav-link">安全笔记</a>
+  
+    <a href="/course-notes/" class="mobile-nav-link">课程</a>
+  
+    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
+  
+    <a href="/tools" class="mobile-nav-link">工具</a>
+  
+    <a href="/projects" class="mobile-nav-link">项目</a>
+  
+    <a href="/resume" class="mobile-nav-link">简历</a>
+  
+    <a href="/about" class="mobile-nav-link">关于我</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
+
+
+
+
+
+  </div>
+</body>
+</html>

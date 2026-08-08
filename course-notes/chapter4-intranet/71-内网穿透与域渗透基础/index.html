@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>71 · 内网穿透与域渗透基础 | tongui 的安全笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="内网穿透与域渗透基础 ⭐ 一句话总结:内网渗透分局域网攻击、内网穿透、域渗透三块;内网穿透用”代理”把数据转出来,数据被过滤时再用”隧道”换一种协议(ICMP&#x2F;DNS)绕过;域则用域控(AD)统一管理和统一认证,拿不到域控前先靠 mimikatz 收集口令做横向尝试。  学习目标 区分局域网渗透、内网穿透、域渗透 掌握代理(ngrok&#x2F;FRP&#x2F;NPS&#x2F;Soc">
+<meta property="og:type" content="website">
+<meta property="og:title" content="71 · 内网穿透与域渗透基础">
+<meta property="og:url" content="https://tongui66.github.io/course-notes/chapter4-intranet/71-%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E4%B8%8E%E5%9F%9F%E6%B8%97%E9%80%8F%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:site_name" content="tongui 的安全笔记">
+<meta property="og:description" content="内网穿透与域渗透基础 ⭐ 一句话总结:内网渗透分局域网攻击、内网穿透、域渗透三块;内网穿透用”代理”把数据转出来,数据被过滤时再用”隧道”换一种协议(ICMP&#x2F;DNS)绕过;域则用域控(AD)统一管理和统一认证,拿不到域控前先靠 mimikatz 收集口令做横向尝试。  学习目标 区分局域网渗透、内网穿透、域渗透 掌握代理(ngrok&#x2F;FRP&#x2F;NPS&#x2F;Soc">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-08T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-08T01:54:51.805Z">
+<meta property="article:author" content="tongui">
+<meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="tongui 的安全笔记" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">tongui 的安全笔记</a>
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/security-notes/">安全笔记</a>
+        
+          <a class="main-nav-link" href="/course-notes/">课程</a>
+        
+          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
+        
+          <a class="main-nav-link" href="/tools">工具</a>
+        
+          <a class="main-nav-link" href="/projects">项目</a>
+        
+          <a class="main-nav-link nav-resume" href="/resume">简历</a>
+        
+          <a class="main-nav-link" href="/about">关于我</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/tongui66"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tongui66.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/course-notes/chapter4-intranet/71-%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E4%B8%8E%E5%9F%9F%E6%B8%97%E9%80%8F%E5%9F%BA%E7%A1%80/index.html" class="article-date">
+  <time class="dt-published" datetime="2026-08-08T02:00:00.000Z" itemprop="datePublished">2026-08-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      71 · 内网穿透与域渗透基础
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="内网穿透与域渗透基础"><a href="#内网穿透与域渗透基础" class="headerlink" title="内网穿透与域渗透基础"></a>内网穿透与域渗透基础</h1><blockquote>
+<p>⭐ <strong>一句话总结</strong>:内网渗透分局域网攻击、内网穿透、域渗透三块;内网穿透用”代理”把数据转出来,数据被过滤时再用”隧道”换一种协议(ICMP&#x2F;DNS)绕过;域则用域控(AD)统一管理和统一认证,拿不到域控前先靠 mimikatz 收集口令做横向尝试。</p>
+</blockquote>
+<h2 id="学习目标"><a href="#学习目标" class="headerlink" title="学习目标"></a>学习目标</h2><ul>
+<li>区分局域网渗透、内网穿透、域渗透</li>
+<li>掌握代理(ngrok&#x2F;FRP&#x2F;NPS&#x2F;Socks)与隧道(ICMP&#x2F;DNS)的原理</li>
+<li>理解工作组与域的区别、AD&#x2F;域控&#x2F;域树&#x2F;域森林概念</li>
+<li>掌握域内信息收集与口令传递基础思路</li>
+</ul>
+<h2 id="一、内网渗透三大块"><a href="#一、内网渗透三大块" class="headerlink" title="一、内网渗透三大块"></a>一、内网渗透三大块</h2><table>
+<thead>
+<tr>
+<th>模块</th>
+<th>常见手段</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>局域网渗透</td>
+<td>ARP 欺骗</td>
+<td>内容少,面试问得少</td>
+</tr>
+<tr>
+<td>内网穿透</td>
+<td>代理、隧道</td>
+<td>每家公司都有内网,必问</td>
+</tr>
+<tr>
+<td>域渗透</td>
+<td>域信息收集、口令传递、黄金票据等</td>
+<td>环境不一定有,优先级稍低</td>
+</tr>
+</tbody></table>
+<h2 id="二、代理-vs-隧道"><a href="#二、代理-vs-隧道" class="headerlink" title="二、代理 vs 隧道"></a>二、代理 vs 隧道</h2><p>两者都解决”内网主机数据转出&#x2F;通信”问题,区别在于:</p>
+<ul>
+<li><strong>代理</strong>:直接把数据转发出来(如 Socks 代理),不改变数据协议。</li>
+<li><strong>隧道</strong>:在代理基础上再加一层<strong>协议转换</strong>,把原协议(如 TCP)数据伪装成防火墙放行的协议(如 ICMP、DNS)再传出来。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">目标主机(TCP数据) → 隧道换协议(ICMP/DNS) → 穿过防火墙 → 还原TCP → 攻击机</span><br></pre></td></tr></table></figure>
+
+<h2 id="三、内网穿透工具"><a href="#三、内网穿透工具" class="headerlink" title="三、内网穿透工具"></a>三、内网穿透工具</h2><h3 id="ngrok-实验用"><a href="#ngrok-实验用" class="headerlink" title="ngrok(实验用)"></a>ngrok(实验用)</h3><ul>
+<li>使用国外第三方服务器中转,把<strong>攻击机内网 IP</strong> 映射到公网。</li>
+<li>流程:注册 → 开通隧道(付费 2 元)→ 拿到公网地址 → 下载客户端 → <code>./sunny clientid &lt;隧道ID&gt;</code> → 看到 <code>online</code> 即成功。</li>
+<li>生成木马时把 payload 的 lhost 指向公网地址(80 映射到攻击机 44 端口),攻击机用 MSF 监听 44 端口。</li>
+<li>缺点:数据经过第三方服务器,成果可能被截留,且国外服务器不稳定,实战很少用。</li>
+</ul>
+<h3 id="FRP-实战最常用"><a href="#FRP-实战最常用" class="headerlink" title="FRP(实战最常用)"></a>FRP(实战最常用)</h3><ul>
+<li>自建服务器(如阿里云),Go 语言编写,分<strong>服务端 frps</strong> 和<strong>客户端 frpc</strong>。</li>
+<li>核心配置:</li>
+</ul>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># frpc.ini(攻击机)</span></span><br><span class="line"><span class="section">[common]</span></span><br><span class="line"><span class="attr">server_addr</span> = 阿里云公网IP</span><br><span class="line"><span class="attr">server_port</span> = <span class="number">6677</span></span><br><span class="line"></span><br><span class="line"><span class="section">[tcp]</span></span><br><span class="line"><span class="attr">type</span> = tcp</span><br><span class="line"><span class="attr">local_ip</span> = <span class="number">127.0</span>.<span class="number">0.1</span></span><br><span class="line"><span class="attr">local_port</span> = <span class="number">5555</span></span><br><span class="line"><span class="attr">remote_port</span> = <span class="number">6000</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>流程:上传 frps 到云服务器 → 改端口 → 加执行权限 <code>chmod +x</code> → 运行 <code>./frps -c frps.ini</code> → 云安全组放行 <code>6677</code>(通信)和 <code>6000</code>(数据端口)→ 攻击机运行 <code>./frpc -c frpc.ini</code>。</li>
+<li>木马 lhost 填云服务器公网 IP、端口填 <code>remote_port</code>(6000);目标机访问的是公网 IP:6000,数据经云服务器转发到攻击机。</li>
+</ul>
+<h3 id="NPS"><a href="#NPS" class="headerlink" title="NPS"></a>NPS</h3><ul>
+<li>与 FRP 类似,也是自建服务器做内网穿透;FRP 使用者更多。</li>
+</ul>
+<h3 id="Socks-代理"><a href="#Socks-代理" class="headerlink" title="Socks 代理"></a>Socks 代理</h3><ul>
+<li>适用于目标<strong>完全不能上网</strong>的纯内网主机;常用工具:EW、毒液、frp 的 socks5 插件、CS 代理。</li>
+</ul>
+<h2 id="四、隧道技术"><a href="#四、隧道技术" class="headerlink" title="四、隧道技术"></a>四、隧道技术</h2><p>按 OSI 分层,常见隧道:</p>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>隧道示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>网络层</td>
+<td>IPv6 隧道、ICMP 隧道</td>
+</tr>
+<tr>
+<td>传输层</td>
+<td>TCP&#x2F;UDP 端口转发(LCX、NC)</td>
+</tr>
+<tr>
+<td>应用层</td>
+<td>SSH&#x2F;HTTP&#x2F;HTTPS 隧道、DNS 隧道</td>
+</tr>
+</tbody></table>
+<p>实战最常用 <strong>ICMP 隧道</strong>和 <strong>DNS 隧道</strong>,因为防火墙很少封 ping 和 DNS 查询。</p>
+<h3 id="ICMP-隧道示例-把-TCP-伪装成-ICMP"><a href="#ICMP-隧道示例-把-TCP-伪装成-ICMP" class="headerlink" title="ICMP 隧道示例(把 TCP 伪装成 ICMP)"></a>ICMP 隧道示例(把 TCP 伪装成 ICMP)</h3><p>场景:已拿下中间机(双网卡),目标机开了 3389 但防火墙禁 TCP 出口;测试发现 ping 通,即 ICMP 放行。</p>
+<ol>
+<li>中间机安装依赖并编译 <code>pingtunnel</code>(依赖 libpcap)。</li>
+<li>中间机开隧道:</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./ptunnel -p 隧道密码</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>攻击机(Kali 自带 ptunnel)转发:</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ptunnel -p &lt;中间机IP&gt; -lp 1080 -da &lt;目标机IP&gt; -dp 3389</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>攻击机连接本地 1080 端口即可拿到远程桌面:</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rdesktop 127.0.0.1:1080</span><br></pre></td></tr></table></figure>
+
+<p>原理:目标机 3389 的 TCP 数据在中间机被封装成 ICMP 包发出,到攻击机后再还原回 TCP。</p>
+<h3 id="DNS-隧道"><a href="#DNS-隧道" class="headerlink" title="DNS 隧道"></a>DNS 隧道</h3><ul>
+<li>用 CS 即可实现:在域名服务商配置 A 记录(公网服务器)+ 两条 NS 记录;服务器开放 53 端口。</li>
+<li>CS 服务端部署在云服务器,客户端连接后新建 <strong>DNS 监听器</strong>,把 NS 记录填进去。</li>
+<li>生成的木马在目标机以 DNS 查询的方式把数据带出来,防火墙几乎不拦。</li>
+</ul>
+<h2 id="五、工作组与域"><a href="#五、工作组与域" class="headerlink" title="五、工作组与域"></a>五、工作组与域</h2><h3 id="工作组"><a href="#工作组" class="headerlink" title="工作组"></a>工作组</h3><ul>
+<li>只是给计算机<strong>分组</strong>(如 sales、finance),Windows 默认都在 <code>WORKGROUP</code>。</li>
+<li>缺点:不能<strong>统一管理</strong>(软件要逐台装),不能<strong>统一身份认证</strong>(访问每台共享都要输用户名密码)。</li>
+</ul>
+<h3 id="域"><a href="#域" class="headerlink" title="域"></a>域</h3><ul>
+<li>解决统一管理与统一认证:域控下发组策略,所有成员机自动执行;域用户登录一次即可访问授权资源。</li>
+<li>关键概念:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DC(域控)</td>
+<td>Domain Controller,域的管理者,像”大脑”</td>
+</tr>
+<tr>
+<td>AD(活动目录)</td>
+<td>装在 DC 上,存储域用户、计算机、组策略等信息</td>
+</tr>
+<tr>
+<td>根域</td>
+<td>域树的顶级域名(如 test.com)</td>
+</tr>
+<tr>
+<td>域树</td>
+<td>只有一个根域,下挂多个子域</td>
+</tr>
+<tr>
+<td>域森林</td>
+<td>多个根域互相建立信任关系的集合</td>
+</tr>
+</tbody></table>
+<ul>
+<li>域内主机用域名(二级&#x2F;三级域名)标识,成员机 DNS 指向 DC。</li>
+<li>拿下 DC &#x3D; 拿下整个域;所以域渗透的核心是<strong>定位并拿下域控</strong>。</li>
+</ul>
+<h2 id="六、域内信息收集"><a href="#六、域内信息收集" class="headerlink" title="六、域内信息收集"></a>六、域内信息收集</h2><h3 id="口令收集"><a href="#口令收集" class="headerlink" title="口令收集"></a>口令收集</h3><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>mimikatz</td>
+<td>Windows 下最常用,需管理员权限(<code>privilege::debug</code>);<code>sekurlsa::logonpasswords</code> 抓内存口令哈希&#x2F;明文</td>
+</tr>
+<tr>
+<td>ladon</td>
+<td>集成信息收集与爆破,功能多</td>
+</tr>
+<tr>
+<td>收费国外工具</td>
+<td>可收集登录过的网站密码,需梯子</td>
+</tr>
+</tbody></table>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mimikatz.exe &quot;privilege::debug&quot; &quot;sekurlsa::logonpasswords&quot;</span><br><span class="line">mimikatz.exe &quot;privilege::debug&quot; &quot;sekurlsa::logonpasswords&quot; &gt; <span class="number">1</span>.txt</span><br></pre></td></tr></table></figure>
+
+<p>提示:拿到本机密码不能只用于本机——管理员常多处复用密码,把密码当字典去撞域内其他主机,逐步接近域控。</p>
+<h3 id="存活-端口探测"><a href="#存活-端口探测" class="headerlink" title="存活&#x2F;端口探测"></a>存活&#x2F;端口探测</h3><ul>
+<li>系统自带 <code>ping</code> 写 PowerShell for 循环,最稳且免杀。</li>
+<li>NBTscan:老牌存活探测工具,能直接标出 <code>DC</code>。</li>
+<li>Nishang:PowerShell 脚本,系统自带执行环境、免杀,可执行 <code>Get-Information</code>、端口扫描等。</li>
+<li>Nmap 功能强,但上传后容易被杀软干掉,内网探测常优先用系统命令。</li>
+</ul>
+<h2 id="七、口令传递攻击"><a href="#七、口令传递攻击" class="headerlink" title="七、口令传递攻击"></a>七、口令传递攻击</h2><h3 id="明文口令传递-IPC"><a href="#明文口令传递-IPC" class="headerlink" title="明文口令传递(IPC$)"></a>明文口令传递(IPC$)</h3><ul>
+<li>IPC$ 命名管道,访问共享资源用,走 135&#x2F;139&#x2F;445 端口。</li>
+<li>流程:用已知用户名密码建立 IPC$ 连接 → 上传木马文件 → 添加计划任务执行 → 建立控制&#x2F;添加用户。</li>
+</ul>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">net</span> use \\目标IP\ipc$ &quot;密码&quot; /user:&quot;用户名&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="计划任务创建-2012-分水岭"><a href="#计划任务创建-2012-分水岭" class="headerlink" title="计划任务创建(2012 分水岭)"></a>计划任务创建(2012 分水岭)</h3><ul>
+<li>Windows Server <strong>2012 之前</strong>:用 <code>at</code>。</li>
+<li>Windows Server <strong>2012 及以后</strong>:用 <code>schtasks</code>。</li>
+</ul>
+<h2 id="八、重点速记"><a href="#八、重点速记" class="headerlink" title="八、重点速记"></a>八、重点速记</h2><ul>
+<li>内网渗透:局域网(ARP)、内网穿透、域渗透</li>
+<li>代理转发不换协议;隧道 &#x3D; 代理 + 协议转换</li>
+<li>能上网 → ngrok&#x2F;FRP&#x2F;NPS;纯内网 → Socks;TCP 被过滤 → ICMP&#x2F;DNS 隧道</li>
+<li>实战多用 FRP(自建服务器,数据不外泄);隧道常用 ICMP 和 DNS</li>
+<li>工作组只有分组;域 &#x3D; 统一管理 + 统一认证</li>
+<li>DC 装 AD,域内大脑;拿下 DC 拿下全域</li>
+<li>mimikatz 抓口令 → 密码复用 → 撞其他主机 → 接近域控</li>
+<li>明文口令走 IPC$;2012 前后计划任务命令不同</li>
+</ul>
+<h2 id="自测题"><a href="#自测题" class="headerlink" title="自测题"></a>自测题</h2><ol>
+<li>内网渗透分哪三块?</li>
+<li>代理和隧道的核心区别是什么?</li>
+<li>目标机能上网但无法直接访问,选什么工具?目标完全不出网呢?</li>
+<li>FRP 和 ngrok 的最大区别?</li>
+<li>常见隧道有哪些?为什么 ICMP 和 DNS 隧道最常用?</li>
+<li>ICMP 隧道的典型应用场景?</li>
+<li>工作组相比域缺少哪两个能力?</li>
+<li>DC、AD、域树、域森林分别是什么?</li>
+<li>mimikatz 收集口令需要什么权限?核心命令是什么?</li>
+<li>为什么收集到的本机密码可以用来尝试横向渗透?</li>
+<li>明文口令传递利用什么连接?走哪些端口?</li>
+<li>Windows Server 2012 前后创建计划任务分别用什么命令?</li>
+</ol>
+<details><summary>参考答案</summary>
+1. 局域网渗透、内网穿透、域渗透。<br>
+2. 代理只转发数据;隧道在代理基础上把数据换成另一种协议绕过过滤。<br>
+3. 能上网用 ngrok/FRP/NPS;完全不出网用 Socks 代理(EW、毒液)。<br>
+4. ngrok 用国外第三方服务器,FRP 自建服务器,数据更安全。<br>
+5. IPv6/ICMP、TCP/UDP 端口转发、SSH/HTTP/HTTPS/DNS;因为防火墙很少封 ping 和 DNS 查询。<br>
+6. 目标主机 TCP 出口被防火墙限制,但 ICMP 放行时,把 3389 等 TCP 数据伪装成 ICMP 转出。<br>
+7. 统一管理和统一身份认证。<br>
+8. DC 是域控主机;AD 是装在 DC 上存储域信息的活动目录;域树只有一个根域;域森林是多个根域建立信任的集合。<br>
+9. 管理员权限(privilege::debug);sekurlsa::logonpasswords。<br>
+10. 管理员常复用相同密码,可用收集到的密码尝试登录域内其他主机。<br>
+11. IPC$ 命名管道;走 135/139/445 端口。<br>
+12. 2012 之前用 at,2012 及以后用 schtasks。<br>
+</details>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tongui66.github.io/course-notes/chapter4-intranet/71-%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E4%B8%8E%E5%9F%9F%E6%B8%97%E9%80%8F%E5%9F%BA%E7%A1%80/index.html" data-id="cuidGbaqmHnVyOjYU8Op972c_" data-title="71 · 内网穿透与域渗透基础" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" style="font-size: 10px;">SQL注入</a> <a href="/tags/SSRF/" style="font-size: 10px;">SSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/XXE/" style="font-size: 10px;">XXE</a> <a href="/tags/%E4%B8%8A%E4%BC%A0/" style="font-size: 10px;">上传</a> <a href="/tags/%E4%BB%A3%E7%90%86/" style="font-size: 10px;">代理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" style="font-size: 10px;">信息收集</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" style="font-size: 10px;">命令执行</a> <a href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" style="font-size: 10px;">域渗透</a> <a href="/tags/%E5%BA%94%E6%80%A5/" style="font-size: 10px;">应急</a> <a href="/tags/%E6%8A%A4%E7%BD%91/" style="font-size: 10px;">护网</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 10px;">报告</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 10px;">提权</a> <a href="/tags/%E6%9F%A5%E6%9D%80/" style="font-size: 10px;">查杀</a> <a href="/tags/%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">流程</a> <a href="/tags/%E7%AD%89%E4%BF%9D/" style="font-size: 10px;">等保</a> <a href="/tags/%E9%9A%A7%E9%81%93/" style="font-size: 10px;">隧道</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a> <a href="/tags/%E9%A2%98%E5%BA%93/" style="font-size: 10px;">题库</a> <a href="/tags/%E9%AB%98%E9%A2%91/" style="font-size: 10px;">高频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">应急响应</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">1</span></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/08/">八月 2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/security-notes/interview-100/">面试高频问答 100 题</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/incident-response/">应急响应速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/intranet-domain/">内网渗透与域渗透速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/pentest-checklist/">渗透测试全流程速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/payload-handbook/">Web 漏洞速查与 Payload 手册</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 tongui<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/security-notes/" class="mobile-nav-link">安全笔记</a>
+  
+    <a href="/course-notes/" class="mobile-nav-link">课程</a>
+  
+    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
+  
+    <a href="/tools" class="mobile-nav-link">工具</a>
+  
+    <a href="/projects" class="mobile-nav-link">项目</a>
+  
+    <a href="/resume" class="mobile-nav-link">简历</a>
+  
+    <a href="/about" class="mobile-nav-link">关于我</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
+
+
+
+
+
+  </div>
+</body>
+</html>

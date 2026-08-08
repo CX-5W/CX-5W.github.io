@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>30 · MySQL 进阶操作 | tongui 的安全笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="MySQL 进阶操作 ⭐ 一句话总结:SQL 四大关键字 insert&#x2F;select&#x2F;update&#x2F;delete 是操作核心;查询(where&#x2F;order&#x2F;limit&#x2F;union)更是SQL 注入的必修课;索引让百万行数据秒查。  学习目标 掌握建表、数据类型、约束 熟练行数据的增删改查与条件查询 会用内置函数、索引、union 联合查询">
+<meta property="og:type" content="website">
+<meta property="og:title" content="30 · MySQL 进阶操作">
+<meta property="og:url" content="https://tongui66.github.io/course-notes/chapter1-web-dev/30-MySQL-%E8%BF%9B%E9%98%B6%E6%93%8D%E4%BD%9C/index.html">
+<meta property="og:site_name" content="tongui 的安全笔记">
+<meta property="og:description" content="MySQL 进阶操作 ⭐ 一句话总结:SQL 四大关键字 insert&#x2F;select&#x2F;update&#x2F;delete 是操作核心;查询(where&#x2F;order&#x2F;limit&#x2F;union)更是SQL 注入的必修课;索引让百万行数据秒查。  学习目标 掌握建表、数据类型、约束 熟练行数据的增删改查与条件查询 会用内置函数、索引、union 联合查询">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-08T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-08T01:54:51.751Z">
+<meta property="article:author" content="tongui">
+<meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="tongui 的安全笔记" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">tongui 的安全笔记</a>
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/security-notes/">安全笔记</a>
+        
+          <a class="main-nav-link" href="/course-notes/">课程</a>
+        
+          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
+        
+          <a class="main-nav-link" href="/tools">工具</a>
+        
+          <a class="main-nav-link" href="/projects">项目</a>
+        
+          <a class="main-nav-link nav-resume" href="/resume">简历</a>
+        
+          <a class="main-nav-link" href="/about">关于我</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/tongui66"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tongui66.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/course-notes/chapter1-web-dev/30-MySQL-%E8%BF%9B%E9%98%B6%E6%93%8D%E4%BD%9C/index.html" class="article-date">
+  <time class="dt-published" datetime="2026-08-08T02:00:00.000Z" itemprop="datePublished">2026-08-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      30 · MySQL 进阶操作
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="MySQL-进阶操作"><a href="#MySQL-进阶操作" class="headerlink" title="MySQL 进阶操作"></a>MySQL 进阶操作</h1><blockquote>
+<p>⭐ <strong>一句话总结</strong>:SQL 四大关键字 insert&#x2F;select&#x2F;update&#x2F;delete 是操作核心;查询(where&#x2F;order&#x2F;limit&#x2F;union)更是<strong>SQL 注入</strong>的必修课;索引让百万行数据秒查。</p>
+</blockquote>
+<h2 id="学习目标"><a href="#学习目标" class="headerlink" title="学习目标"></a>学习目标</h2><ul>
+<li>掌握建表、数据类型、约束</li>
+<li>熟练行数据的增删改查与条件查询</li>
+<li>会用内置函数、索引、union 联合查询</li>
+<li>知道存储引擎和备份恢复</li>
+</ul>
+<h2 id="一、数据类型"><a href="#一、数据类型" class="headerlink" title="一、数据类型"></a>一、数据类型</h2><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>int &#x2F; bigint</td>
+<td>整数(4&#x2F;8 字节)</td>
+</tr>
+<tr>
+<td>float</td>
+<td>小数(如价格 999.99)</td>
+</tr>
+<tr>
+<td>char(定长) &#x2F; varchar(变长)</td>
+<td>字符串(姓名、密码;varchar 省空间但稍慢)</td>
+</tr>
+<tr>
+<td>text</td>
+<td>长文本(描述、小说,longtext 可存 4G)</td>
+</tr>
+<tr>
+<td>enum</td>
+<td>枚举多选一(如 男士&#x2F;女士表)</td>
+</tr>
+<tr>
+<td>date</td>
+<td>日期(存 Unix 时间戳)</td>
+</tr>
+<tr>
+<td>布尔</td>
+<td>真假</td>
+</tr>
+</tbody></table>
+<h2 id="二、创建表与约束"><a href="#二、创建表与约束" class="headerlink" title="二、创建表与约束"></a>二、创建表与约束</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">create table t1 (</span><br><span class="line">  id int auto_increment primary key,   -- 自增 + 主键(不能空、不能重复)</span><br><span class="line">  name char(10) not null,              -- 不能为空</span><br><span class="line">  price float(5,2) default 0.00,       -- 默认值</span><br><span class="line">  email varchar(50) unique             -- 唯一(不能重复)</span><br><span class="line">) default charset=utf8mb4;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>常用约束:NOT NULL(必填)、DEFAULT(默认值)、UNIQUE(唯一)、PRIMARY KEY(主键)。</li>
+<li><strong>字符集</strong>:默认 latin 不支持中文,建库&#x2F;建表指定 <code>utf8mb4</code> 才支持全部中文。</li>
+<li>查看表结构:<code>desc 表名</code>。</li>
+</ul>
+<h2 id="三、行数据增删改查-重点"><a href="#三、行数据增删改查-重点" class="headerlink" title="三、行数据增删改查(重点)"></a>三、行数据增删改查(重点)</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">insert into t1(name, price) values(&#x27;jadon&#x27;, 11.22);     -- 插入</span><br><span class="line">select * from t1 where id=1;                             -- 查询</span><br><span class="line">update t1 set price=66.66 where name=&#x27;jadon&#x27;;            -- 修改</span><br><span class="line">delete from t1 where id=6;                               -- 删除</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>⭐ 重点:delete&#x2F;update 一定要带 <strong>where 条件</strong>,否则全表数据被清空&#x2F;改掉!</p>
+</blockquote>
+<h2 id="四、查询进阶-注入基础"><a href="#四、查询进阶-注入基础" class="headerlink" title="四、查询进阶(注入基础)"></a>四、查询进阶(注入基础)</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">select * from city where country_code=&#x27;CHN&#x27;;             -- 条件</span><br><span class="line">select * from city where district=&#x27;山西&#x27; or district=&#x27;河北&#x27;;  -- 或</span><br><span class="line">select * from city where district=&#x27;山西&#x27; and population&gt;1000000; -- 且(注意括号)</span><br><span class="line">select * from city where name like &#x27;山%&#x27;;                -- 模糊(山开头)</span><br><span class="line">select * from city order by population desc;             -- 排序(desc 降序)</span><br><span class="line">select * from city order by population desc limit 5;     -- 前 5 名</span><br><span class="line">select * from city where population between 89000 and 90000; -- 区间</span><br><span class="line">select count(*) from city;                               -- 统计行数</span><br><span class="line">select sum(population) from city;                        -- 求和</span><br><span class="line">select concat(name,&#x27;-&#x27;,district) from city;              -- 多列拼一列</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>字符串值必须加引号(单引号)——<strong>SQL 注入的引号闭合</strong>就是从这里来的。</li>
+<li>like + 百分号通配符;order by 排序;limit 限制条数(索引从 0 开始)。</li>
+</ul>
+<h2 id="五、索引-加速查询"><a href="#五、索引-加速查询" class="headerlink" title="五、索引(加速查询)"></a>五、索引(加速查询)</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">alter table t100w add primary key(id);   -- 主键索引</span><br><span class="line">alter table t100w add unique(phone);     -- 唯一索引</span><br><span class="line">alter table t100w add index idx_name(name); -- 普通索引</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>索引 &#x3D; 数据的”目录”,百万行数据没索引查 0.3 秒,有索引秒查。</li>
+<li>where 条件用了带索引的列才生效。</li>
+<li>主键特点:不能空、不能重复、可自增(auto_increment)。</li>
+</ul>
+<h2 id="六、union-联合查询-注入关键"><a href="#六、union-联合查询-注入关键" class="headerlink" title="六、union 联合查询(注入关键)"></a>六、union 联合查询(注入关键)</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select name, district from c1</span><br><span class="line">union</span><br><span class="line">select name, population from c2;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>作用:把多个 select 结果合并成一张表;<strong>前后列数必须一致</strong>。</li>
+<li>注入常用:<code>union select 1,2,3</code>、<code>union select database(),user(),version()</code> 把数据库名&#x2F;用户&#x2F;版本显示出来。</li>
+</ul>
+<h2 id="七、存储引擎、备份与恢复"><a href="#七、存储引擎、备份与恢复" class="headerlink" title="七、存储引擎、备份与恢复"></a>七、存储引擎、备份与恢复</h2><ul>
+<li><strong>InnoDB</strong>(默认):读写均衡,2 个文件(数据 .ibd + 结构 .frm)。</li>
+<li><strong>MyISAM</strong>:读快写慢,3 个文件(数据&#x2F;索引&#x2F;结构)。</li>
+<li>备份:<code>mysqldump -u root -p 库名 &gt; 备份.sql</code>(全量备份,里面全是 SQL 语句)。</li>
+<li>恢复:<code>mysql -u root -p 库名 &lt; 备份.sql</code>。</li>
+</ul>
+<h2 id="八、重点速记"><a href="#八、重点速记" class="headerlink" title="八、重点速记"></a>八、重点速记</h2><ul>
+<li>增删改查:insert &#x2F; select &#x2F; update &#x2F; delete;删除修改必须带 where</li>
+<li>条件:where、and&#x2F;or、like、between、order by、limit</li>
+<li>字符串要加引号;count&#x2F;sum&#x2F;concat 常用</li>
+<li>索引加速:主键&#x2F;唯一&#x2F;普通;union 列数必须一致</li>
+<li>字符集 utf8mb4;InnoDB 默认;mysqldump 备份</li>
+</ul>
+<h2 id="自测题"><a href="#自测题" class="headerlink" title="自测题"></a>自测题</h2><ol>
+<li>插入、查询、修改、删除的关键字是什么?</li>
+<li>NOT NULL、DEFAULT、UNIQUE 分别控制什么?</li>
+<li>查询”山东或山西、人口大于100万”怎么写?</li>
+<li>like ‘山%’ 表示什么?</li>
+<li>order by 和 limit 的作用?</li>
+<li>索引为什么能加速?主键有什么特点?</li>
+<li>union 查询有什么要求?注入里常查哪三个函数?</li>
+<li>数据库怎么备份和恢复?</li>
+</ol>
+<details><summary>参考答案</summary>
+1. insert、select、update、delete。<br>
+2. 不能为空、默认值、不能重复。<br>
+3. `where (district='山东' or district='山西') and population>1000000`。<br>
+4. 以"山"开头的模糊匹配。<br>
+5. 排序和限制返回条数。<br>
+6. 像目录一样定位数据;主键不能空、不能重复、可自增。<br>
+7. 前后列数必须一致;database()、user()、version()。<br>
+8. mysqldump 导出成 .sql,再用 mysql < 文件导入。
+</details>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tongui66.github.io/course-notes/chapter1-web-dev/30-MySQL-%E8%BF%9B%E9%98%B6%E6%93%8D%E4%BD%9C/index.html" data-id="cuidDzdFY0_d1I5Q3S_GABrPC" data-title="30 · MySQL 进阶操作" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" style="font-size: 10px;">SQL注入</a> <a href="/tags/SSRF/" style="font-size: 10px;">SSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/XXE/" style="font-size: 10px;">XXE</a> <a href="/tags/%E4%B8%8A%E4%BC%A0/" style="font-size: 10px;">上传</a> <a href="/tags/%E4%BB%A3%E7%90%86/" style="font-size: 10px;">代理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" style="font-size: 10px;">信息收集</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" style="font-size: 10px;">命令执行</a> <a href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" style="font-size: 10px;">域渗透</a> <a href="/tags/%E5%BA%94%E6%80%A5/" style="font-size: 10px;">应急</a> <a href="/tags/%E6%8A%A4%E7%BD%91/" style="font-size: 10px;">护网</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 10px;">报告</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 10px;">提权</a> <a href="/tags/%E6%9F%A5%E6%9D%80/" style="font-size: 10px;">查杀</a> <a href="/tags/%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">流程</a> <a href="/tags/%E7%AD%89%E4%BF%9D/" style="font-size: 10px;">等保</a> <a href="/tags/%E9%9A%A7%E9%81%93/" style="font-size: 10px;">隧道</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a> <a href="/tags/%E9%A2%98%E5%BA%93/" style="font-size: 10px;">题库</a> <a href="/tags/%E9%AB%98%E9%A2%91/" style="font-size: 10px;">高频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">应急响应</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">1</span></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/08/">八月 2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/security-notes/interview-100/">面试高频问答 100 题</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/incident-response/">应急响应速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/intranet-domain/">内网渗透与域渗透速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/pentest-checklist/">渗透测试全流程速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/payload-handbook/">Web 漏洞速查与 Payload 手册</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 tongui<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/security-notes/" class="mobile-nav-link">安全笔记</a>
+  
+    <a href="/course-notes/" class="mobile-nav-link">课程</a>
+  
+    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
+  
+    <a href="/tools" class="mobile-nav-link">工具</a>
+  
+    <a href="/projects" class="mobile-nav-link">项目</a>
+  
+    <a href="/resume" class="mobile-nav-link">简历</a>
+  
+    <a href="/about" class="mobile-nav-link">关于我</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
+
+
+
+
+
+  </div>
+</body>
+</html>

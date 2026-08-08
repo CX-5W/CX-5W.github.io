@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>72 · 域渗透(口令传递与票据攻击) | tongui 的安全笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="域渗透(口令传递与票据攻击) ⭐ 一句话总结:域渗透的三种传递手法是 PTH(哈希)、PTK(密钥)、PTT(票据);NTLM 用”质询-响应”校验,哈希就能代替密码登录;Kerberos 用票据做单点认证,伪造 TGT 就是黄金票据(通票),伪造 ST 就是白银票据(单服务票),配合 mimikatz 即可打穿整个域。  学习目标 理解 Windows 本地登录与 NTLM 认证流程 掌握 PT">
+<meta property="og:type" content="website">
+<meta property="og:title" content="72 · 域渗透(口令传递与票据攻击)">
+<meta property="og:url" content="https://tongui66.github.io/course-notes/chapter4-intranet/72-%E5%9F%9F%E6%B8%97%E9%80%8F(%E5%8F%A3%E4%BB%A4%E4%BC%A0%E9%80%92%E4%B8%8E%E7%A5%A8%E6%8D%AE%E6%94%BB%E5%87%BB)/index.html">
+<meta property="og:site_name" content="tongui 的安全笔记">
+<meta property="og:description" content="域渗透(口令传递与票据攻击) ⭐ 一句话总结:域渗透的三种传递手法是 PTH(哈希)、PTK(密钥)、PTT(票据);NTLM 用”质询-响应”校验,哈希就能代替密码登录;Kerberos 用票据做单点认证,伪造 TGT 就是黄金票据(通票),伪造 ST 就是白银票据(单服务票),配合 mimikatz 即可打穿整个域。  学习目标 理解 Windows 本地登录与 NTLM 认证流程 掌握 PT">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-08T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-08T01:54:51.809Z">
+<meta property="article:author" content="tongui">
+<meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="tongui 的安全笔记" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">tongui 的安全笔记</a>
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/security-notes/">安全笔记</a>
+        
+          <a class="main-nav-link" href="/course-notes/">课程</a>
+        
+          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
+        
+          <a class="main-nav-link" href="/tools">工具</a>
+        
+          <a class="main-nav-link" href="/projects">项目</a>
+        
+          <a class="main-nav-link nav-resume" href="/resume">简历</a>
+        
+          <a class="main-nav-link" href="/about">关于我</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/tongui66"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tongui66.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/course-notes/chapter4-intranet/72-%E5%9F%9F%E6%B8%97%E9%80%8F(%E5%8F%A3%E4%BB%A4%E4%BC%A0%E9%80%92%E4%B8%8E%E7%A5%A8%E6%8D%AE%E6%94%BB%E5%87%BB)/index.html" class="article-date">
+  <time class="dt-published" datetime="2026-08-08T02:00:00.000Z" itemprop="datePublished">2026-08-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      72 · 域渗透(口令传递与票据攻击)
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="域渗透-口令传递与票据攻击"><a href="#域渗透-口令传递与票据攻击" class="headerlink" title="域渗透(口令传递与票据攻击)"></a>域渗透(口令传递与票据攻击)</h1><blockquote>
+<p>⭐ <strong>一句话总结</strong>:域渗透的三种传递手法是 PTH(哈希)、PTK(密钥)、PTT(票据);NTLM 用”质询-响应”校验,哈希就能代替密码登录;Kerberos 用票据做单点认证,伪造 TGT 就是黄金票据(通票),伪造 ST 就是白银票据(单服务票),配合 mimikatz 即可打穿整个域。</p>
+</blockquote>
+<h2 id="学习目标"><a href="#学习目标" class="headerlink" title="学习目标"></a>学习目标</h2><ul>
+<li>理解 Windows 本地登录与 NTLM 认证流程</li>
+<li>掌握 PTH&#x2F;PTK&#x2F;PTT 三种传递攻击</li>
+<li>理解 Kerberos 认证与 TGT&#x2F;ST 票据</li>
+<li>掌握黄金票据、白银票据的伪造条件与用途</li>
+</ul>
+<h2 id="一、Windows-认证基础"><a href="#一、Windows-认证基础" class="headerlink" title="一、Windows 认证基础"></a>一、Windows 认证基础</h2><h3 id="本地登录认证"><a href="#本地登录认证" class="headerlink" title="本地登录认证"></a>本地登录认证</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入密码 → winlogon.exe 调出登录界面 → lsass.exe 接收</span><br><span class="line">→ 对密码做哈希 → 与 SAM 数据库(SYSTEM32\config\SAM)比对 → 相同即登录成功</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>SAM 中只存<strong>密文哈希</strong>,内存中不留明文。</li>
+<li>本地登录、远程桌面输入密码都属于本地认证。</li>
+</ul>
+<h3 id="NTLM-认证-工作组-网络访问"><a href="#NTLM-认证-工作组-网络访问" class="headerlink" title="NTLM 认证(工作组&#x2F;网络访问)"></a>NTLM 认证(工作组&#x2F;网络访问)</h3><p>凡是在网络上访问共享资源,都会走 NTLM”质询-响应”流程,三个消息:</p>
+<table>
+<thead>
+<tr>
+<th>消息</th>
+<th>名称</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Type 1</td>
+<td>协商</td>
+<td>客户端支持&#x2F;请求的协议版本与功能列表</td>
+</tr>
+<tr>
+<td>Type 2</td>
+<td>质询</td>
+<td>服务端产生 16 字节随机数 Challenge</td>
+</tr>
+<tr>
+<td>Type 3</td>
+<td>响应</td>
+<td>客户端用 NTLM 哈希加密 Challenge 得到 Response,连同用户名返回</td>
+</tr>
+</tbody></table>
+<p>服务端用自己 SAM 里存的哈希加密同一个 Challenge,和 Response 对比,相同即通过。全程无明文密码传输。</p>
+<h3 id="域环境认证"><a href="#域环境认证" class="headerlink" title="域环境认证"></a>域环境认证</h3><ul>
+<li>域用户信息存在 <strong>DC</strong> 上,成员机没有。</li>
+<li>域用户访问资源时,成员机通过 <strong>netlogon</strong> 协议与 DC 建立安全通道,把 Type 1&#x2F;2&#x2F;3 转发给 DC 认证。</li>
+<li>域里默认同时存在 NTLM 与 Kerberos 两种认证;Kerberos 异常时自动回退到 NTLM。</li>
+</ul>
+<h2 id="二、三种传递攻击-PTH-PTK-PTT"><a href="#二、三种传递攻击-PTH-PTK-PTT" class="headerlink" title="二、三种传递攻击(PTH&#x2F;PTK&#x2F;PTT)"></a>二、三种传递攻击(PTH&#x2F;PTK&#x2F;PTT)</h2><table>
+<thead>
+<tr>
+<th>攻击</th>
+<th>全称</th>
+<th>利用凭据</th>
+<th>针对协议</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>PTH</td>
+<td>Pass the Hash</td>
+<td>NTLM 哈希</td>
+<td>NTLM</td>
+</tr>
+<tr>
+<td>PTK</td>
+<td>Pass the Key</td>
+<td>AES256-HMAC(K 值)</td>
+<td>NTLM(打了补丁的系统)</td>
+</tr>
+<tr>
+<td>PTT</td>
+<td>Pass the Ticket</td>
+<td>票据(TGT&#x2F;ST)</td>
+<td>Kerberos</td>
+</tr>
+</tbody></table>
+<h3 id="PTH-示例-mimikatz"><a href="#PTH-示例-mimikatz" class="headerlink" title="PTH 示例(mimikatz)"></a>PTH 示例(mimikatz)</h3><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mimikatz.exe &quot;privilege::debug&quot; &quot;sekurlsa::pth /user:administrator /domain:god.org /ntlm:&lt;NTLM哈希&gt;&quot;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>会弹出一个新窗口,只有在这个窗口内可以用 <code>net use \\192.168.241.21\c$</code> 直接访问目标(如域控)资源。</li>
+<li>工具包:微软自带工具(知道明文时用);<strong>impacket</strong>(psexec&#x2F;wmiexec&#x2F;secretsdump)支持哈希传递。</li>
+</ul>
+<h3 id="RDP-哈希传递"><a href="#RDP-哈希传递" class="headerlink" title="RDP 哈希传递"></a>RDP 哈希传递</h3><ul>
+<li>依赖远程桌面的 <strong>Restricted Admin(受限制管理员)</strong> 特性。</li>
+<li>Win7 需手动开启,Win8&#x2F;2012R2 默认开启;老系统需装补丁。</li>
+<li>相关 RDP 漏洞:MS12-020、CVE-2019-0708(BlueKeep)。</li>
+</ul>
+<h3 id="PTK-示例"><a href="#PTK-示例" class="headerlink" title="PTK 示例"></a>PTK 示例</h3><ul>
+<li>拿不到明文&#x2F;哈希时,若 mimikatz 收集到 <code>AES256-HMAC</code> 值,也能免密登录:</li>
+</ul>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mimikatz.exe &quot;privilege::debug&quot; &quot;sekurlsa::pth /user:mary /domain:god.org /aes256:&lt;AES256-HMAC值&gt;&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="三、Kerberos-认证流程"><a href="#三、Kerberos-认证流程" class="headerlink" title="三、Kerberos 认证流程"></a>三、Kerberos 认证流程</h2><h3 id="角色与名词"><a href="#角色与名词" class="headerlink" title="角色与名词"></a>角色与名词</h3><table>
+<thead>
+<tr>
+<th>名词</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>KDC</td>
+<td>密钥分发中心,运行在 DC 上</td>
+</tr>
+<tr>
+<td>AS</td>
+<td>身份验证服务,验证用户身份并签发 TGT</td>
+</tr>
+<tr>
+<td>TGS</td>
+<td>票据发放服务,用 TGT 换服务票据(ST)</td>
+</tr>
+<tr>
+<td>TGT</td>
+<td>黄金票据,类似”游乐园通票”</td>
+</tr>
+<tr>
+<td>ST&#x2F;TGS 票据</td>
+<td>白银票据,只能访问某一个服务</td>
+</tr>
+<tr>
+<td>SPN</td>
+<td>服务主体名称,注册在 AD 中,用于定位服务</td>
+</tr>
+<tr>
+<td>krbtgt</td>
+<td>DC 内置账户,TGT 用它加密,哈希固定</td>
+</tr>
+</tbody></table>
+<h3 id="认证流程"><a href="#认证流程" class="headerlink" title="认证流程"></a>认证流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">① 客户端 → AS:  AS-REQ(用自己NTLM哈希加密时间戳 + 用户名 + SPN/域名)</span><br><span class="line">② AS 校验用户、解密时间戳(有效期约5分钟,防重放/爆破)</span><br><span class="line">③ AS → 客户端: SessionKey + TGT(用 krbtgt 哈希加密,客户端解不开)</span><br><span class="line">④ 客户端 → TGS: TGT + 用 SessionKey 加密的 Authenticator</span><br><span class="line">⑤ TGS 校验后签发 ST(白银票据),客户端带 ST 访问目标服务</span><br><span class="line">⑥ 服务端校验 ST 后放行,全程加密、无需重复输密码</span><br></pre></td></tr></table></figure>
+
+<p>票据缓存默认约 <strong>10 小时</strong>;期间拿到主机就能直接提取、注入他人缓存的票据。</p>
+<h2 id="四、黄金票据与白银票据"><a href="#四、黄金票据与白银票据" class="headerlink" title="四、黄金票据与白银票据"></a>四、黄金票据与白银票据</h2><h3 id="黄金票据-TGT"><a href="#黄金票据-TGT" class="headerlink" title="黄金票据(TGT)"></a>黄金票据(TGT)</h3><ul>
+<li>伪造 TGT,像”通票”:可向 TGS 申请访问<strong>任意服务&#x2F;任意主机</strong>的票据,连域控都能访问。</li>
+<li>伪造条件:<strong>krbtgt 的哈希值 + 域 SID</strong>(条件苛刻)。</li>
+</ul>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mimikatz.exe &quot;privilege::debug&quot; &quot;kerberos::golden /admin:system /domain:god.org /sid:S-<span class="number">1</span>-<span class="number">5</span>-<span class="number">21</span>-xxx /krbtgt:&lt;哈希&gt;&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="白银票据-ST-TGS-票据"><a href="#白银票据-ST-TGS-票据" class="headerlink" title="白银票据(ST&#x2F;TGS 票据)"></a>白银票据(ST&#x2F;TGS 票据)</h3><ul>
+<li>伪造某个服务的 ST,只能访问<strong>单个服务</strong>(如 CIFS 文件服务)。</li>
+<li>伪造条件:域名、客户端 SID、目标服务器计算机全名、目标服务器某用户(常用 administrator)哈希、服务名称、要伪装的用户名。</li>
+<li>mimikatz 的 <code>kerberos::golden</code> 功能同样能生成白银票据;默认有效期较短(示例约 20 分钟),过期可再伪造。</li>
+</ul>
+<h3 id="区别速记"><a href="#区别速记" class="headerlink" title="区别速记"></a>区别速记</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">黄金票据 = 通票:任意申请服务票据,能打整个域</span><br><span class="line">白银票据 = 单项票:只能访问指定服务</span><br></pre></td></tr></table></figure>
+
+<h3 id="票据操作"><a href="#票据操作" class="headerlink" title="票据操作"></a>票据操作</h3><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">klist                    # 查看本机缓存票据</span><br><span class="line">klist purge              # 清除缓存票据</span><br><span class="line">mimikatz &quot;kerberos::ptt &lt;票据文件&gt;&quot;   # 注入票据</span><br></pre></td></tr></table></figure>
+
+<h2 id="五、MS14-068-黄金票据漏洞"><a href="#五、MS14-068-黄金票据漏洞" class="headerlink" title="五、MS14-068(黄金票据漏洞)"></a>五、MS14-068(黄金票据漏洞)</h2><ul>
+<li>域内漏洞,可用普通域用户生成 TGT 提权;补丁编号 <strong>KB3011780</strong>。</li>
+<li>查询是否打补丁:</li>
+</ul>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wmic qfe get hotfixid | <span class="built_in">findstr</span> <span class="number">3011780</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>利用前提(信息收集):域成员用户名、域名、密码、SID、域控 IP。</li>
+</ul>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MS14-<span class="number">068</span>.exe -u mary@god.org -s &lt;SID&gt; -d &lt;DC_IP&gt; -p &lt;当前用户密码&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>生成 TGT 票据 → 清除旧票据 → <code>kerberos::ptt</code> 导入 → <code>dir \\DC域名\c$</code> 直接访问域控。</li>
+</ul>
+<h2 id="六、票据攻击的定位"><a href="#六、票据攻击的定位" class="headerlink" title="六、票据攻击的定位"></a>六、票据攻击的定位</h2><ul>
+<li><strong>权限维持</strong>:即使域控被清理,只要留有 krbtgt 哈希,仍可随时伪造黄金票据重新掌控域。</li>
+<li><strong>利用缓存票据</strong>:拿下主机后检查未过期(10 小时内)的票据,导出、注入直接使用,但靠运气。</li>
+<li>常用工具:mimikatz、impacket、kekeo、CS + ladon 插件(集成信息收集、PTH&#x2F;PTT、漏洞扫描)。</li>
+</ul>
+<h2 id="七、重点速记"><a href="#七、重点速记" class="headerlink" title="七、重点速记"></a>七、重点速记</h2><ul>
+<li>本地登录查 SAM;网络访问走 NTLM 质询-响应;域用户认证经 DC&#x2F;netlogon</li>
+<li>PTH 用哈希、PTK 用 AES256 密钥、PTT 用票据</li>
+<li>mimikatz:<code>sekurlsa::logonpasswords</code> 抓凭据,<code>sekurlsa::pth</code> 传递,<code>kerberos::ptt</code> 注入票据</li>
+<li>RDP 哈希传递依赖 Restricted Admin,版本有限制</li>
+<li>Kerberos 三角色:KDC&#x2F;AS&#x2F;TGS;时间戳防重放(约 5 分钟);票据缓存 10 小时</li>
+<li>TGT&#x3D;黄金票据&#x3D;通票;ST&#x3D;白银票据&#x3D;单服务票</li>
+<li>伪造黄金票据要 krbtgt 哈希+SID;白银票据要目标服务用户哈希+SID 等</li>
+<li>MS14-068 打补丁 KB3011780;票据攻击常用于权限维持</li>
+</ul>
+<h2 id="自测题"><a href="#自测题" class="headerlink" title="自测题"></a>自测题</h2><ol>
+<li>本地登录认证的完整流程?</li>
+<li>NTLM 认证的三个消息分别是什么?</li>
+<li>域用户访问资源时在哪里认证?</li>
+<li>PTH、PTK、PTT 分别利用什么?</li>
+<li>mimikatz 做 PTH 的核心命令?</li>
+<li>RDP 哈希传递依赖什么特性?哪些系统默认开启?</li>
+<li>Kerberos 中 KDC、AS、TGS、TGT、ST 分别是什么?</li>
+<li>为什么 AS 要加密时间戳?</li>
+<li>黄金票据和白银票据的区别?</li>
+<li>伪造黄金票据需要什么条件?</li>
+<li>伪造白银票据需要什么条件?</li>
+<li>MS14-068 对应补丁编号是多少?利用前需要收集哪些信息?</li>
+<li>查看和清除本机缓存票据的命令?</li>
+<li>票据攻击常被用来做什么?</li>
+</ol>
+<details><summary>参考答案</summary>
+1. 输入密码 → winlogon 接收 → lsass 哈希比对 SAM 数据库。<br>
+2. Type1 协商、Type2 质询(Challenge)、Type3 响应(用哈希加密 Challenge)。<br>
+3. 在域控 DC 上认证,成员机通过 netlogon 把认证数据转发给 DC。<br>
+4. PTH 用 NTLM 哈希,PTK 用 AES256-HMAC 密钥,PTT 用 Kerberos 票据。<br>
+5. sekurlsa::pth /user:xxx /domain:xxx /ntlm:哈希。<br>
+6. Restricted Admin 受限制管理员特性;Win8 和 2012R2 默认开启。<br>
+7. KDC 密钥分发中心(在 DC),AS 身份验证服务, TGS 票据发放服务,TGT 黄金票据,ST 白银票据。<br>
+8. 防中间人篡改和重放爆破,时间戳有效约 5 分钟。<br>
+9. 黄金票据是 TGT 通票可访问任意服务;白银票据是 ST 只能访问单个服务。<br>
+10. krbtgt 用户的哈希值和域 SID。<br>
+11. 域名、客户端 SID、目标服务器计算机全名、目标服务用户哈希、服务名称、伪装用户名。<br>
+12. KB3011780;需要域成员用户名、域名、密码、SID、域控 IP。<br>
+13. klist 查看,klist purge 清除。<br>
+14. 权限维持:被清理后仍可伪造票据重新控制域。<br>
+</details>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tongui66.github.io/course-notes/chapter4-intranet/72-%E5%9F%9F%E6%B8%97%E9%80%8F(%E5%8F%A3%E4%BB%A4%E4%BC%A0%E9%80%92%E4%B8%8E%E7%A5%A8%E6%8D%AE%E6%94%BB%E5%87%BB)/index.html" data-id="cuid5LZc8BgN9_fruFK-SOezM" data-title="72 · 域渗透(口令传递与票据攻击)" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" style="font-size: 10px;">SQL注入</a> <a href="/tags/SSRF/" style="font-size: 10px;">SSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/XXE/" style="font-size: 10px;">XXE</a> <a href="/tags/%E4%B8%8A%E4%BC%A0/" style="font-size: 10px;">上传</a> <a href="/tags/%E4%BB%A3%E7%90%86/" style="font-size: 10px;">代理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" style="font-size: 10px;">信息收集</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" style="font-size: 10px;">命令执行</a> <a href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" style="font-size: 10px;">域渗透</a> <a href="/tags/%E5%BA%94%E6%80%A5/" style="font-size: 10px;">应急</a> <a href="/tags/%E6%8A%A4%E7%BD%91/" style="font-size: 10px;">护网</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 10px;">报告</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 10px;">提权</a> <a href="/tags/%E6%9F%A5%E6%9D%80/" style="font-size: 10px;">查杀</a> <a href="/tags/%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">流程</a> <a href="/tags/%E7%AD%89%E4%BF%9D/" style="font-size: 10px;">等保</a> <a href="/tags/%E9%9A%A7%E9%81%93/" style="font-size: 10px;">隧道</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a> <a href="/tags/%E9%A2%98%E5%BA%93/" style="font-size: 10px;">题库</a> <a href="/tags/%E9%AB%98%E9%A2%91/" style="font-size: 10px;">高频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">应急响应</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">1</span></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/08/">八月 2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/security-notes/interview-100/">面试高频问答 100 题</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/incident-response/">应急响应速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/intranet-domain/">内网渗透与域渗透速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/pentest-checklist/">渗透测试全流程速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/payload-handbook/">Web 漏洞速查与 Payload 手册</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 tongui<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/security-notes/" class="mobile-nav-link">安全笔记</a>
+  
+    <a href="/course-notes/" class="mobile-nav-link">课程</a>
+  
+    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
+  
+    <a href="/tools" class="mobile-nav-link">工具</a>
+  
+    <a href="/projects" class="mobile-nav-link">项目</a>
+  
+    <a href="/resume" class="mobile-nav-link">简历</a>
+  
+    <a href="/about" class="mobile-nav-link">关于我</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
+
+
+
+
+
+  </div>
+</body>
+</html>

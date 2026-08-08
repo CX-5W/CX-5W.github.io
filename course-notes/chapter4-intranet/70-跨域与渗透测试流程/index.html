@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>70 · 跨域与渗透测试流程 | tongui 的安全笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="跨域与渗透测试流程 ⭐ 一句话总结:跨域解决”不同源网站如何交换数据”;渗透测试流程则是”扫描→手工验证→报告→复测”,打点还要走”拿Shell→免杀→提权→权限维持→内网渗透”。  学习目标 理解同源策略与跨域方式 掌握渗透测试完整流程 会写渗透测试报告  一、同源策略 同源三要素:协议 + 域名 + 端口 全部相同。 只要一项不同就是非同源,浏览器会拦截响应数据(请求能发出去)。 目的:防止恶">
+<meta property="og:type" content="website">
+<meta property="og:title" content="70 · 跨域与渗透测试流程">
+<meta property="og:url" content="https://tongui66.github.io/course-notes/chapter4-intranet/70-%E8%B7%A8%E5%9F%9F%E4%B8%8E%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E6%B5%81%E7%A8%8B/index.html">
+<meta property="og:site_name" content="tongui 的安全笔记">
+<meta property="og:description" content="跨域与渗透测试流程 ⭐ 一句话总结:跨域解决”不同源网站如何交换数据”;渗透测试流程则是”扫描→手工验证→报告→复测”,打点还要走”拿Shell→免杀→提权→权限维持→内网渗透”。  学习目标 理解同源策略与跨域方式 掌握渗透测试完整流程 会写渗透测试报告  一、同源策略 同源三要素:协议 + 域名 + 端口 全部相同。 只要一项不同就是非同源,浏览器会拦截响应数据(请求能发出去)。 目的:防止恶">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-08T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-08T01:54:51.802Z">
+<meta property="article:author" content="tongui">
+<meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="tongui 的安全笔记" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">tongui 的安全笔记</a>
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/security-notes/">安全笔记</a>
+        
+          <a class="main-nav-link" href="/course-notes/">课程</a>
+        
+          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
+        
+          <a class="main-nav-link" href="/tools">工具</a>
+        
+          <a class="main-nav-link" href="/projects">项目</a>
+        
+          <a class="main-nav-link nav-resume" href="/resume">简历</a>
+        
+          <a class="main-nav-link" href="/about">关于我</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/tongui66"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tongui66.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/course-notes/chapter4-intranet/70-%E8%B7%A8%E5%9F%9F%E4%B8%8E%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E6%B5%81%E7%A8%8B/index.html" class="article-date">
+  <time class="dt-published" datetime="2026-08-08T02:00:00.000Z" itemprop="datePublished">2026-08-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      70 · 跨域与渗透测试流程
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="跨域与渗透测试流程"><a href="#跨域与渗透测试流程" class="headerlink" title="跨域与渗透测试流程"></a>跨域与渗透测试流程</h1><blockquote>
+<p>⭐ <strong>一句话总结</strong>:跨域解决”不同源网站如何交换数据”;渗透测试流程则是”扫描→手工验证→报告→复测”,打点还要走”拿Shell→免杀→提权→权限维持→内网渗透”。</p>
+</blockquote>
+<h2 id="学习目标"><a href="#学习目标" class="headerlink" title="学习目标"></a>学习目标</h2><ul>
+<li>理解同源策略与跨域方式</li>
+<li>掌握渗透测试完整流程</li>
+<li>会写渗透测试报告</li>
+</ul>
+<h2 id="一、同源策略"><a href="#一、同源策略" class="headerlink" title="一、同源策略"></a>一、同源策略</h2><ul>
+<li><strong>同源三要素</strong>:协议 + 域名 + 端口 全部相同。</li>
+<li>只要一项不同就是非同源,浏览器会拦截<strong>响应数据</strong>(请求能发出去)。</li>
+<li>目的:防止恶意网站盗取其他网站数据。</li>
+</ul>
+<h2 id="二、跨域方式"><a href="#二、跨域方式" class="headerlink" title="二、跨域方式"></a>二、跨域方式</h2><h3 id="1-CORS"><a href="#1-CORS" class="headerlink" title="1. CORS"></a>1. CORS</h3><ul>
+<li>服务端响应头加 <code>Access-Control-Allow-Origin: 指定域名</code>(或 *),浏览器放行。</li>
+</ul>
+<h3 id="2-跨域标签"><a href="#2-跨域标签" class="headerlink" title="2. 跨域标签"></a>2. 跨域标签</h3><ul>
+<li>五大标签默认跨域:script、img、link、iframe、a(href)。</li>
+<li>可用于加载外部 JS(配合存储型 XSS 做大段攻击代码)。</li>
+</ul>
+<h3 id="3-JSONP"><a href="#3-JSONP" class="headerlink" title="3. JSONP"></a>3. JSONP</h3><ul>
+<li>利用 <code>&lt;script src=&quot;接口?callback=函数名&quot;&gt;</code>,服务端返回 <code>函数名(数据)</code>。</li>
+<li>需双方约定回调函数名,定制性好。</li>
+</ul>
+<h2 id="三、渗透测试流程-常规"><a href="#三、渗透测试流程-常规" class="headerlink" title="三、渗透测试流程(常规)"></a>三、渗透测试流程(常规)</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">资产 → 漏洞扫描(Web+系统) → 手工验证 → 漏扫报告 → 渗透测试报告 → 复测</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><strong>漏洞扫描</strong>:AWVS&#x2F;AppScan&#x2F;Xray(Web),Nessus(系统)。</li>
+<li><strong>手工验证</strong>:<ul>
+<li>验证扫描器报出的漏洞(注入&#x2F;XSS 等)</li>
+<li>主动挖掘<strong>逻辑漏洞、越权、未授权访问</strong>(扫描器扫不出)</li>
+</ul>
+</li>
+<li>出报告:漏洞名称、URL、数据包、证据截图、修复建议。</li>
+<li><strong>复测</strong>:标记已修复&#x2F;未修复。</li>
+</ol>
+<h2 id="四、打点流程-攻击"><a href="#四、打点流程-攻击" class="headerlink" title="四、打点流程(攻击)"></a>四、打点流程(攻击)</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">信息收集 → 漏洞扫描 → 手工验证 → 拿Shell → 免杀 → 提权 → 权限维持 → 内网渗透</span><br></pre></td></tr></table></figure>
+
+<h2 id="五、手工验证细节"><a href="#五、手工验证细节" class="headerlink" title="五、手工验证细节"></a>五、手工验证细节</h2><ul>
+<li>先检测&#x2F;绕过 WAF;前端&#x2F;后端过滤都要考虑。</li>
+<li>工具优先:sqlmap(可 –tamper 过 WAF),不行再手工。</li>
+<li>回显情况:有回显直接取数;无回显用报错注入&#x2F;盲注&#x2F;DNSlog。</li>
+<li>注入利用:<ul>
+<li>读数据(库&#x2F;表&#x2F;密码)</li>
+<li>getshell:三个前提——<code>into outfile</code> 可用、知道网站代码目录、目录有写权限。</li>
+</ul>
+</li>
+</ul>
+<h2 id="六、参数化查询-PDO-预处理"><a href="#六、参数化查询-PDO-预处理" class="headerlink" title="六、参数化查询(PDO 预处理)"></a>六、参数化查询(PDO 预处理)</h2><ul>
+<li>把用户输入整体当作<strong>值</strong>查询,不当作 SQL 语句执行 → 注入失效。</li>
+<li>这是 SQL 注入”绝对防御”,发现后无需再测该点。</li>
+</ul>
+<h2 id="七、拿-Shell-姿势"><a href="#七、拿-Shell-姿势" class="headerlink" title="七、拿 Shell 姿势"></a>七、拿 Shell 姿势</h2><ul>
+<li>文件上传(最直观)</li>
+<li>SQL 注入 <code>into outfile</code> 写一句话木马</li>
+<li>系统&#x2F;中间件漏洞</li>
+<li>一句话木马:<code>&lt;?php @eval($_POST[&#39;x&#39;]);?&gt;</code></li>
+</ul>
+<h2 id="八、报告要点"><a href="#八、报告要点" class="headerlink" title="八、报告要点"></a>八、报告要点</h2><ul>
+<li>漏洞名称、级别、URL、数据包、复现 payload、证据截图、修复建议。</li>
+<li>报告模板:风险评估、渗透测试报告、复测报告。</li>
+</ul>
+<h2 id="九、重点速记"><a href="#九、重点速记" class="headerlink" title="九、重点速记"></a>九、重点速记</h2><ul>
+<li>同源:协议+域名+端口</li>
+<li>跨域:CORS 响应头、五大标签、JSONP</li>
+<li>流程:扫描→验证→报告→复测</li>
+<li>打点:拿Shell→免杀→提权→维持→内网</li>
+<li>注入利用前提:into outfile+目录路径+写权限</li>
+<li>参数化查询防注入</li>
+<li>报告要有证据截图和修复建议</li>
+</ul>
+<h2 id="自测题"><a href="#自测题" class="headerlink" title="自测题"></a>自测题</h2><ol>
+<li>同源三要素是什么?</li>
+<li>浏览器同源机制拦截的是什么?</li>
+<li>跨域有哪几种方式?</li>
+<li>CORS 怎么实现?</li>
+<li>渗透测试完整流程?</li>
+<li>为什么逻辑漏洞要手工挖?</li>
+<li>SQL 注入 getshell 的三个前提?</li>
+<li>参数化查询为什么防注入?</li>
+<li>无回显时怎么注入?</li>
+<li>渗透测试报告要包含什么?</li>
+</ol>
+<details><summary>参考答案</summary>
+1. 协议、域名、端口。<br>
+2. 响应数据(请求能发出去)。<br>
+3. CORS、跨域标签、JSONP。<br>
+4. 响应头加Access-Control-Allow-Origin。<br>
+5. 扫描→手工验证→报告→复测。<br>
+6. 逻辑/越权是程序员逻辑缺陷,扫描器无法分析。<br>
+7. into outfile可用、知道代码目录、目录可写。<br>
+8. 输入被当成值而不是SQL语句执行。<br>
+9. 报错注入、盲注、DNSlog外带。<br>
+10. 漏洞名称、URL、数据包、截图、修复建议。<br>
+</details>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tongui66.github.io/course-notes/chapter4-intranet/70-%E8%B7%A8%E5%9F%9F%E4%B8%8E%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E6%B5%81%E7%A8%8B/index.html" data-id="cuidJVJXOFEI8VjE8Ik9Y-BhG" data-title="70 · 跨域与渗透测试流程" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" style="font-size: 10px;">SQL注入</a> <a href="/tags/SSRF/" style="font-size: 10px;">SSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/XXE/" style="font-size: 10px;">XXE</a> <a href="/tags/%E4%B8%8A%E4%BC%A0/" style="font-size: 10px;">上传</a> <a href="/tags/%E4%BB%A3%E7%90%86/" style="font-size: 10px;">代理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" style="font-size: 10px;">信息收集</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" style="font-size: 10px;">命令执行</a> <a href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" style="font-size: 10px;">域渗透</a> <a href="/tags/%E5%BA%94%E6%80%A5/" style="font-size: 10px;">应急</a> <a href="/tags/%E6%8A%A4%E7%BD%91/" style="font-size: 10px;">护网</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 10px;">报告</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 10px;">提权</a> <a href="/tags/%E6%9F%A5%E6%9D%80/" style="font-size: 10px;">查杀</a> <a href="/tags/%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">流程</a> <a href="/tags/%E7%AD%89%E4%BF%9D/" style="font-size: 10px;">等保</a> <a href="/tags/%E9%9A%A7%E9%81%93/" style="font-size: 10px;">隧道</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a> <a href="/tags/%E9%A2%98%E5%BA%93/" style="font-size: 10px;">题库</a> <a href="/tags/%E9%AB%98%E9%A2%91/" style="font-size: 10px;">高频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">应急响应</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">1</span></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/08/">八月 2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/security-notes/interview-100/">面试高频问答 100 题</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/incident-response/">应急响应速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/intranet-domain/">内网渗透与域渗透速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/pentest-checklist/">渗透测试全流程速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/payload-handbook/">Web 漏洞速查与 Payload 手册</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 tongui<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/security-notes/" class="mobile-nav-link">安全笔记</a>
+  
+    <a href="/course-notes/" class="mobile-nav-link">课程</a>
+  
+    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
+  
+    <a href="/tools" class="mobile-nav-link">工具</a>
+  
+    <a href="/projects" class="mobile-nav-link">项目</a>
+  
+    <a href="/resume" class="mobile-nav-link">简历</a>
+  
+    <a href="/about" class="mobile-nav-link">关于我</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
+
+
+
+
+
+  </div>
+</body>
+</html>

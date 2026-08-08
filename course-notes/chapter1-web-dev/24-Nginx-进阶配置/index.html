@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>24 · Nginx 进阶配置 | tongui 的安全笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Nginx 进阶配置 ⭐ 一句话总结:一个 Nginx 能跑 N 个网站(端口&#x2F;IP&#x2F;域名三种玩法);日志、SSL、跳转、压缩、访问控制、目录浏览都是安全运维必会配置——渗透测试先看的就是这些配置。  学习目标 会用多端口&#x2F;多 IP&#x2F;多域名部署多个站点 会用 include 拆分站点配置 会配访问日志、basic 认证、SSL 证书 会配 HTTP→HTTP">
+<meta property="og:type" content="website">
+<meta property="og:title" content="24 · Nginx 进阶配置">
+<meta property="og:url" content="https://tongui66.github.io/course-notes/chapter1-web-dev/24-Nginx-%E8%BF%9B%E9%98%B6%E9%85%8D%E7%BD%AE/index.html">
+<meta property="og:site_name" content="tongui 的安全笔记">
+<meta property="og:description" content="Nginx 进阶配置 ⭐ 一句话总结:一个 Nginx 能跑 N 个网站(端口&#x2F;IP&#x2F;域名三种玩法);日志、SSL、跳转、压缩、访问控制、目录浏览都是安全运维必会配置——渗透测试先看的就是这些配置。  学习目标 会用多端口&#x2F;多 IP&#x2F;多域名部署多个站点 会用 include 拆分站点配置 会配访问日志、basic 认证、SSL 证书 会配 HTTP→HTTP">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-08T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-08T01:54:51.737Z">
+<meta property="article:author" content="tongui">
+<meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="tongui 的安全笔记" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">tongui 的安全笔记</a>
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/security-notes/">安全笔记</a>
+        
+          <a class="main-nav-link" href="/course-notes/">课程</a>
+        
+          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
+        
+          <a class="main-nav-link" href="/tools">工具</a>
+        
+          <a class="main-nav-link" href="/projects">项目</a>
+        
+          <a class="main-nav-link nav-resume" href="/resume">简历</a>
+        
+          <a class="main-nav-link" href="/about">关于我</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/tongui66"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tongui66.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/course-notes/chapter1-web-dev/24-Nginx-%E8%BF%9B%E9%98%B6%E9%85%8D%E7%BD%AE/index.html" class="article-date">
+  <time class="dt-published" datetime="2026-08-08T02:00:00.000Z" itemprop="datePublished">2026-08-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      24 · Nginx 进阶配置
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Nginx-进阶配置"><a href="#Nginx-进阶配置" class="headerlink" title="Nginx 进阶配置"></a>Nginx 进阶配置</h1><blockquote>
+<p>⭐ <strong>一句话总结</strong>:一个 Nginx 能跑 N 个网站(端口&#x2F;IP&#x2F;域名三种玩法);日志、SSL、跳转、压缩、访问控制、目录浏览都是安全运维必会配置——渗透测试先看的就是这些配置。</p>
+</blockquote>
+<h2 id="学习目标"><a href="#学习目标" class="headerlink" title="学习目标"></a>学习目标</h2><ul>
+<li>会用多端口&#x2F;多 IP&#x2F;多域名部署多个站点</li>
+<li>会用 include 拆分站点配置</li>
+<li>会配访问日志、basic 认证、SSL 证书</li>
+<li>会配 HTTP→HTTPS 跳转(return&#x2F;rewrite)、gzip 压缩</li>
+<li>理解目录浏览、访问控制、location 优先级</li>
+</ul>
+<h2 id="一、一个-Nginx-部署多个站点"><a href="#一、一个-Nginx-部署多个站点" class="headerlink" title="一、一个 Nginx 部署多个站点"></a>一、一个 Nginx 部署多个站点</h2><h3 id="1-多端口"><a href="#1-多端口" class="headerlink" title="1. 多端口"></a>1. 多端口</h3><p>复制多个 <code>server{}</code>,每个用不同 <code>listen</code>(80&#x2F;81&#x2F;82)+ 不同 <code>root</code>(站点根目录),<code>charset utf-8</code> 解决中文乱码。</p>
+<h3 id="2-多-IP"><a href="#2-多-IP" class="headerlink" title="2. 多 IP"></a>2. 多 IP</h3><ul>
+<li>给网卡配多个 IP(Linux:<code>IPADDR1/2/3</code> 写在 ifcfg 文件),每个 server 用 <code>listen 192.168.61.139:80</code> 绑定不同 IP,共用 80 端口。</li>
+<li>缺点:公网 IP 要花钱买。</li>
+</ul>
+<h3 id="3-多域名-最常用"><a href="#3-多域名-最常用" class="headerlink" title="3. 多域名(最常用)"></a>3. 多域名(最常用)</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    server_name a.jadon.com;      # 每个站点一个域名</span><br><span class="line">    root /web/one;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>一个公网 IP + 多个域名即可;本地实验改 <code>C:\Windows\System32\drivers\etc\hosts</code> 把域名指向服务器 IP。</li>
+<li>多个 server 可用 <code>default_server</code> 指定”兜底网站”(访问不匹配的域名时展示)。</li>
+</ul>
+<h2 id="二、include-拆分配置"><a href="#二、include-拆分配置" class="headerlink" title="二、include 拆分配置"></a>二、include 拆分配置</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">include /etc/nginx/conf.d/*.conf;    # 主配置引入 conf.d 下所有 conf</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>每个站点一个独立 conf 文件(如 <code>a.jadon.com.conf</code>),管理方便、不易误删。</li>
+<li>停用某站点:把文件名后缀改成非 .conf(如 .stop)即可,不用删文件。</li>
+</ul>
+<h2 id="三、日志配置"><a href="#三、日志配置" class="headerlink" title="三、日志配置"></a>三、日志配置</h2><ul>
+<li>访问日志:<code>/var/log/nginx/access.log</code>;错误日志:<code>error.log</code>(按天切割)。</li>
+<li>网络安全法要求:日志保留<strong>不少于 6 个月</strong>,用于<strong>攻击溯源</strong>(根据 IP 追查攻击者)。</li>
+<li>自定义格式:<code>log_format jadon &#39;$time_local $remote_addr &quot;$request&quot; $status $body_bytes_sent&#39;;</code> 再在站点里 <code>access_log /opt/nginx/a.log jadon;</code>。</li>
+<li>常用变量:remote_addr(客户端 IP)、time_local(时间)、request(请求行)、status(状态码)、body_bytes_sent(响应大小)、http_referer(来源)、http_user_agent(浏览器)。</li>
+<li>注意:网页一刷新会请求图片&#x2F;CSS&#x2F;JS 等<strong>大量资源</strong>,所以日志很多行;日志目录要给 nginx 用户权限(chown nginx)。</li>
+</ul>
+<h2 id="四、basic-认证-给网站加锁"><a href="#四、basic-认证-给网站加锁" class="headerlink" title="四、basic 认证(给网站加锁)"></a>四、basic 认证(给网站加锁)</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">auth_basic &quot;需要登录&quot;;            # 开启认证</span><br><span class="line">auth_basic_user_file /etc/nginx/htpasswd;   # 账号密码文件(用户名:加密密码)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>密码文件可在线生成 htpasswd 内容;适合保护后台等敏感路径。</li>
+</ul>
+<h2 id="五、SSL-证书-HTTPS"><a href="#五、SSL-证书-HTTPS" class="headerlink" title="五、SSL 证书(HTTPS)"></a>五、SSL 证书(HTTPS)</h2><ol>
+<li>买域名 → 阿里云&#x2F;腾讯云申请(免费)SSL 证书 → 下载 Nginx 版。</li>
+<li>解压得到两个文件:<code>.pem</code>(证书)+ <code>.key</code>(私钥),放到 <code>/opt/cert/</code>。</li>
+<li>站点配置:</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 443 ssl;</span><br><span class="line">    server_name www.jadon.com;</span><br><span class="line">    ssl_certificate /opt/cert/域名.pem;</span><br><span class="line">    ssl_certificate_key /opt/cert/域名.key;</span><br><span class="line">    root /web/www;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>访问 <code>https://域名</code> 出现小锁 &#x3D; 成功。</li>
+</ol>
+<blockquote>
+<p>⭐ 重点:HTTP 明文(抓包可见)、HTTPS 加密(TLS,抓包只有密文);渗透中抓包看到明文数据就是没上 HTTPS 的站点。</p>
+</blockquote>
+<h2 id="六、跳转-return-与-rewrite"><a href="#六、跳转-return-与-rewrite" class="headerlink" title="六、跳转:return 与 rewrite"></a>六、跳转:return 与 rewrite</h2><p>需求:用户访问 HTTP 时自动跳到 HTTPS,并保留原路径。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    server_name www.jadon.com;</span><br><span class="line">    return 301 https://www.jadon.com$request_uri;   # $request_uri 保留路径</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>return</strong> 新写法,简单;<strong>rewrite</strong> 旧写法,要写正则:rewrite ^(.*)$ <a target="_blank" rel="noopener" href="https://www.jadon.com$1/">https://www.jadon.com$1</a> redirect。</li>
+<li>浏览器行为:收到 <strong>302</strong>(临时)&#x2F;<strong>301</strong>(永久)响应头里的 Location 后自动再请求新地址(可抓包&#x2F;<code>curl -v</code> 看到)。</li>
+<li>可再配一个不带 www 的 server 同样跳转。</li>
+</ul>
+<h2 id="七、gzip-压缩"><a href="#七、gzip-压缩" class="headerlink" title="七、gzip 压缩"></a>七、gzip 压缩</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gzip on;</span><br><span class="line">gzip_min_length 1k;                 # 小于 1K 不压</span><br><span class="line">gzip_comp_level 6;                  # 1~9,6 常用</span><br><span class="line">gzip_types text/html text/css application/javascript application/xml;  # 只压文本类</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>好处:省流量、传输更快(页面总资源 1.3M → 传输 986K)。</li>
+<li>图片&#x2F;视频本身已压缩,再压没意义。</li>
+<li>响应头 <code>Content-Encoding: gzip</code> 告诉浏览器解压;浏览器请求头 <code>Accept-Encoding: gzip</code> 表示支持。</li>
+</ul>
+<h2 id="八、目录浏览与访问控制"><a href="#八、目录浏览与访问控制" class="headerlink" title="八、目录浏览与访问控制"></a>八、目录浏览与访问控制</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">autoindex on;              # 开启目录浏览(站点根目录无 index.html 时列出文件)</span><br><span class="line">autoindex_exact_size off;  # 文件大小显示单位</span><br><span class="line"></span><br><span class="line">deny 192.168.61.1;         # 禁止某 IP</span><br><span class="line">allow all;                 # 其余允许(加黑)</span><br><span class="line"># 或者 allow 指定IP; deny all;  # 只放行指定 IP(加白)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>四层控制:防火墙(firewalld rich rule)封 IP,所有协议全断;七层控制:nginx 只影响网站。</li>
+<li><strong>403 的三种常见原因</strong>:站点目录无 index.html、nginx 用户无读取权限(权限 000)、被 deny。</li>
+</ul>
+<h2 id="九、location-与优先级"><a href="#九、location-与优先级" class="headerlink" title="九、location 与优先级"></a>九、location 与优先级</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">location = /a.txt            &#123; ... &#125;   # 精准匹配(最高)</span><br><span class="line">location ^~ /a/              &#123; ... &#125;   # 前缀匹配</span><br><span class="line">location ~ \.txt$            &#123; ... &#125;   # 正则匹配(区分大小写)</span><br><span class="line">location ~* \.txt$           &#123; ... &#125;   # 正则匹配(不区分大小写)</span><br><span class="line">location /                   &#123; ... &#125;   # 通用匹配(最低)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>多个 location 可对<strong>不同路径</strong>做不同控制(如某个目录加 basic 认证、禁止 .txt 访问)。</li>
+<li>优先级:精准 <code>=</code> &gt; <code>^~</code> &gt; 正则(<code>~</code>&#x2F;<code>~*</code>) &gt; 通用 <code>/</code>。</li>
+</ul>
+<h2 id="十、重点速记"><a href="#十、重点速记" class="headerlink" title="十、重点速记"></a>十、重点速记</h2><ul>
+<li>多站点:多端口&#x2F;多 IP&#x2F;多域名;多域名最常用,hosts 文件本地测试</li>
+<li>include conf.d&#x2F;*.conf 拆分管理;停用改后缀</li>
+<li>日志保留 6 个月防溯源;log_format 自定义</li>
+<li>HTTPS:443 + ssl_certificate(.pem)+ key;HTTP 明文、HTTPS 密文</li>
+<li>跳转 return 301 + $request_uri;gzip 压缩文本类</li>
+<li>deny&#x2F;allow 访问控制;403 &#x3D; 无 index&#x2F;无权限&#x2F;被禁</li>
+<li>location 优先级:&#x3D; &gt; ^~ &gt; ~* ~ &gt; &#x2F;</li>
+</ul>
+<h2 id="自测题"><a href="#自测题" class="headerlink" title="自测题"></a>自测题</h2><ol>
+<li>三种多站点部署方式是什么?最常用哪个?</li>
+<li>include 有什么好处?怎么停用某个站点配置?</li>
+<li>日志为什么要保留 6 个月以上?</li>
+<li>HTTPS 用哪个端口?SSL 证书两个文件分别是什么?</li>
+<li>return 301 后面的 $request_uri 起什么作用?</li>
+<li>gzip 一般压缩哪些类型文件?为什么不压图片?</li>
+<li>网站返回 403 可能是什么原因?</li>
+<li>location 的优先级顺序是什么?</li>
+</ol>
+<details><summary>参考答案</summary>
+1. 多端口、多 IP、多域名;多域名最常用(一个公网 IP 多个域名)。<br>
+2. 每个站点一个 conf 文件,好管理;把后缀改成非 conf(如 .stop)。<br>
+3. 网络安全法要求,方便攻击溯源。<br>
+4. 443;.pem 证书文件和 .key 私钥文件。<br>
+5. 跳转时保留用户访问的原始路径,不会回到首页。<br>
+6. 文本类(html/css/js/xml);图片视频本身已压缩,再压没意义。<br>
+7. 目录没有 index.html、nginx 用户没读取权限、IP 被 deny。<br>
+8. = 精准 > ^~ 前缀 > ~ ~* 正则 > / 通用。
+</details>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tongui66.github.io/course-notes/chapter1-web-dev/24-Nginx-%E8%BF%9B%E9%98%B6%E9%85%8D%E7%BD%AE/index.html" data-id="cuidC6t5DqEuJ0fzUCJUaPWtG" data-title="24 · Nginx 进阶配置" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" style="font-size: 10px;">SQL注入</a> <a href="/tags/SSRF/" style="font-size: 10px;">SSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/XXE/" style="font-size: 10px;">XXE</a> <a href="/tags/%E4%B8%8A%E4%BC%A0/" style="font-size: 10px;">上传</a> <a href="/tags/%E4%BB%A3%E7%90%86/" style="font-size: 10px;">代理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" style="font-size: 10px;">信息收集</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" style="font-size: 10px;">命令执行</a> <a href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" style="font-size: 10px;">域渗透</a> <a href="/tags/%E5%BA%94%E6%80%A5/" style="font-size: 10px;">应急</a> <a href="/tags/%E6%8A%A4%E7%BD%91/" style="font-size: 10px;">护网</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 10px;">报告</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 10px;">提权</a> <a href="/tags/%E6%9F%A5%E6%9D%80/" style="font-size: 10px;">查杀</a> <a href="/tags/%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">流程</a> <a href="/tags/%E7%AD%89%E4%BF%9D/" style="font-size: 10px;">等保</a> <a href="/tags/%E9%9A%A7%E9%81%93/" style="font-size: 10px;">隧道</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a> <a href="/tags/%E9%A2%98%E5%BA%93/" style="font-size: 10px;">题库</a> <a href="/tags/%E9%AB%98%E9%A2%91/" style="font-size: 10px;">高频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">应急响应</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">1</span></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/08/">八月 2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/security-notes/interview-100/">面试高频问答 100 题</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/incident-response/">应急响应速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/intranet-domain/">内网渗透与域渗透速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/pentest-checklist/">渗透测试全流程速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/payload-handbook/">Web 漏洞速查与 Payload 手册</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 tongui<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/security-notes/" class="mobile-nav-link">安全笔记</a>
+  
+    <a href="/course-notes/" class="mobile-nav-link">课程</a>
+  
+    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
+  
+    <a href="/tools" class="mobile-nav-link">工具</a>
+  
+    <a href="/projects" class="mobile-nav-link">项目</a>
+  
+    <a href="/resume" class="mobile-nav-link">简历</a>
+  
+    <a href="/about" class="mobile-nav-link">关于我</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
+
+
+
+
+
+  </div>
+</body>
+</html>

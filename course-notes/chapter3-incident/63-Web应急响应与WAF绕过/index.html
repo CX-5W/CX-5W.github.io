@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>63 · Web应急响应与WAF绕过 | tongui 的安全笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Web 应急响应与 WAF 绕过 ⭐ 一句话总结:Web 被入侵先做小溯源——从 Web 日志找到攻击载荷和对应代码漏洞并修复;WAF 绕过则围绕”身份认证→数据包解析→规则匹配”三层做文章。  学习目标 掌握 Web 入侵排查与溯源 了解网页挂马手法 掌握 WAF 检测流程与绕过思路  一、Web 入侵排查入侵路径:  系统层:开放端口(135&#x2F;139&#x2F;445)+ 未打补丁">
+<meta property="og:type" content="website">
+<meta property="og:title" content="63 · Web应急响应与WAF绕过">
+<meta property="og:url" content="https://tongui66.github.io/course-notes/chapter3-incident/63-Web%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E4%B8%8EWAF%E7%BB%95%E8%BF%87/index.html">
+<meta property="og:site_name" content="tongui 的安全笔记">
+<meta property="og:description" content="Web 应急响应与 WAF 绕过 ⭐ 一句话总结:Web 被入侵先做小溯源——从 Web 日志找到攻击载荷和对应代码漏洞并修复;WAF 绕过则围绕”身份认证→数据包解析→规则匹配”三层做文章。  学习目标 掌握 Web 入侵排查与溯源 了解网页挂马手法 掌握 WAF 检测流程与绕过思路  一、Web 入侵排查入侵路径:  系统层:开放端口(135&#x2F;139&#x2F;445)+ 未打补丁">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-08T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-08T01:54:51.788Z">
+<meta property="article:author" content="tongui">
+<meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="tongui 的安全笔记" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">tongui 的安全笔记</a>
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/security-notes/">安全笔记</a>
+        
+          <a class="main-nav-link" href="/course-notes/">课程</a>
+        
+          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
+        
+          <a class="main-nav-link" href="/tools">工具</a>
+        
+          <a class="main-nav-link" href="/projects">项目</a>
+        
+          <a class="main-nav-link nav-resume" href="/resume">简历</a>
+        
+          <a class="main-nav-link" href="/about">关于我</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/tongui66"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tongui66.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/course-notes/chapter3-incident/63-Web%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E4%B8%8EWAF%E7%BB%95%E8%BF%87/index.html" class="article-date">
+  <time class="dt-published" datetime="2026-08-08T02:00:00.000Z" itemprop="datePublished">2026-08-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      63 · Web应急响应与WAF绕过
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Web-应急响应与-WAF-绕过"><a href="#Web-应急响应与-WAF-绕过" class="headerlink" title="Web 应急响应与 WAF 绕过"></a>Web 应急响应与 WAF 绕过</h1><blockquote>
+<p>⭐ <strong>一句话总结</strong>:Web 被入侵先做小溯源——从 Web 日志找到攻击载荷和对应代码漏洞并修复;WAF 绕过则围绕”身份认证→数据包解析→规则匹配”三层做文章。</p>
+</blockquote>
+<h2 id="学习目标"><a href="#学习目标" class="headerlink" title="学习目标"></a>学习目标</h2><ul>
+<li>掌握 Web 入侵排查与溯源</li>
+<li>了解网页挂马手法</li>
+<li>掌握 WAF 检测流程与绕过思路</li>
+</ul>
+<h2 id="一、Web-入侵排查"><a href="#一、Web-入侵排查" class="headerlink" title="一、Web 入侵排查"></a>一、Web 入侵排查</h2><p>入侵路径:</p>
+<ol>
+<li><strong>系统层</strong>:开放端口(135&#x2F;139&#x2F;445)+ 未打补丁 → 系统漏洞入侵。</li>
+<li><strong>应用层</strong>:网站代码漏洞(SQL注入&#x2F;XSS&#x2F;上传等)→ 控制服务器。</li>
+</ol>
+<p>排查要点:</p>
+<ul>
+<li>检查系统补丁(systeminfo + 官方公告对比)</li>
+<li>分析 Web 访问日志:找状态码 200、攻击 payload、命令执行回显</li>
+<li>定位请求对应代码文件 → 审计漏洞 → 修复</li>
+<li>查 WebShell 后门(地盾&#x2F;河马)</li>
+</ul>
+<h2 id="二、溯源"><a href="#二、溯源" class="headerlink" title="二、溯源"></a>二、溯源</h2><ul>
+<li><strong>小溯源</strong>:找到攻击入口(哪个漏洞),修复它。</li>
+<li><strong>大溯源</strong>:通过日志&#x2F;IP 反向收集,找到攻击者本人(通常只能追到肉鸡&#x2F;国外 VPS)。</li>
+</ul>
+<p>蓝队溯源:结合安全设备报警日志 + 原始请求日志 + 全流量平台。</p>
+<h2 id="三、网页挂马"><a href="#三、网页挂马" class="headerlink" title="三、网页挂马"></a>三、网页挂马</h2><table>
+<thead>
+<tr>
+<th>手法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>JS 挂马</td>
+<td>页面插入 <code>&lt;script src=&quot;恶意JS&quot;&gt;</code>,访问即加载弹广告&#x2F;木马</td>
+</tr>
+<tr>
+<td>iframe 挂马</td>
+<td>隐藏 iframe 嵌入恶意页面</td>
+</tr>
+<tr>
+<td>主页篡改</td>
+<td>修改首页代码跳转钓鱼页</td>
+</tr>
+<tr>
+<td>变形加密</td>
+<td>JS 混淆加密隐藏恶意代码</td>
+</tr>
+</tbody></table>
+<p>排查:检查 HTML 中异常 script&#x2F;iframe 标签、响应包中的外链、文件修改时间。</p>
+<h2 id="四、WAF-检测流程"><a href="#四、WAF-检测流程" class="headerlink" title="四、WAF 检测流程"></a>四、WAF 检测流程</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">请求 → 黑白名单(身份认证) → 数据包解析 → 规则库匹配 → 放行/拦截</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>规则库:URL&#x2F;POST&#x2F;Cookie&#x2F;HTTP 头等位置的攻击特征。</li>
+<li>白名单放行、黑名单拦截;解析不了的数据交给服务器。</li>
+</ul>
+<h2 id="五、SQL-注入过-WAF-重点"><a href="#五、SQL-注入过-WAF-重点" class="headerlink" title="五、SQL 注入过 WAF(重点)"></a>五、SQL 注入过 WAF(重点)</h2><h3 id="规则绕过"><a href="#规则绕过" class="headerlink" title="规则绕过"></a>规则绕过</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">union</span><span class="comment">/**/</span><span class="keyword">select</span>       <span class="comment">-- 注释替换空格</span></span><br><span class="line"><span class="keyword">union</span><span class="operator">%</span><span class="number">0</span>aselect        <span class="comment">-- 换行替换空格</span></span><br><span class="line"><span class="comment">/*!50000union select*/</span> <span class="comment">-- 注释包含关键字(内联注释)</span></span><br><span class="line"><span class="keyword">UnIoN</span> <span class="keyword">sElEcT</span>          <span class="comment">-- 大小写混合</span></span><br><span class="line">ununionion seselectlect <span class="comment">-- 双写</span></span><br><span class="line">concat(<span class="string">&#x27;un&#x27;</span>,<span class="string">&#x27;ion&#x27;</span>)    <span class="comment">-- 字符串拼接</span></span><br><span class="line"><span class="built_in">mod</span>(<span class="number">8</span>,<span class="number">7</span>) <span class="keyword">in</span> (<span class="number">1</span>)       <span class="comment">-- 替换 1=1</span></span><br><span class="line"><span class="keyword">and</span> → <span class="operator">&amp;&amp;</span>, <span class="keyword">or</span> → <span class="operator">||</span>     <span class="comment">-- 符号替换</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="解析绕过"><a href="#解析绕过" class="headerlink" title="解析绕过"></a>解析绕过</h3><ul>
+<li>编码(URL&#x2F;base64&#x2F;十六进制)、复参数、把载荷放 WAF 未检测的位置。</li>
+</ul>
+<h3 id="请求走私-分块传输"><a href="#请求走私-分块传输" class="headerlink" title="请求走私&#x2F;分块传输"></a>请求走私&#x2F;分块传输</h3><ul>
+<li>请求头加 <code>Transfer-Encoding: chunked</code>,把请求体分块发送。</li>
+<li>WAF 单块检测不到完整关键字,服务端重组后执行。</li>
+<li>BP 插件 Chunked Coding Converter 一键分块。</li>
+</ul>
+<blockquote>
+<p>⭐ 重点:绕过必须满足”WAF 不拦 + 数据库能执行”。</p>
+</blockquote>
+<h2 id="六、面试要点"><a href="#六、面试要点" class="headerlink" title="六、面试要点"></a>六、面试要点</h2><p>过 WAF 常用手法:</p>
+<ol>
+<li>白名单绕过(伪造搜索引擎 UA,较老)</li>
+<li>数据包解析绕过(编码、复参数)</li>
+<li>规则绕过(注释替换、拼接、大小写&#x2F;双写、mod+in、&amp;&amp;&#x2F;||、分块传输)</li>
+</ol>
+<h2 id="七、重点速记"><a href="#七、重点速记" class="headerlink" title="七、重点速记"></a>七、重点速记</h2><ul>
+<li>Web 应急:日志找攻击载荷→定位代码→修复;系统补丁排查</li>
+<li>溯源:小溯源找入口,大溯源找人</li>
+<li>挂马:JS&#x2F;iframe&#x2F;主页篡改</li>
+<li>WAF:黑白名单→解析→规则</li>
+<li>过 WAF:注释&#x2F;**&#x2F;、%0a、拼接、双写、mod+in、&amp;&amp;&#x2F;||、chunked 分块</li>
+</ul>
+<h2 id="自测题"><a href="#自测题" class="headerlink" title="自测题"></a>自测题</h2><ol>
+<li>Web 被入侵后小溯源做什么?</li>
+<li>大溯源一般追到什么?</li>
+<li>网页挂马常见手法?</li>
+<li>WAF 检测分哪几步?</li>
+<li>空格被过滤怎么替换?</li>
+<li>1&#x3D;1 怎么替换?</li>
+<li>and&#x2F;or 被拦截怎么办?</li>
+<li>分块传输为什么能过 WAF?</li>
+<li>过 WAF 的三大类思路?</li>
+<li>从日志怎么判断攻击是否成功?</li>
+</ol>
+<details><summary>参考答案</summary>
+1. 从日志定位攻击入口和对应漏洞并修复。<br>
+2. 肉鸡、国外VPS等,很难追到本人。<br>
+3. JS挂马、iframe挂马、主页篡改等。<br>
+4. 黑白名单、数据包解析、规则匹配。<br>
+5. /**/、%0a、括号等。<br>
+6. mod(8,7) in (1)。<br>
+7. 替换成 && 和 ||。<br>
+8. 数据分块发送,WAF逐块检测不到完整关键字,服务端重组执行。<br>
+9. 伪造白名单、解析绕过、规则绕过。<br>
+10. 看响应中是否包含payload执行结果、状态码200等。<br>
+</details>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tongui66.github.io/course-notes/chapter3-incident/63-Web%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E4%B8%8EWAF%E7%BB%95%E8%BF%87/index.html" data-id="cuidS9B8S_ZkiBAxbr_tsrlAb" data-title="63 · Web应急响应与WAF绕过" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" style="font-size: 10px;">SQL注入</a> <a href="/tags/SSRF/" style="font-size: 10px;">SSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/XXE/" style="font-size: 10px;">XXE</a> <a href="/tags/%E4%B8%8A%E4%BC%A0/" style="font-size: 10px;">上传</a> <a href="/tags/%E4%BB%A3%E7%90%86/" style="font-size: 10px;">代理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" style="font-size: 10px;">信息收集</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" style="font-size: 10px;">命令执行</a> <a href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" style="font-size: 10px;">域渗透</a> <a href="/tags/%E5%BA%94%E6%80%A5/" style="font-size: 10px;">应急</a> <a href="/tags/%E6%8A%A4%E7%BD%91/" style="font-size: 10px;">护网</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 10px;">报告</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 10px;">提权</a> <a href="/tags/%E6%9F%A5%E6%9D%80/" style="font-size: 10px;">查杀</a> <a href="/tags/%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">流程</a> <a href="/tags/%E7%AD%89%E4%BF%9D/" style="font-size: 10px;">等保</a> <a href="/tags/%E9%9A%A7%E9%81%93/" style="font-size: 10px;">隧道</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a> <a href="/tags/%E9%A2%98%E5%BA%93/" style="font-size: 10px;">题库</a> <a href="/tags/%E9%AB%98%E9%A2%91/" style="font-size: 10px;">高频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">应急响应</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">1</span></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/08/">八月 2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/security-notes/interview-100/">面试高频问答 100 题</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/incident-response/">应急响应速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/intranet-domain/">内网渗透与域渗透速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/pentest-checklist/">渗透测试全流程速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/payload-handbook/">Web 漏洞速查与 Payload 手册</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 tongui<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/security-notes/" class="mobile-nav-link">安全笔记</a>
+  
+    <a href="/course-notes/" class="mobile-nav-link">课程</a>
+  
+    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
+  
+    <a href="/tools" class="mobile-nav-link">工具</a>
+  
+    <a href="/projects" class="mobile-nav-link">项目</a>
+  
+    <a href="/resume" class="mobile-nav-link">简历</a>
+  
+    <a href="/about" class="mobile-nav-link">关于我</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
+
+
+
+
+
+  </div>
+</body>
+</html>

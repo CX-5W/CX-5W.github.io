@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>33 · PHP 后端基础 | tongui 的安全笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="PHP 后端基础 ⭐ 一句话总结:PHP 的作用是”动态生成 HTML”——接收前端数据、加工、查数据库、把结果塞进页面;看懂 PHP 是理解漏洞原理的前提。  学习目标 理解前后端交互流程(PHP 怎么接收数据、输出页面) 掌握变量、常量、数据类型 会用运算符和 if 判断 学会防乱码、调试基础  一、PHP 是什么 PHP(超文本预处理器):后端语言,把 HTML 动态加工后返回浏览器;浏览器">
+<meta property="og:type" content="website">
+<meta property="og:title" content="33 · PHP 后端基础">
+<meta property="og:url" content="https://tongui66.github.io/course-notes/chapter1-web-dev/33-PHP-%E5%90%8E%E7%AB%AF%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:site_name" content="tongui 的安全笔记">
+<meta property="og:description" content="PHP 后端基础 ⭐ 一句话总结:PHP 的作用是”动态生成 HTML”——接收前端数据、加工、查数据库、把结果塞进页面;看懂 PHP 是理解漏洞原理的前提。  学习目标 理解前后端交互流程(PHP 怎么接收数据、输出页面) 掌握变量、常量、数据类型 会用运算符和 if 判断 学会防乱码、调试基础  一、PHP 是什么 PHP(超文本预处理器):后端语言,把 HTML 动态加工后返回浏览器;浏览器">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-08T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-08T01:54:51.752Z">
+<meta property="article:author" content="tongui">
+<meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="tongui 的安全笔记" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">tongui 的安全笔记</a>
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/security-notes/">安全笔记</a>
+        
+          <a class="main-nav-link" href="/course-notes/">课程</a>
+        
+          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
+        
+          <a class="main-nav-link" href="/tools">工具</a>
+        
+          <a class="main-nav-link" href="/projects">项目</a>
+        
+          <a class="main-nav-link nav-resume" href="/resume">简历</a>
+        
+          <a class="main-nav-link" href="/about">关于我</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/tongui66"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tongui66.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/course-notes/chapter1-web-dev/33-PHP-%E5%90%8E%E7%AB%AF%E5%9F%BA%E7%A1%80/index.html" class="article-date">
+  <time class="dt-published" datetime="2026-08-08T02:00:00.000Z" itemprop="datePublished">2026-08-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      33 · PHP 后端基础
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="PHP-后端基础"><a href="#PHP-后端基础" class="headerlink" title="PHP 后端基础"></a>PHP 后端基础</h1><blockquote>
+<p>⭐ <strong>一句话总结</strong>:PHP 的作用是”动态生成 HTML”——接收前端数据、加工、查数据库、把结果塞进页面;看懂 PHP 是理解漏洞原理的前提。</p>
+</blockquote>
+<h2 id="学习目标"><a href="#学习目标" class="headerlink" title="学习目标"></a>学习目标</h2><ul>
+<li>理解前后端交互流程(PHP 怎么接收数据、输出页面)</li>
+<li>掌握变量、常量、数据类型</li>
+<li>会用运算符和 if 判断</li>
+<li>学会防乱码、调试基础</li>
+</ul>
+<h2 id="一、PHP-是什么"><a href="#一、PHP-是什么" class="headerlink" title="一、PHP 是什么"></a>一、PHP 是什么</h2><ul>
+<li><strong>PHP(超文本预处理器)</strong>:后端语言,把 HTML 动态加工后返回浏览器;<strong>浏览器不认识 PHP</strong>,必须由 Apache&#x2F;Nginx 交给 PHP-FPM 解析。</li>
+<li>历史:1995 年诞生;主流版本 PHP 5.x 和 7.x(稳定、长期支持)。</li>
+<li>为什么学它:大量开源项目和漏洞复现基于 PHP,安全人员要<strong>看得懂</strong>。</li>
+<li>开发环境:PHPStudy(集成 Apache&#x2F;MySQL&#x2F;PHP),站点目录 www。</li>
+</ul>
+<h2 id="二、前后端交互流程"><a href="#二、前后端交互流程" class="headerlink" title="二、前后端交互流程"></a>二、前后端交互流程</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">login.html 表单 → GET/POST 提交 → check_login.php</span><br><span class="line"> → $_GET/$_POST 取值 → echo 输出到 HTML 标签 → 浏览器显示</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$username = $_GET[&#x27;username&#x27;];      // 接收前端提交的数据</span><br><span class="line">$password = $_GET[&#x27;password&#x27;];</span><br><span class="line">echo &quot;&lt;h1&gt;欢迎 $username&lt;/h1&gt;&quot;;</span><br><span class="line">if ($username == &#x27;jadon&#x27;) &#123; echo &quot;登录成功&quot;; &#125;</span><br><span class="line">else &#123; echo &quot;用户名或密码有误&quot;; &#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>PHP 文件里可以直接写 HTML 标签;PHP 代码用 <code>&lt;?php … ?&gt;</code> 包裹,语句以分号结尾。</li>
+<li><strong>乱码解决</strong>:<code>header(&quot;Content-Type: text/html; charset=utf-8&quot;);</code></li>
+</ul>
+<h2 id="三、变量与常量"><a href="#三、变量与常量" class="headerlink" title="三、变量与常量"></a>三、变量与常量</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$a = 100;                 // 变量(可重新赋值)</span><br><span class="line">define(&quot;SITE&quot;, &quot;PHP中文网&quot;);  // 常量(不可重新赋值)</span><br><span class="line">const A = 123;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>变量以 <code>$</code> 开头;<strong>字母或下划线开头</strong>,后面可跟字母&#x2F;数字&#x2F;下划线;不能用中文和特殊符号。</li>
+<li>常量一般大写,用 define 或 const 定义,<code>const</code> 不能用在 if 里。</li>
+</ul>
+<h2 id="四、数据类型"><a href="#四、数据类型" class="headerlink" title="四、数据类型"></a>四、数据类型</h2><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>bool</td>
+<td>true&#x2F;false,0&#x3D;假,非0&#x3D;真</td>
+</tr>
+<tr>
+<td>int &#x2F; float</td>
+<td>整数 &#x2F; 小数</td>
+</tr>
+<tr>
+<td>string</td>
+<td>字符串(引号包裹)</td>
+</tr>
+<tr>
+<td>array</td>
+<td>数组(容器,可放多种数据)</td>
+</tr>
+<tr>
+<td>object</td>
+<td>对象(类实例化)</td>
+</tr>
+<tr>
+<td>resource</td>
+<td>资源(文件等)</td>
+</tr>
+<tr>
+<td>null</td>
+<td>空</td>
+</tr>
+</tbody></table>
+<ul>
+<li>数组取值:<code>$s[0]</code>(索引从 0 开始);查看类型:<code>gettype()</code>、<code>var_dump()</code>(更详细)。</li>
+<li>echo 只能打印字符串&#x2F;数字,打印数组会报错。</li>
+</ul>
+<h2 id="五、字符串与引号"><a href="#五、字符串与引号" class="headerlink" title="五、字符串与引号"></a>五、字符串与引号</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$name = &quot;科比&quot;;</span><br><span class="line">echo &quot;最喜欢的球星 $name&quot;;     // 双引号解析变量 → 最喜欢的球星 科比</span><br><span class="line">echo &#x27;最喜欢的球星 $name&#x27;;     // 单引号不解析 → 原样输出 $name</span><br><span class="line">echo &quot;a&quot; . $name;              // . 是拼接符</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>单引号不解析变量、双引号解析变量;拼接用 <code>.</code>。</li>
+</ul>
+<h2 id="六、运算符"><a href="#六、运算符" class="headerlink" title="六、运算符"></a>六、运算符</h2><table>
+<thead>
+<tr>
+<th>类别</th>
+<th>符号</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>算术</td>
+<td><code>+ - * / %</code>(取余)、<code>.</code>(拼接)、<code>-</code>(取负)</td>
+</tr>
+<tr>
+<td>赋值</td>
+<td><code>=</code>、<code>+=</code>、<code>-=</code>、<code>*=</code>、<code>/=</code>、<code>.=</code></td>
+</tr>
+<tr>
+<td>比较</td>
+<td><code>==</code>(弱等于)、<code>===</code>(强等于,比较类型)、<code>!=</code>、<code>&gt;</code>、<code>&lt;</code></td>
+</tr>
+<tr>
+<td>逻辑</td>
+<td><code>and</code>&#x2F;<code>&amp;&amp;</code>、<code>or</code>&#x2F;<code>||</code>、<code>xor</code>(异或)、<code>!</code>(取反)</td>
+</tr>
+<tr>
+<td>自增自减</td>
+<td><code>$a++</code>(先使用后+1)、<code>++$a</code>(先+1再使用)</td>
+</tr>
+<tr>
+<td>三元</td>
+<td><code>条件 ? 值1 : 值2</code></td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>⭐ 重点:<code>==</code> 不比较类型(“10”&#x3D;&#x3D;10 为真),<code>===</code> 比较类型;乘除优先于加减,括号提升优先级。</p>
+</blockquote>
+<h2 id="七、流程控制-if"><a href="#七、流程控制-if" class="headerlink" title="七、流程控制 if"></a>七、流程控制 if</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if (条件) &#123; … &#125; </span><br><span class="line">elseif (条件2) &#123; … &#125;</span><br><span class="line">else &#123; … &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>条件成立执行 if 块,否则依次判断 elseif,最后走 else。</li>
+<li>逻辑运算符常用于登录判断:<code>if ($u==&#39;jadon&#39; &amp;&amp; $p==&#39;123&#39;)</code>。</li>
+</ul>
+<h2 id="八、重点速记"><a href="#八、重点速记" class="headerlink" title="八、重点速记"></a>八、重点速记</h2><ul>
+<li>PHP 动态生成 HTML;PHP-FPM 解析;<code>&lt;?php ?&gt;</code> 写代码</li>
+<li>接收数据 <code>$_GET[&#39;键&#39;]</code> &#x2F; <code>$_POST[&#39;键&#39;]</code>;输出 echo</li>
+<li>变量 <code>$</code> 开头;常量 define&#x2F;const;引号:单引号不解析、双引号解析</li>
+<li>数据类型:bool&#x2F;int&#x2F;float&#x2F;string&#x2F;array&#x2F;null</li>
+<li>运算符:&#x3D;&#x3D; 弱等于、&#x3D;&#x3D;&#x3D; 强等于;&amp;&amp; &#x2F; || &#x2F; !;. 拼接</li>
+<li>if&#x2F;elseif&#x2F;else 判断</li>
+</ul>
+<h2 id="自测题"><a href="#自测题" class="headerlink" title="自测题"></a>自测题</h2><ol>
+<li>浏览器为什么不能直接识别 PHP?</li>
+<li>接收 GET 提交的用户名怎么写?</li>
+<li>变量和常量的区别?</li>
+<li>单引号和双引号的区别?</li>
+<li><code>==</code> 和 <code>===</code> 的区别?</li>
+<li><code>$a++</code> 和 <code>++$a</code> 的区别?</li>
+<li>PHP 中文乱码怎么解决?</li>
+</ol>
+<details><summary>参考答案</summary>
+1. PHP 是后端语言,必须由 PHP-FPM 解析成 HTML 后返回。<br>
+2. `$_GET['username']`。<br>
+3. 变量可重新赋值,常量定义后不可改。<br>
+4. 双引号解析变量,单引号原样输出。<br>
+5. == 不比较类型,=== 比较类型和值。<br>
+6. 先使用后自增 / 先自增再使用。<br>
+7. header("Content-Type: text/html; charset=utf-8")。
+</details>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tongui66.github.io/course-notes/chapter1-web-dev/33-PHP-%E5%90%8E%E7%AB%AF%E5%9F%BA%E7%A1%80/index.html" data-id="cuidRSNZ-ghJ9xeAjlPTts-rT" data-title="33 · PHP 后端基础" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" style="font-size: 10px;">SQL注入</a> <a href="/tags/SSRF/" style="font-size: 10px;">SSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/XXE/" style="font-size: 10px;">XXE</a> <a href="/tags/%E4%B8%8A%E4%BC%A0/" style="font-size: 10px;">上传</a> <a href="/tags/%E4%BB%A3%E7%90%86/" style="font-size: 10px;">代理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" style="font-size: 10px;">信息收集</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" style="font-size: 10px;">命令执行</a> <a href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" style="font-size: 10px;">域渗透</a> <a href="/tags/%E5%BA%94%E6%80%A5/" style="font-size: 10px;">应急</a> <a href="/tags/%E6%8A%A4%E7%BD%91/" style="font-size: 10px;">护网</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 10px;">报告</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 10px;">提权</a> <a href="/tags/%E6%9F%A5%E6%9D%80/" style="font-size: 10px;">查杀</a> <a href="/tags/%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">流程</a> <a href="/tags/%E7%AD%89%E4%BF%9D/" style="font-size: 10px;">等保</a> <a href="/tags/%E9%9A%A7%E9%81%93/" style="font-size: 10px;">隧道</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a> <a href="/tags/%E9%A2%98%E5%BA%93/" style="font-size: 10px;">题库</a> <a href="/tags/%E9%AB%98%E9%A2%91/" style="font-size: 10px;">高频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">应急响应</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">1</span></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/08/">八月 2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/security-notes/interview-100/">面试高频问答 100 题</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/incident-response/">应急响应速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/intranet-domain/">内网渗透与域渗透速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/pentest-checklist/">渗透测试全流程速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/payload-handbook/">Web 漏洞速查与 Payload 手册</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 tongui<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/security-notes/" class="mobile-nav-link">安全笔记</a>
+  
+    <a href="/course-notes/" class="mobile-nav-link">课程</a>
+  
+    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
+  
+    <a href="/tools" class="mobile-nav-link">工具</a>
+  
+    <a href="/projects" class="mobile-nav-link">项目</a>
+  
+    <a href="/resume" class="mobile-nav-link">简历</a>
+  
+    <a href="/about" class="mobile-nav-link">关于我</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
+
+
+
+
+
+  </div>
+</body>
+</html>

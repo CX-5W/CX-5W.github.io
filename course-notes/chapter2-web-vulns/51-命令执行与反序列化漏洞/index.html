@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>51 · 命令执行与反序列化漏洞 | tongui 的安全笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="命令执行与反序列化漏洞 ⭐ 一句话总结:命令执行漏洞让你在服务器上”敲命令”,反序列化漏洞让你通过一段字符串”唤醒恶意代码”——两者都常出现在框架&#x2F;中间件中,影响范围通常是一大片使用相同版本的网站。  学习目标 区分远程命令执行与远程代码执行 掌握命令连接符和注入方式 理解序列化&#x2F;反序列化原理 理解反序列化漏洞的触发链 了解常见框架 RCE&#x2F;反序列化漏洞  一、RCE">
+<meta property="og:type" content="website">
+<meta property="og:title" content="51 · 命令执行与反序列化漏洞">
+<meta property="og:url" content="https://tongui66.github.io/course-notes/chapter2-web-vulns/51-%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E4%B8%8E%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/index.html">
+<meta property="og:site_name" content="tongui 的安全笔记">
+<meta property="og:description" content="命令执行与反序列化漏洞 ⭐ 一句话总结:命令执行漏洞让你在服务器上”敲命令”,反序列化漏洞让你通过一段字符串”唤醒恶意代码”——两者都常出现在框架&#x2F;中间件中,影响范围通常是一大片使用相同版本的网站。  学习目标 区分远程命令执行与远程代码执行 掌握命令连接符和注入方式 理解序列化&#x2F;反序列化原理 理解反序列化漏洞的触发链 了解常见框架 RCE&#x2F;反序列化漏洞  一、RCE">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-08T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-08T01:54:51.772Z">
+<meta property="article:author" content="tongui">
+<meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="tongui 的安全笔记" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">tongui 的安全笔记</a>
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/security-notes/">安全笔记</a>
+        
+          <a class="main-nav-link" href="/course-notes/">课程</a>
+        
+          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
+        
+          <a class="main-nav-link" href="/tools">工具</a>
+        
+          <a class="main-nav-link" href="/projects">项目</a>
+        
+          <a class="main-nav-link nav-resume" href="/resume">简历</a>
+        
+          <a class="main-nav-link" href="/about">关于我</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/tongui66"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tongui66.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/course-notes/chapter2-web-vulns/51-%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E4%B8%8E%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/index.html" class="article-date">
+  <time class="dt-published" datetime="2026-08-08T02:00:00.000Z" itemprop="datePublished">2026-08-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      51 · 命令执行与反序列化漏洞
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="命令执行与反序列化漏洞"><a href="#命令执行与反序列化漏洞" class="headerlink" title="命令执行与反序列化漏洞"></a>命令执行与反序列化漏洞</h1><blockquote>
+<p>⭐ <strong>一句话总结</strong>:命令执行漏洞让你在服务器上”敲命令”,反序列化漏洞让你通过一段字符串”唤醒恶意代码”——两者都常出现在框架&#x2F;中间件中,影响范围通常是一大片使用相同版本的网站。</p>
+</blockquote>
+<h2 id="学习目标"><a href="#学习目标" class="headerlink" title="学习目标"></a>学习目标</h2><ul>
+<li>区分远程命令执行与远程代码执行</li>
+<li>掌握命令连接符和注入方式</li>
+<li>理解序列化&#x2F;反序列化原理</li>
+<li>理解反序列化漏洞的触发链</li>
+<li>了解常见框架 RCE&#x2F;反序列化漏洞</li>
+</ul>
+<h2 id="一、RCE-概念"><a href="#一、RCE-概念" class="headerlink" title="一、RCE 概念"></a>一、RCE 概念</h2><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>含义</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>远程命令执行</td>
+<td>执行系统指令</td>
+<td><code>ipconfig</code>、<code>net user</code></td>
+</tr>
+<tr>
+<td>远程代码执行</td>
+<td>执行后端语言代码</td>
+<td>PHP <code>eval()</code>、Java 表达式</td>
+</tr>
+</tbody></table>
+<p>常见出现位置:运维自动化平台、ping 检测、执行命令的后台功能、框架漏洞。</p>
+<h2 id="二、命令注入"><a href="#二、命令注入" class="headerlink" title="二、命令注入"></a>二、命令注入</h2><p>后台把用户输入拼进命令执行函数:</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">system</span>(<span class="string">&quot;ping &quot;</span> . <span class="variable">$_GET</span>[<span class="string">&#x27;ip&#x27;</span>]);</span><br></pre></td></tr></table></figure>
+
+<p><strong>命令连接符</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>符号</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>;</code></td>
+<td>无条件执行多条命令</td>
+</tr>
+<tr>
+<td><code>&amp;</code></td>
+<td>前后都执行</td>
+</tr>
+<tr>
+<td><code>&amp;&amp;</code></td>
+<td>前面成功才执行后面</td>
+</tr>
+<tr>
+<td><code>|</code></td>
+<td>前面输出作为后面输入</td>
+</tr>
+<tr>
+<td><code>||</code></td>
+<td>前面失败才执行后面</td>
+</tr>
+</tbody></table>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">192.168.1.1 &amp; ipconfig</span><br><span class="line">192.168.1.1 &amp;&amp; <span class="built_in">whoami</span></span><br><span class="line">192.168.1.1 | net user</span><br></pre></td></tr></table></figure>
+
+<p>利用示例:添加系统用户 <code>&amp; net user hacker 123 /add &amp; net localgroup administrators hacker /add</code>。</p>
+<h2 id="三、命令注入绕过"><a href="#三、命令注入绕过" class="headerlink" title="三、命令注入绕过"></a>三、命令注入绕过</h2><ul>
+<li>过滤 <code>&amp;&amp;</code> 就试 <code>&amp;</code>、<code>;</code>、<code>|</code>、<code>||</code>。</li>
+<li>过滤空格:用 <code>${IFS}</code>、<code>%09</code>(Tab)、去掉空格等。</li>
+<li>过滤关键字:变量拼接(<code>w+h+o+a+m+i</code>)、编码等。</li>
+<li>结论:过滤不严谨(如只替换一次)都能绕过,所以要逐字符测试。</li>
+</ul>
+<h2 id="四、框架漏洞与-RCE"><a href="#四、框架漏洞与-RCE" class="headerlink" title="四、框架漏洞与 RCE"></a>四、框架漏洞与 RCE</h2><ul>
+<li>中间件&#x2F;框架版本漏洞常导致 RCE:Struts2(S2-045&#x2F;048&#x2F;052&#x2F;057)、WebLogic、Fastjson、Shiro、Spring、Redis 未授权、OA 系统(致远&#x2F;蓝凌&#x2F;泛微)等。</li>
+<li>利用方式:找 POC&#x2F;EXP 或综合利用工具直接打;到 Seebug&#x2F;Freebuf 等平台搜漏洞复现过程。</li>
+<li>检测:信息收集确认版本 → 找对应 POC → 复现&#x2F;利用 → 截图证明。</li>
+</ul>
+<h2 id="五、序列化与反序列化"><a href="#五、序列化与反序列化" class="headerlink" title="五、序列化与反序列化"></a>五、序列化与反序列化</h2><ul>
+<li><strong>序列化</strong>:把对象&#x2F;数组等数据转成字符串(便于存储、传输、跨语言)。</li>
+<li><strong>反序列化</strong>:把字符串还原成对象&#x2F;数据。</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$s</span> = <span class="title function_ invoke__">serialize</span>(<span class="variable">$obj</span>);     <span class="comment">// O:1:&quot;S&quot;:1:&#123;s:4:&quot;test&quot;;s:7:&quot;pikachu&quot;;&#125;</span></span><br><span class="line"><span class="variable">$obj</span> = <span class="title function_ invoke__">unserialize</span>(<span class="variable">$s</span>);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>格式含义:<code>O</code> 对象、类名长度、属性名&#x2F;值及长度等。</li>
+</ul>
+<h2 id="六、反序列化漏洞原理-重点"><a href="#六、反序列化漏洞原理-重点" class="headerlink" title="六、反序列化漏洞原理(重点)"></a>六、反序列化漏洞原理(重点)</h2><ol>
+<li>攻击者构造恶意序列化字符串(类里定义<strong>魔术方法</strong>,如 <code>__destruct</code> 中写命令执行代码)。</li>
+<li>目标程序对用户可控数据直接 <code>unserialize()</code>。</li>
+<li>反序列化生成对象后,对象销毁时 <code>__destruct</code> <strong>自动触发</strong> → 恶意代码执行。</li>
+</ol>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">S</span> </span>&#123;</span><br><span class="line">  <span class="keyword">public</span> <span class="variable">$test</span> = <span class="string">&quot;pikachu&quot;</span>;</span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="title function_ invoke__">system</span>(<span class="string">&quot;whoami&quot;</span>);   <span class="comment">// 对象销毁时自动执行</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>⭐ 重点:漏洞链 &#x3D; 用户可控数据 + 未过滤反序列化 + 魔术方法自动触发。</p>
+</blockquote>
+<ul>
+<li>特点:黑盒很难发现,大多通过<strong>代码审计</strong>或框架公开漏洞发现。</li>
+<li>典型案例:WebLogic T3、Fastjson、Shiro、PHP 框架(Laravel 等)反序列化漏洞。</li>
+</ul>
+<h2 id="七、中间件-框架-Web-服务程序区分"><a href="#七、中间件-框架-Web-服务程序区分" class="headerlink" title="七、中间件&#x2F;框架&#x2F;Web 服务程序区分"></a>七、中间件&#x2F;框架&#x2F;Web 服务程序区分</h2><ul>
+<li><strong>Web 服务应用程序</strong>:接收并转发请求(Apache、Nginx、IIS、Tomcat、WebLogic)。</li>
+<li><strong>框架</strong>:加工处理请求数据、封装公共功能(Struts2、Spring、Laravel、Django)。</li>
+<li>中间件:以上统称(客户端与最终数据之间的一切程序)。</li>
+</ul>
+<h2 id="八、利用与检测思路"><a href="#八、利用与检测思路" class="headerlink" title="八、利用与检测思路"></a>八、利用与检测思路</h2><ul>
+<li>反序列化漏洞:确认指纹(WebLogic 7001 端口等) → 用综合利用工具检测&#x2F;执行命令 → 截图证明。</li>
+<li>检测命令执行:在参数后加连接符+命令,看回显。</li>
+</ul>
+<h2 id="九、重点速记"><a href="#九、重点速记" class="headerlink" title="九、重点速记"></a>九、重点速记</h2><ul>
+<li>RCE &#x3D; 命令执行(系统指令)&#x2F;代码执行(语言代码)</li>
+<li>命令连接符:; &amp; &amp;&amp; | ||</li>
+<li>绕过:换符号、去空格、变量拼接</li>
+<li>序列化转字符串,反序列化还原对象</li>
+<li>反序列化漏洞 &#x3D; 可控数据 + unserialize + 魔术方法自动执行</li>
+<li>框架漏洞影响面大;新漏洞关注 Seebug&#x2F;Freebuf</li>
+</ul>
+<h2 id="自测题"><a href="#自测题" class="headerlink" title="自测题"></a>自测题</h2><ol>
+<li>远程命令执行和远程代码执行的区别?</li>
+<li>命令连接符有哪些?&amp;&amp; 和 ; 的区别?</li>
+<li>命令注入怎么测?</li>
+<li>过滤了 &amp;&amp; 怎么绕过?</li>
+<li>序列化和反序列化是干什么的?</li>
+<li>反序列化漏洞的触发链是什么?</li>
+<li>魔术方法 __destruct 什么时候执行?</li>
+<li>为什么框架反序列化漏洞影响面大?</li>
+<li>Web 服务程序和框架有什么区别?</li>
+<li>反序列化漏洞为什么难在黑盒中发现?</li>
+</ol>
+<details><summary>参考答案</summary>
+1. 命令执行执行系统指令,代码执行执行后端语言代码。<br>
+2. ; & && | ||;&& 前面成功才执行后面,; 无条件都执行。<br>
+3. 在参数后加连接符和命令看回显,如 & whoami。<br>
+4. 换用 &、;、|、|| 或编码绕过。<br>
+5. 序列化把数据转成字符串,反序列化把字符串还原成数据。<br>
+6. 用户可控数据 → 直接 unserialize → 魔术方法自动执行恶意代码。<br>
+7. 对象被销毁时自动触发。<br>
+8. 同一框架/版本被大量网站使用,一个漏洞通杀一片。<br>
+9. Web 服务程序接收转发请求,框架加工请求数据并封装功能。<br>
+10. 需要看源码确认反序列化点和过滤情况,多靠代码审计。<br>
+</details>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tongui66.github.io/course-notes/chapter2-web-vulns/51-%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E4%B8%8E%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/index.html" data-id="cuidOft9bVG9ZM6RMB1rJob9h" data-title="51 · 命令执行与反序列化漏洞" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" style="font-size: 10px;">SQL注入</a> <a href="/tags/SSRF/" style="font-size: 10px;">SSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/XXE/" style="font-size: 10px;">XXE</a> <a href="/tags/%E4%B8%8A%E4%BC%A0/" style="font-size: 10px;">上传</a> <a href="/tags/%E4%BB%A3%E7%90%86/" style="font-size: 10px;">代理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" style="font-size: 10px;">信息收集</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" style="font-size: 10px;">命令执行</a> <a href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" style="font-size: 10px;">域渗透</a> <a href="/tags/%E5%BA%94%E6%80%A5/" style="font-size: 10px;">应急</a> <a href="/tags/%E6%8A%A4%E7%BD%91/" style="font-size: 10px;">护网</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 10px;">报告</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 10px;">提权</a> <a href="/tags/%E6%9F%A5%E6%9D%80/" style="font-size: 10px;">查杀</a> <a href="/tags/%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">流程</a> <a href="/tags/%E7%AD%89%E4%BF%9D/" style="font-size: 10px;">等保</a> <a href="/tags/%E9%9A%A7%E9%81%93/" style="font-size: 10px;">隧道</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a> <a href="/tags/%E9%A2%98%E5%BA%93/" style="font-size: 10px;">题库</a> <a href="/tags/%E9%AB%98%E9%A2%91/" style="font-size: 10px;">高频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">应急响应</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">1</span></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/08/">八月 2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/security-notes/interview-100/">面试高频问答 100 题</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/incident-response/">应急响应速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/intranet-domain/">内网渗透与域渗透速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/pentest-checklist/">渗透测试全流程速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/payload-handbook/">Web 漏洞速查与 Payload 手册</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 tongui<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/security-notes/" class="mobile-nav-link">安全笔记</a>
+  
+    <a href="/course-notes/" class="mobile-nav-link">课程</a>
+  
+    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
+  
+    <a href="/tools" class="mobile-nav-link">工具</a>
+  
+    <a href="/projects" class="mobile-nav-link">项目</a>
+  
+    <a href="/resume" class="mobile-nav-link">简历</a>
+  
+    <a href="/about" class="mobile-nav-link">关于我</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
+
+
+
+
+
+  </div>
+</body>
+</html>

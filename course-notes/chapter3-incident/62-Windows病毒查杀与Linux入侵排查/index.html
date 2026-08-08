@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>62 · Windows病毒查杀与Linux入侵排查 | tongui 的安全笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Windows 病毒查杀与 Linux 入侵排查 ⭐ 一句话总结:Windows 查病毒看”进程→文件→注册表→启动项”,小心映像劫持;Linux 排查靠”账号→历史命令→端口进程→定时任务→日志”,重点记住 &#x2F;etc&#x2F;passwd、secure 日志、crontab、rkhunter。  学习目标 掌握 Windows 病毒手动查杀流程 理解映像劫持技术 掌握 Linux 入">
+<meta property="og:type" content="website">
+<meta property="og:title" content="62 · Windows病毒查杀与Linux入侵排查">
+<meta property="og:url" content="https://tongui66.github.io/course-notes/chapter3-incident/62-Windows%E7%97%85%E6%AF%92%E6%9F%A5%E6%9D%80%E4%B8%8ELinux%E5%85%A5%E4%BE%B5%E6%8E%92%E6%9F%A5/index.html">
+<meta property="og:site_name" content="tongui 的安全笔记">
+<meta property="og:description" content="Windows 病毒查杀与 Linux 入侵排查 ⭐ 一句话总结:Windows 查病毒看”进程→文件→注册表→启动项”,小心映像劫持;Linux 排查靠”账号→历史命令→端口进程→定时任务→日志”,重点记住 &#x2F;etc&#x2F;passwd、secure 日志、crontab、rkhunter。  学习目标 掌握 Windows 病毒手动查杀流程 理解映像劫持技术 掌握 Linux 入">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-08T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-08T01:54:51.785Z">
+<meta property="article:author" content="tongui">
+<meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="tongui 的安全笔记" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">tongui 的安全笔记</a>
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/security-notes/">安全笔记</a>
+        
+          <a class="main-nav-link" href="/course-notes/">课程</a>
+        
+          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
+        
+          <a class="main-nav-link" href="/tools">工具</a>
+        
+          <a class="main-nav-link" href="/projects">项目</a>
+        
+          <a class="main-nav-link nav-resume" href="/resume">简历</a>
+        
+          <a class="main-nav-link" href="/about">关于我</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/tongui66"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tongui66.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/course-notes/chapter3-incident/62-Windows%E7%97%85%E6%AF%92%E6%9F%A5%E6%9D%80%E4%B8%8ELinux%E5%85%A5%E4%BE%B5%E6%8E%92%E6%9F%A5/index.html" class="article-date">
+  <time class="dt-published" datetime="2026-08-08T02:00:00.000Z" itemprop="datePublished">2026-08-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      62 · Windows病毒查杀与Linux入侵排查
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Windows-病毒查杀与-Linux-入侵排查"><a href="#Windows-病毒查杀与-Linux-入侵排查" class="headerlink" title="Windows 病毒查杀与 Linux 入侵排查"></a>Windows 病毒查杀与 Linux 入侵排查</h1><blockquote>
+<p>⭐ <strong>一句话总结</strong>:Windows 查病毒看”进程→文件→注册表→启动项”,小心映像劫持;Linux 排查靠”账号→历史命令→端口进程→定时任务→日志”,重点记住 &#x2F;etc&#x2F;passwd、secure 日志、crontab、rkhunter。</p>
+</blockquote>
+<h2 id="学习目标"><a href="#学习目标" class="headerlink" title="学习目标"></a>学习目标</h2><ul>
+<li>掌握 Windows 病毒手动查杀流程</li>
+<li>理解映像劫持技术</li>
+<li>掌握 Linux 入侵排查关键命令</li>
+<li>能讲挖矿病毒、暴力破解应急案例</li>
+</ul>
+<h2 id="一、Windows-病毒查杀-维金病毒案例"><a href="#一、Windows-病毒查杀-维金病毒案例" class="headerlink" title="一、Windows 病毒查杀(维金病毒案例)"></a>一、Windows 病毒查杀(维金病毒案例)</h2><h3 id="感染特征"><a href="#感染特征" class="headerlink" title="感染特征"></a>感染特征</h3><ul>
+<li>磁盘右键菜单多了”Auto”打开项</li>
+<li>出现 <code>autorun.inf</code>(U 盘传播)</li>
+<li>进程 <code>DLLHOST.EXE</code> 等可疑进程</li>
+</ul>
+<h3 id="查杀流程"><a href="#查杀流程" class="headerlink" title="查杀流程"></a>查杀流程</h3><ol>
+<li>分析进程(大写&#x2F;异常进程名)。</li>
+<li>通过 PID 找到程序文件。</li>
+<li>删除病毒程序文件 → 结束进程。</li>
+<li>清理注册表启动项、删除 autorun.inf。</li>
+<li>重启验证是否复发。</li>
+</ol>
+<blockquote>
+<p>提示:病毒文件可能被占用删不掉,可进安全模式或使用 ARK 工具。</p>
+</blockquote>
+<h2 id="二、映像劫持-IFEO"><a href="#二、映像劫持-IFEO" class="headerlink" title="二、映像劫持(IFEO)"></a>二、映像劫持(IFEO)</h2><ul>
+<li>位置:<code>HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options</code></li>
+<li>原理:把杀毒软件&#x2F;注册表等程序路径改成不存在的程序,导致无法启动。</li>
+<li>排查:该注册表项下出现大量杀软名称且路径异常 &#x3D; 被劫持。</li>
+<li>突破:改名运行、删除恶意注册表项、用 PCHunter 等 ARK 工具删除。</li>
+</ul>
+<h2 id="三、Linux-入侵排查-重点命令"><a href="#三、Linux-入侵排查-重点命令" class="headerlink" title="三、Linux 入侵排查(重点命令)"></a>三、Linux 入侵排查(重点命令)</h2><h3 id="1-账号安全"><a href="#1-账号安全" class="headerlink" title="1. 账号安全"></a>1. 账号安全</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /etc/passwd        <span class="comment"># 查看所有用户(排查无 nologin 的异常用户)</span></span><br><span class="line">more /etc/passwd       <span class="comment"># 分页查看</span></span><br><span class="line"><span class="built_in">who</span>                    <span class="comment"># 当前登录用户(TTY本地/PTS远程,含IP)</span></span><br><span class="line">w / <span class="built_in">uptime</span>             <span class="comment"># 用户行为/登录时长</span></span><br><span class="line">awk -F: <span class="string">&#x27;$3==0&#123;print $1&#125;&#x27;</span> /etc/passwd   <span class="comment"># 特权用户(UID=0)</span></span><br><span class="line"><span class="built_in">cat</span> /etc/shadow        <span class="comment"># 密码文件(排查弱口令)</span></span><br><span class="line">usermod -L 用户名      <span class="comment"># 禁用用户</span></span><br><span class="line">userdel -r 用户名      <span class="comment"># 删除用户</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-历史命令"><a href="#2-历史命令" class="headerlink" title="2. 历史命令"></a>2. 历史命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">history</span>                <span class="comment"># 当前用户历史命令</span></span><br><span class="line"><span class="built_in">cat</span> ~/.bash_history    <span class="comment"># 历史命令文件</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>修改 <code>/etc/profile</code> 增大记录条数并带时间&#x2F;用户&#x2F;IP:</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">HISTSIZE=10000</span><br><span class="line">HISTTIMEFORMAT=<span class="string">&quot;%F %T %u %U %h &quot;</span></span><br><span class="line"><span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-端口与进程"><a href="#3-端口与进程" class="headerlink" title="3. 端口与进程"></a>3. 端口与进程</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">netstat -anpt          <span class="comment"># 查看连接和PID</span></span><br><span class="line">ps aux                 <span class="comment"># 进程+CPU+内存+程序文件</span></span><br><span class="line"><span class="built_in">ls</span> -l /proc/PID/exe    <span class="comment"># 根据PID定位程序文件</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>系统指令文件(ps&#x2F;ls)可能被替换:用同版本系统文件替换。</li>
+</ul>
+<h3 id="4-开机自启与计划任务"><a href="#4-开机自启与计划任务" class="headerlink" title="4. 开机自启与计划任务"></a>4. 开机自启与计划任务</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">runlevel               <span class="comment"># 当前运行级别(3命令行/5图形)</span></span><br><span class="line">chkconfig --list       <span class="comment"># 查看服务自启(CentOS6)</span></span><br><span class="line">systemctl list-unit-files | grep enabled   <span class="comment"># CentOS7</span></span><br><span class="line">crontab -l             <span class="comment"># 查看当前用户定时任务</span></span><br><span class="line"><span class="built_in">ls</span> /var/spool/cron/    <span class="comment"># 各用户定时任务文件</span></span><br><span class="line"><span class="built_in">ls</span> /etc/rc.d/rc5.d/    <span class="comment"># 开机自启软链接</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-日志"><a href="#5-日志" class="headerlink" title="5. 日志"></a>5. 日志</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /var/log/secure    <span class="comment"># 安全日志(登录/SSH记录)</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="6-查杀工具"><a href="#6-查杀工具" class="headerlink" title="6. 查杀工具"></a>6. 查杀工具</h3><ul>
+<li>rkhunter &#x2F; chkrootkit:rootkit&#x2F;后门检测</li>
+<li>ClamAV:开源杀毒</li>
+<li>河马:WebShell 查杀</li>
+<li>RPM -Va:校验安装包文件是否被篡改</li>
+</ul>
+<h2 id="四、真实案例"><a href="#四、真实案例" class="headerlink" title="四、真实案例"></a>四、真实案例</h2><h3 id="挖矿病毒"><a href="#挖矿病毒" class="headerlink" title="挖矿病毒"></a>挖矿病毒</h3><ol>
+<li><code>top</code> 发现 CPU 100% 的可疑进程。</li>
+<li>查看定时任务,发现可疑脚本(如 root&#x2F;pwn.sh)。</li>
+<li>分析脚本:下载木马、加锁、防二次下载、清理日志等。</li>
+<li>删除脚本和下载文件、结束进程、清理计划任务。</li>
+</ol>
+<h3 id="FTP-SSH-暴力破解"><a href="#FTP-SSH-暴力破解" class="headerlink" title="FTP&#x2F;SSH 暴力破解"></a>FTP&#x2F;SSH 暴力破解</h3><ul>
+<li>现象:服务器变慢,重启后反复。</li>
+<li>排查:安全日志大量 4625 登录失败;Log Parser 提取分析;netstat 看连接;抓包定位攻击 IP。</li>
+<li>处置:关闭&#x2F;限制 FTP 外网端口,改强密码,加登录限制。</li>
+</ul>
+<h2 id="五、重点速记"><a href="#五、重点速记" class="headerlink" title="五、重点速记"></a>五、重点速记</h2><ul>
+<li>Windows:进程→文件→注册表→启动项→autorun.inf→重启验证</li>
+<li>映像劫持:IFEO 注册表;改名&#x2F;删项&#x2F;ARK 突破</li>
+<li>Linux:passwd&#x2F;who&#x2F;history&#x2F;netstat&#x2F;ps&#x2F;crontab&#x2F;secure</li>
+<li>定时任务藏挖矿;安全日志查爆破</li>
+<li>工具:rkhunter、chkrootkit、ClamAV、河马</li>
+</ul>
+<h2 id="自测题"><a href="#自测题" class="headerlink" title="自测题"></a>自测题</h2><ol>
+<li>Windows 病毒查杀的流程?</li>
+<li>autorun.inf 是干什么的?</li>
+<li>映像劫持的原理和位置?</li>
+<li>查看 Linux 所有用户用什么命令?</li>
+<li>怎么找出特权用户(UID&#x3D;0)?</li>
+<li>历史命令记录在哪?怎么增强记录?</li>
+<li>查看 Linux 定时任务有哪些方法?</li>
+<li>Linux 安全日志在哪个文件?</li>
+<li>挖矿病毒一般藏在哪里?</li>
+<li>FTP 暴力破解应急怎么处理?</li>
+</ol>
+<details><summary>参考答案</summary>
+1. 分析进程→定位程序文件→删文件→杀进程→清注册表/启动项→重启验证。<br>
+2. 磁盘/优盘自动运行文件,用于传播病毒。<br>
+3. 注册表IFEO把程序路径改错,导致程序无法启动。<br>
+4. cat /etc/passwd。<br>
+5. awk -F: '$3==0{print $1}' /etc/passwd。<br>
+6. ~/.bash_history;修改/etc/profile增加HISTSIZE和HISTTIMEFORMAT。<br>
+7. crontab -l、/var/spool/cron、/etc/crontab。<br>
+8. /var/log/secure。<br>
+9. 定时任务+下载脚本+临时目录文件。<br>
+10. 关外网FTP端口、查安全日志4625、改强密码、限制登录。<br>
+</details>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tongui66.github.io/course-notes/chapter3-incident/62-Windows%E7%97%85%E6%AF%92%E6%9F%A5%E6%9D%80%E4%B8%8ELinux%E5%85%A5%E4%BE%B5%E6%8E%92%E6%9F%A5/index.html" data-id="cuidk8JJWE8BVNJMQIBJ413L_" data-title="62 · Windows病毒查杀与Linux入侵排查" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" style="font-size: 10px;">SQL注入</a> <a href="/tags/SSRF/" style="font-size: 10px;">SSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/XXE/" style="font-size: 10px;">XXE</a> <a href="/tags/%E4%B8%8A%E4%BC%A0/" style="font-size: 10px;">上传</a> <a href="/tags/%E4%BB%A3%E7%90%86/" style="font-size: 10px;">代理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" style="font-size: 10px;">信息收集</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" style="font-size: 10px;">命令执行</a> <a href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" style="font-size: 10px;">域渗透</a> <a href="/tags/%E5%BA%94%E6%80%A5/" style="font-size: 10px;">应急</a> <a href="/tags/%E6%8A%A4%E7%BD%91/" style="font-size: 10px;">护网</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 10px;">报告</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 10px;">提权</a> <a href="/tags/%E6%9F%A5%E6%9D%80/" style="font-size: 10px;">查杀</a> <a href="/tags/%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">流程</a> <a href="/tags/%E7%AD%89%E4%BF%9D/" style="font-size: 10px;">等保</a> <a href="/tags/%E9%9A%A7%E9%81%93/" style="font-size: 10px;">隧道</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a> <a href="/tags/%E9%A2%98%E5%BA%93/" style="font-size: 10px;">题库</a> <a href="/tags/%E9%AB%98%E9%A2%91/" style="font-size: 10px;">高频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">应急响应</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">1</span></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/08/">八月 2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/security-notes/interview-100/">面试高频问答 100 题</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/incident-response/">应急响应速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/intranet-domain/">内网渗透与域渗透速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/pentest-checklist/">渗透测试全流程速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/payload-handbook/">Web 漏洞速查与 Payload 手册</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 tongui<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/security-notes/" class="mobile-nav-link">安全笔记</a>
+  
+    <a href="/course-notes/" class="mobile-nav-link">课程</a>
+  
+    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
+  
+    <a href="/tools" class="mobile-nav-link">工具</a>
+  
+    <a href="/projects" class="mobile-nav-link">项目</a>
+  
+    <a href="/resume" class="mobile-nav-link">简历</a>
+  
+    <a href="/about" class="mobile-nav-link">关于我</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
+
+
+
+
+
+  </div>
+</body>
+</html>
