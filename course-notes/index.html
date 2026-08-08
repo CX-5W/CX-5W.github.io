@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>渗透测试全套课程 | tongui 的安全笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="📚 渗透测试全套课程 由 74 篇系统课程笔记精选的 31 篇核心文章，按四大方向组织：从 Web 开发原理到漏洞利用，从红队攻击到蓝队防守，形成完整渗透测试知识闭环。  ★重点 每篇均含：一句话总结 + 学习目标 + 核心速记 + 面试问答 + 记忆口诀。  📖 第一章 · Web 开发与安全基础 懂开发才懂安全：Nginx &#x2F; Cookie·Session &#x2F; 数据库">
+<meta property="og:type" content="website">
+<meta property="og:title" content="渗透测试全套课程">
+<meta property="og:url" content="https://tongui66.github.io/course-notes/index.html">
+<meta property="og:site_name" content="tongui 的安全笔记">
+<meta property="og:description" content="📚 渗透测试全套课程 由 74 篇系统课程笔记精选的 31 篇核心文章，按四大方向组织：从 Web 开发原理到漏洞利用，从红队攻击到蓝队防守，形成完整渗透测试知识闭环。  ★重点 每篇均含：一句话总结 + 学习目标 + 核心速记 + 面试问答 + 记忆口诀。  📖 第一章 · Web 开发与安全基础 懂开发才懂安全：Nginx &#x2F; Cookie·Session &#x2F; 数据库">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-08T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-08T01:39:13.307Z">
+<meta property="article:author" content="tongui">
+<meta property="article:tag" content="Web安全, 渗透测试, CTF, SQL注入, XSS, 内网渗透, 应急响应, 安全笔记">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="tongui 的安全笔记" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a href="/" id="logo" class="nav-logo">tongui 的安全笔记</a>
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/security-notes/">安全笔记</a>
+        
+          <a class="main-nav-link" href="/course-notes/">课程</a>
+        
+          <a class="main-nav-link" href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95">CTF题解</a>
+        
+          <a class="main-nav-link" href="/tools">工具</a>
+        
+          <a class="main-nav-link" href="/projects">项目</a>
+        
+          <a class="main-nav-link nav-resume" href="/resume">简历</a>
+        
+          <a class="main-nav-link current" href="/about">关于我</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/tongui66"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tongui66.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/course-notes/index.html" class="article-date">
+  <time class="dt-published" datetime="2026-08-08T02:00:00.000Z" itemprop="datePublished">2026-08-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      渗透测试全套课程
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="📚-渗透测试全套课程"><a href="#📚-渗透测试全套课程" class="headerlink" title="📚 渗透测试全套课程"></a>📚 渗透测试全套课程</h1><blockquote>
+<p>由 74 篇系统课程笔记精选的 <strong>31 篇核心文章</strong>，按四大方向组织：从 Web 开发原理到漏洞利用，从红队攻击到蓝队防守，形成完整渗透测试知识闭环。</p>
+</blockquote>
+<p><span class="badge-key">★重点</span> 每篇均含：一句话总结 + 学习目标 + 核心速记 + 面试问答 + 记忆口诀。</p>
+<hr>
+<h2 id="📖-第一章-·-Web-开发与安全基础"><a href="#📖-第一章-·-Web-开发与安全基础" class="headerlink" title="📖 第一章 · Web 开发与安全基础"></a>📖 第一章 · Web 开发与安全基础</h2><blockquote>
+<p>懂开发才懂安全：Nginx &#x2F; Cookie·Session &#x2F; 数据库 &#x2F; PHP 安全开发</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>主题</th>
+<th>直达</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>23</td>
+<td>Nginx 基础与 HTTP 协议</td>
+<td><a href="/course-notes/chapter1-web-dev/23-Nginx-%E5%9F%BA%E7%A1%80%E4%B8%8E-HTTP-%E5%8D%8F%E8%AE%AE/">阅读 →</a></td>
+</tr>
+<tr>
+<td>24</td>
+<td>Nginx 进阶配置</td>
+<td><a href="/course-notes/chapter1-web-dev/24-Nginx-%E8%BF%9B%E9%98%B6%E9%85%8D%E7%BD%AE/">阅读 →</a></td>
+</tr>
+<tr>
+<td>26</td>
+<td>Cookie&#x2F;Session 与数据库网站</td>
+<td><a href="/course-notes/chapter1-web-dev/26-Cookie-Session-%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BD%91%E7%AB%99/">阅读 →</a></td>
+</tr>
+<tr>
+<td>29</td>
+<td>数据库基础与分类</td>
+<td><a href="/course-notes/chapter1-web-dev/29-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%80%E4%B8%8E%E5%88%86%E7%B1%BB/">阅读 →</a></td>
+</tr>
+<tr>
+<td>30</td>
+<td>MySQL 进阶操作</td>
+<td><a href="/course-notes/chapter1-web-dev/30-MySQL-%E8%BF%9B%E9%98%B6%E6%93%8D%E4%BD%9C/">阅读 →</a></td>
+</tr>
+<tr>
+<td>33</td>
+<td>PHP 后端基础</td>
+<td><a href="/course-notes/chapter1-web-dev/33-PHP-%E5%90%8E%E7%AB%AF%E5%9F%BA%E7%A1%80/">阅读 →</a></td>
+</tr>
+<tr>
+<td>36</td>
+<td>PHP 命令执行与序列化</td>
+<td><a href="/course-notes/chapter1-web-dev/36-PHP-%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E3%80%81%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E4%B8%8E%E5%BA%8F%E5%88%97%E5%8C%96/">阅读 →</a></td>
+</tr>
+<tr>
+<td>37</td>
+<td>PHP 数据库与会话操作</td>
+<td><a href="/course-notes/chapter1-web-dev/37-PHP-%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8E%E4%BC%9A%E8%AF%9D%E6%93%8D%E4%BD%9C/">阅读 →</a></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🎯-第二章-·-Web-漏洞全解"><a href="#🎯-第二章-·-Web-漏洞全解" class="headerlink" title="🎯 第二章 · Web 漏洞全解"></a>🎯 第二章 · Web 漏洞全解</h2><blockquote>
+<p>核心攻击面全覆盖：SQL 注入 &#x2F; XSS &#x2F; 上传 &#x2F; 包含 &#x2F; CSRF &#x2F; 反序列化 &#x2F; SSRF·XXE &#x2F; 代码审计</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>主题</th>
+<th>直达</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>45</td>
+<td>Web 漏洞概述与 SQL 注入</td>
+<td><a href="/course-notes/chapter2-web-vulns/45-Web%E6%BC%8F%E6%B4%9E%E6%A6%82%E8%BF%B0%E4%B8%8ESQL%E6%B3%A8%E5%85%A5/">阅读 →</a></td>
+</tr>
+<tr>
+<td>46</td>
+<td>SQL 注入进阶</td>
+<td><a href="/course-notes/chapter2-web-vulns/46-SQL%E6%B3%A8%E5%85%A5%E8%BF%9B%E9%98%B6/">阅读 →</a></td>
+</tr>
+<tr>
+<td>47</td>
+<td>XSS 跨站脚本攻击</td>
+<td><a href="/course-notes/chapter2-web-vulns/47-XSS%E8%B7%A8%E7%AB%99%E8%84%9A%E6%9C%AC%E6%94%BB%E5%87%BB/">阅读 →</a></td>
+</tr>
+<tr>
+<td>48</td>
+<td>任意文件上传与下载漏洞</td>
+<td><a href="/course-notes/chapter2-web-vulns/48-%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E4%B8%8E%E4%B8%8B%E8%BD%BD%E6%BC%8F%E6%B4%9E/">阅读 →</a></td>
+</tr>
+<tr>
+<td>49</td>
+<td>解析漏洞与文件包含漏洞</td>
+<td><a href="/course-notes/chapter2-web-vulns/49-Web%E6%9C%8D%E5%8A%A1%E7%A8%8B%E5%BA%8F%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E%E4%B8%8E%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E/">阅读 →</a></td>
+</tr>
+<tr>
+<td>50</td>
+<td>CSRF 跨站请求伪造</td>
+<td><a href="/course-notes/chapter2-web-vulns/50-CSRF%E8%B7%A8%E7%AB%99%E8%AF%B7%E6%B1%82%E4%BC%AA%E9%80%A0/">阅读 →</a></td>
+</tr>
+<tr>
+<td>51</td>
+<td>命令执行与反序列化漏洞</td>
+<td><a href="/course-notes/chapter2-web-vulns/51-%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E4%B8%8E%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/">阅读 →</a></td>
+</tr>
+<tr>
+<td>52</td>
+<td>SSRF 与 XXE 漏洞</td>
+<td><a href="/course-notes/chapter2-web-vulns/52-SSRF%E4%B8%8EXXE%E6%BC%8F%E6%B4%9E/">阅读 →</a></td>
+</tr>
+<tr>
+<td>55</td>
+<td>逻辑漏洞、挂马与钓鱼</td>
+<td><a href="/course-notes/chapter2-web-vulns/55-%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E%E3%80%81%E6%8C%82%E9%A9%AC%E4%B8%8E%E9%92%93%E9%B1%BC/">阅读 →</a></td>
+</tr>
+<tr>
+<td>64</td>
+<td>WAF 绕过补充与代码审计</td>
+<td><a href="/course-notes/chapter2-web-vulns/64-WAF%E7%BB%95%E8%BF%87%E8%A1%A5%E5%85%85%E4%B8%8E%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">阅读 →</a></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🛡-第三章-·-应急响应与护网"><a href="#🛡-第三章-·-应急响应与护网" class="headerlink" title="🛡 第三章 · 应急响应与护网"></a>🛡 第三章 · 应急响应与护网</h2><blockquote>
+<p>攻防一体：护网研判 &#x2F; 应急响应 &#x2F; 病毒查杀 &#x2F; 等保合规</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>主题</th>
+<th>直达</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>60</td>
+<td>护网行动与安全设备</td>
+<td><a href="/course-notes/chapter3-incident/60-%E6%8A%A4%E7%BD%91%E8%A1%8C%E5%8A%A8%E4%B8%8E%E5%AE%89%E5%85%A8%E8%AE%BE%E5%A4%87/">阅读 →</a></td>
+</tr>
+<tr>
+<td>61</td>
+<td>应急响应流程与入侵排查</td>
+<td><a href="/course-notes/chapter3-incident/61-%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%B5%81%E7%A8%8B%E4%B8%8E%E5%85%A5%E4%BE%B5%E6%8E%92%E6%9F%A5/">阅读 →</a></td>
+</tr>
+<tr>
+<td>62</td>
+<td>Windows 病毒查杀与 Linux 入侵排查</td>
+<td><a href="/course-notes/chapter3-incident/62-Windows%E7%97%85%E6%AF%92%E6%9F%A5%E6%9D%80%E4%B8%8ELinux%E5%85%A5%E4%BE%B5%E6%8E%92%E6%9F%A5/">阅读 →</a></td>
+</tr>
+<tr>
+<td>63</td>
+<td>Web 应急响应与 WAF 绕过</td>
+<td><a href="/course-notes/chapter3-incident/63-Web%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E4%B8%8EWAF%E7%BB%95%E8%BF%87/">阅读 →</a></td>
+</tr>
+<tr>
+<td>68</td>
+<td>等保、安全巡检与风险评估</td>
+<td><a href="/course-notes/chapter3-incident/68-%E7%AD%89%E4%BF%9D%E3%80%81%E5%AE%89%E5%85%A8%E5%B7%A1%E6%A3%80%E4%B8%8E%E9%A3%8E%E9%99%A9%E8%AF%84%E4%BC%B0/">阅读 →</a></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🕸-第四章-·-内网渗透与提权"><a href="#🕸-第四章-·-内网渗透与提权" class="headerlink" title="🕸 第四章 · 内网渗透与提权"></a>🕸 第四章 · 内网渗透与提权</h2><blockquote>
+<p>拉开差距的进阶内容：提权 &#x2F; CS 工具 &#x2F; 横向移动 &#x2F; 域渗透票据攻击</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>主题</th>
+<th>直达</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>38</td>
+<td>渗透系统安装与靶场部署</td>
+<td><a href="/course-notes/chapter4-intranet/38-%E6%B8%97%E9%80%8F%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85%E4%B8%8E%E9%9D%B6%E5%9C%BA%E9%83%A8%E7%BD%B2/">阅读 →</a></td>
+</tr>
+<tr>
+<td>39</td>
+<td>Docker 与漏洞靶场部署</td>
+<td><a href="/course-notes/chapter4-intranet/39-Docker-%E4%B8%8E%E6%BC%8F%E6%B4%9E%E9%9D%B6%E5%9C%BA%E9%83%A8%E7%BD%B2/">阅读 →</a></td>
+</tr>
+<tr>
+<td>65</td>
+<td>权限提升</td>
+<td><a href="/course-notes/chapter4-intranet/65-%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/">阅读 →</a></td>
+</tr>
+<tr>
+<td>66</td>
+<td>CS 工具功能详解</td>
+<td><a href="/course-notes/chapter4-intranet/66-CS%E5%B7%A5%E5%85%B7%E5%8A%9F%E8%83%BD%E8%AF%A6%E8%A7%A3/">阅读 →</a></td>
+</tr>
+<tr>
+<td>67</td>
+<td>内网渗透</td>
+<td><a href="/course-notes/chapter4-intranet/67-%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">阅读 →</a></td>
+</tr>
+<tr>
+<td>70</td>
+<td>跨域与渗透测试流程</td>
+<td><a href="/course-notes/chapter4-intranet/70-%E8%B7%A8%E5%9F%9F%E4%B8%8E%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E6%B5%81%E7%A8%8B/">阅读 →</a></td>
+</tr>
+<tr>
+<td>71</td>
+<td>内网穿透与域渗透基础</td>
+<td><a href="/course-notes/chapter4-intranet/71-%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E4%B8%8E%E5%9F%9F%E6%B8%97%E9%80%8F%E5%9F%BA%E7%A1%80/">阅读 →</a></td>
+</tr>
+<tr>
+<td>72</td>
+<td>域渗透（口令传递与票据攻击）</td>
+<td><a href="/course-notes/chapter4-intranet/72-%E5%9F%9F%E6%B8%97%E9%80%8F(%E5%8F%A3%E4%BB%A4%E4%BC%A0%E9%80%92%E4%B8%8E%E7%A5%A8%E6%8D%AE%E6%94%BB%E5%87%BB)/">阅读 →</a></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="📌-完整课程体系"><a href="#📌-完整课程体系" class="headerlink" title="📌 完整课程体系"></a>📌 完整课程体系</h2><p>本板块为精选核心篇目。<strong>完整 74 篇课程笔记</strong>（含计算机&#x2F;Linux&#x2F;网络基础、信息收集、扫描器、免杀等）将陆续整理上线，也可关注我的 GitHub 仓库获取完整笔记库。</p>
+<p><strong>学习路线</strong>：环境与协议 → 信息收集 → Web 漏洞 → 工具对抗 → 内网与域 → 应急与运营 → 安全开发</p>
+<p><a href="/">← 返回首页</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tongui66.github.io/course-notes/index.html" data-id="cuid5F9a9839Hi6JFC0bJA5sC" data-title="渗透测试全套课程" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" style="font-size: 10px;">SQL注入</a> <a href="/tags/SSRF/" style="font-size: 10px;">SSRF</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/XXE/" style="font-size: 10px;">XXE</a> <a href="/tags/%E4%B8%8A%E4%BC%A0/" style="font-size: 10px;">上传</a> <a href="/tags/%E4%BB%A3%E7%90%86/" style="font-size: 10px;">代理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" style="font-size: 10px;">信息收集</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" style="font-size: 10px;">命令执行</a> <a href="/tags/%E5%9F%9F%E6%B8%97%E9%80%8F/" style="font-size: 10px;">域渗透</a> <a href="/tags/%E5%BA%94%E6%80%A5/" style="font-size: 10px;">应急</a> <a href="/tags/%E6%8A%A4%E7%BD%91/" style="font-size: 10px;">护网</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 10px;">报告</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 10px;">提权</a> <a href="/tags/%E6%9F%A5%E6%9D%80/" style="font-size: 10px;">查杀</a> <a href="/tags/%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">流程</a> <a href="/tags/%E7%AD%89%E4%BF%9D/" style="font-size: 10px;">等保</a> <a href="/tags/%E9%9A%A7%E9%81%93/" style="font-size: 10px;">隧道</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a> <a href="/tags/%E9%A2%98%E5%BA%93/" style="font-size: 10px;">题库</a> <a href="/tags/%E9%AB%98%E9%A2%91/" style="font-size: 10px;">高频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/">安全笔记</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/Web%E6%BC%8F%E6%B4%9E/">Web漏洞</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">应急响应</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">1</span></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/08/">八月 2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/security-notes/interview-100/">面试高频问答 100 题</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/incident-response/">应急响应速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/intranet-domain/">内网渗透与域渗透速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/pentest-checklist/">渗透测试全流程速查</a>
+          </li>
+        
+          <li>
+            <a href="/security-notes/payload-handbook/">Web 漏洞速查与 Payload 手册</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 tongui<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/security-notes/" class="mobile-nav-link">安全笔记</a>
+  
+    <a href="/course-notes/" class="mobile-nav-link">课程</a>
+  
+    <a href="/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95" class="mobile-nav-link">CTF题解</a>
+  
+    <a href="/tools" class="mobile-nav-link">工具</a>
+  
+    <a href="/projects" class="mobile-nav-link">项目</a>
+  
+    <a href="/resume" class="mobile-nav-link">简历</a>
+  
+    <a href="/about" class="mobile-nav-link">关于我</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('#main-nav .main-nav-link');
+    var best = null, bestLen = -1;
+    for (var i = 0; i < links.length; i++){
+      var href = links[i].getAttribute('href') || '';
+      href = href.replace(/\/+$/, '') || '/';
+      var hit = (href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0));
+      if (hit && href.length > bestLen){
+        bestLen = href.length;
+        best = links[i];
+      }
+    }
+    if (best){
+      best.classList.add('current');
+    }
+  })();
+</script>
+
+
+
+
+
+
+  </div>
+</body>
+</html>
